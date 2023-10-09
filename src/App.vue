@@ -1,30 +1,122 @@
 <template>
-  <nav>
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
-  </nav>
-  <router-view/>
+  <div class="container">
+    <Navbar />
+
+    <div v-if="isUserConnected && !getChainName" class="alert alert-danger" role="alert">
+      You are on an unsupported network. Click here to connect to either 
+      <span @click="switchToGoerli" class="network-switch-link">Arbitrum Goerli testnet</span>.
+      <span @click="switchToPolygon" class="network-switch-link">Polygon</span> or 
+      <span @click="switchToKovan" class="network-switch-link">Kovan testnet</span> or 
+      <span @click="switchToMumbai" class="network-switch-link">Mumbai testnet</span> or 
+      <span @click="switchToFuji" class="network-switch-link">Fuji testnet</span> or
+      <span @click="switchToCantoTestnet" class="network-switch-link">Canto testnet</span>.
+      <span @click="switchToArbitrumGoerli" class="network-switch-link">Arbitrum Goerli testnet</span>.
+    </div>
+
+    <router-view />
+
+    <Footer />
+
+  </div>
 </template>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
+<script>
+import { mapGetters } from "vuex";
+import Footer from './components/Footer.vue';
+import Navbar from './components/Navbar.vue';
 
-nav {
-  padding: 30px;
-}
+export default {
+  name: 'App',
 
-nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
+  components: {
+    Navbar,
+    Footer
+  },
 
-nav a.router-link-exact-active {
-  color: #42b983;
+  computed: {
+    ...mapGetters("accounts", ["getChainName", "getSupportedChains", "isUserConnected"]),
+  },
+
+  methods: {
+    switchToPolygon() {
+      window.ethereum.request({ 
+        method: 'wallet_addEthereumChain', 
+        params: [{ 
+          chainId: '0x89', 
+          chainName: 'Polygon PoS Chain', 
+          nativeCurrency: { name: 'MATIC', symbol: 'MATIC', decimals: 18 }, 
+          rpcUrls: ['https://polygon-rpc.com/'], 
+          blockExplorerUrls: ['https://polygonscan.com/']
+        }] 
+      });
+    },
+    switchToKovan() {
+      window.ethereum.request({ 
+        method: 'wallet_switchEthereumChain', 
+        params: [{ 
+          chainId: '0x2a'
+        }] 
+      });
+    },
+    switchToMumbai() {
+      window.ethereum.request({ 
+        method: 'wallet_switchEthereumChain', 
+        params: [{ 
+          chainId: '0x13881'
+        }] 
+      });
+    },
+    switchToFuji() {
+      window.ethereum.request({ 
+        method: 'wallet_switchEthereumChain', 
+        params: [{ 
+          chainId: '0xa869'
+        }] 
+      });
+    },
+    switchToCantoTestnet() {
+      window.ethereum.request({ 
+        method: 'wallet_switchEthereumChain', 
+        params: [{ 
+          chainId: '0x1e15'
+        }] 
+      });
+    },
+    switchToArbitrumGoerli() {
+      window.ethereum.request({ 
+        method: 'wallet_switchEthereumChain', 
+        params: [{ 
+          chainId: '0x66eed'
+        }] 
+      });
+    },
+    switchToGoerli() {
+      window.ethereum.request({ 
+        method: 'wallet_switchEthereumChain', 
+        params: [{ 
+          chainId: '0x5'
+        }] 
+      });
+    }
+  },
+  watch: {
+    getChainName: function () {
+      // update everything whenever the network is changed
+      /*
+        this.$store.dispatch("governableFundFactory/fetchContract");
+      */
+    }
+  }
+}
+</script>
+
+<style scoped>
+ .modal {
+   display: block;
+ }
+
+.network-switch-link {
+  text-decoration: underline;
+  cursor: pointer;
 }
 </style>
