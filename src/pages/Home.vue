@@ -217,7 +217,7 @@
 
           <div class="d-flex flex-row justify-content-center">
             <p class="feature-text-short">
-              Users of DeFi Options have full ownership of their funds at all times
+              Users of Rethink Finance have full ownership of their funds at all times
             </p>
           </div>
         </div>
