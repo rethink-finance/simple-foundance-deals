@@ -123,6 +123,7 @@
               <li><button @click="switchToFuji" class="dropdown-item">Fuji Testnet</button></li>
               <li><button @click="switchToCantoTestnet" class="dropdown-item">Canto Testnet</button></li>
               <li><button @click="switchToArbitrumGoerli" class="dropdown-item">Arbitrum Goerli Testnet</button></li>
+              <li><button @click="switchToGoerli" class="dropdown-item">Goerli Testnet</button></li>
             </ul>
           </div>
 
@@ -247,6 +248,14 @@ export default {
         method: 'wallet_switchEthereumChain', 
         params: [{ 
           chainId: '0x66eed'
+        }] 
+      });
+    },
+    switchToGoerli() {
+      window.ethereum.request({ 
+        method: 'wallet_switchEthereumChain', 
+        params: [{ 
+          chainId: '0x5'
         }] 
       });
     }
