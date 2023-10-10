@@ -17,28 +17,6 @@
 
 <script>
 
-/*
-
-struct Settings {
-    uint256 depositFee;
-    uint256 withdrawFee;
-    uint256 performanceFee;//TODO: not imp 
-    uint256 managementFee;
-    uint256 performaceHurdleRateBps;//TODO: not imp 
-    address baseToken;
-    address safe; //TODO: needs to be set after safe creation
-    bool isExternalGovTokenInUse; //TODO: needs to be set after upload
-    bool isWhitelistedDeposits; //TODO: needs to be set after upload
-    address[] allowedDepositAddrs;
-    address[] allowedManagers;
-    address governanceToken;
-    address governor; //TODO: needs to be set after upload
-    string fundName;
-    string fundSymbol;
-  }
-
-*/
-
 export default {
   name: "FundInput",
   props: ["fund"],

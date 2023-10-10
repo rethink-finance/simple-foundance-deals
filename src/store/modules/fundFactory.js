@@ -1,27 +1,23 @@
 import ContractJson from "../../contracts/ERC20.json";
 import addresses from "../../contracts/addresses.json";
 
-const ContractName = "CreditToken";
+const ContractName = "GovernableFundFactoryTransparentUpgradeableProxy";
 
 const state = {
   abi: null,
   address: null,
   contract: null,
-  userBalance: null
 };
 
 const getters = {
-  getCreditTokenAbi(state) {
+  getFundFactoryAbi(state) {
     return state.abi;
   },
-  getCreditTokenAddress(state) {
+  getFundFactoryAddress(state) {
     return state.address;
   },
-  getCreditTokenContract(state) {
+  getFundFactoryContract(state) {
     return state.contract;
-  },
-  getCreditTokenUserBalance(state) {
-    return state.userBalance;
   }
 };
 
@@ -32,19 +28,6 @@ const actions = {
     let address = addresses[ContractName][chainIdDec];
     let contract = new web3.eth.Contract(ContractJson.abi, address);
     commit("setContract", contract);
-  },
-  async fetchUserBalance({ commit, rootState }) {
-    if (!state.contract) {
-      this.fetchContract();
-    }
-
-    let activeAccount = rootState.accounts.activeAccount;
-    let balanceWei = await state.contract.methods.balanceOf(activeAccount).call();
-
-    let web3 = rootState.accounts.web3;
-    let balance = web3.utils.fromWei(balanceWei, "ether");
-
-    commit("setUserCreditTokenBalance", balance);
   },
   storeAbi({commit}) {
     commit("setAbi", ContractJson.abi);
@@ -64,9 +47,6 @@ const mutations = {
   },
   setContract(state, _contract) {
     state.contract = _contract;
-  },
-  setUserCreditTokenBalance(state, balance) {
-    state.userBalance = balance;
   }
 };
 

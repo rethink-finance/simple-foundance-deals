@@ -10,6 +10,13 @@
   </div>
 </template>
 
+<div class="pool-submit-buttons">
+  <button @click="createFund" class="btn btn-success">
+    <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+    Create Fund
+  </button>
+</div>
+
 <script>
 import { mapGetters, mapActions } from "vuex";
 import FundInput from '../components/fund/FundInput.vue';
@@ -18,11 +25,7 @@ export default {
   name: "CreateFund",
 
   computed: {
-    ...mapGetters("accounts", ["getChainName", "isUserConnected"]),
-
-    isGoerli() {
-      return this.getChainName == "Goerli";
-    }
+    ...mapGetters("fundFactory", ["getFundFactoryContract"]),
   },
 
   created() {
@@ -35,9 +38,9 @@ export default {
       fund: {
         depositFee: null,
         withdrawFee: null,
-        performanceFee: null,//TODO: not imp 
+        //performanceFee: null,//TODO: not imp 
         managementFee: null,
-        performaceHurdleRateBps: null,//TODO: not imp 
+        //performaceHurdleRateBps: null,//TODO: not imp 
         baseToken: "",
         allowedDepositAddrs: [],
         allowedManagers: [],
@@ -54,6 +57,84 @@ export default {
 
   methods: {
     ...mapActions("accounts", ["connectWeb3Modal"]),
+    validateObj(obj) {
+      if (obj.length == 0)
+        return false;
+
+      for (let i =0; i < obj.length; i++) {
+        for (const key in obj[i]) {
+          if (obj[i][key] === null) {
+            return false;
+          }
+        }
+      }
+
+      return true;
+    },
+    async createFund () {
+      let component = this;
+      /*
+        struct Settings {
+            uint256 depositFee;
+            uint256 withdrawFee;
+            uint256 performanceFee;//TODO: not imp 
+            uint256 managementFee;
+            uint256 performaceHurdleRateBps;//TODO: not imp 
+            address baseToken;
+            address safe; //TODO: needs to be set after safe creation
+            bool isExternalGovTokenInUse; //TODO: needs to be set after upload
+            bool isWhitelistedDeposits; //TODO: needs to be set after upload
+            address[] allowedDepositAddrs;
+            address[] allowedManagers;
+            address governanceToken;
+            address governor; //TODO: needs to be set after upload
+            string fundName;
+            string fundSymbol;
+          }
+      */
+      if (component.validateObj(component.fund)) {
+        component.getFundFactoryContract.methods.createFund(
+          [
+            parseInt(component.fund.depositFee),
+            parseInt(component.fund.withdrawFee),
+            0,//bps
+            parseInt(component.fund.managementFee),
+            0,//bps
+            component.fund.baseToken,
+            "0x0000000000000000000000000000000000000000",
+            0,//false
+            0,//false
+            component.fund.allowedDepositAddrs,
+            component.fund.allowedManagers,
+            component.fund.governanceToken,
+            "0x0000000000000000000000000000000000000000",
+            component.fund.fundName,
+            component.fund.fundSymbol
+          ]
+        ).send({
+          from: component.getActiveAccount,
+          maxPriorityFeePerGas: null,
+          maxFeePerGas: null
+        }).on('transactionHash', function(hash){
+          console.log("tx hash: " + hash);
+          component.$toast.info("The transaction has been submitted. Please wait for it to be confirmed.");
+        }).on('receipt', function(receipt){
+          console.log(receipt);
+          if (receipt.status) {
+            component.$toast.success("Create Fund transaction was successfull.");
+            
+          } else {
+            component.$toast.error("The Create Fund tx has failed. Please contact the Rethink Finance community for support.");
+          }
+          component.loading = false;
+
+        }).on('error', function(error){
+          console.log(error);
+          component.loading = false;
+          component.$toast.error("There has been an error. Please contact the Rethink Finance community for support.");
+        });
+      }
+    },
   }
 }
 </script>
