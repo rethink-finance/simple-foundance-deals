@@ -10,8 +10,8 @@
         "43113": "",
         "421613":""
     },
-    "GovernableFundFactoryTransparentUpgradeableProxy": {
-      "5":"0x29680E257ff42d2d57Bb13A90FDc45019b771217",
+    "GovernableFundFactoryBeaconProxy": {
+      "5":"0x12890733c4Daebb6D3bC99E5d1370dB6acEcC659",
       "42":"",
       "137":"",
       "740":"",
@@ -21,8 +21,8 @@
       "43113": "",
       "421613":""
     },
-    "NAVCalculatorTransparentUpgradeableProxy": {
-      "5":"0xE1855889FD9E2c0793c1fB8FFF558648e9EE7e4f",
+    "NAVCalculatorBeaconProxy": {
+      "5":"0x26d70661664Fc2b4a1519Fa5766ccFF7E384a12F",
       "42":"",
       "137":"",
       "740":"",
@@ -32,8 +32,8 @@
       "43113": "",
       "421613":""
     },
-    "RethinkFundGovernerTransparentUpgradeableProxy": {
-      "5":"0x8AaA926b78e029A3c2619a23B58628A767c3efC2",
+    "RethinkFundGovernerUpgradeableBeacon": {
+      "5":"0x30DB0Ca15AfB8a9D6ec6e3e377207B9E995E1901",
       "42":"",
       "137":"",
       "740":"",
@@ -43,8 +43,8 @@
       "43113": "",
       "421613":""
     },
-    "GovernableFundTransparentUpgradeableProxy": {
-      "5":"0x988c368be3ab87817A2503779e3757546765F73A",
+    "GovernableFundUpgradeableBeacon": {
+      "5":"0x2c6a034e5c0154c458fe6a0478d9181a959d2bed",
       "42":"",
       "137":"",
       "740":"",
@@ -76,8 +76,19 @@
       "43113": "",
       "421613":""
     },
-    "ZodiacRolesV1ModifierTransparentUpgradeableProxy": {
-      "5":"0x9AFc0514f085990F2090e087A60c2F8F4340fE97",
+    "ZodiacRolesV1ModifierUpgradeableBeacon": {
+      "5":"0xb3aec0e144e46ee4290ad93cc05609c160413087",
+      "42":"",
+      "137":"",
+      "740":"",
+      "7701":"",
+      "80001":"",
+      "43112": "",
+      "43113": "",
+      "421613":""
+    },
+    "GovernableFundFlowsBeaconProxy": {
+      "5":"0xD183169c80d0Fc8823b5661ca125F3F0E42EA827",
       "42":"",
       "137":"",
       "740":"",

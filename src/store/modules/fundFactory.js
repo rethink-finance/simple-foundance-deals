@@ -1,7 +1,7 @@
 import ContractJson from "../../contracts/ERC20.json";
 import addresses from "../../contracts/addresses.json";
 
-const ContractName = "GovernableFundFactoryTransparentUpgradeableProxy";
+const ContractName = "GovernableFundFactoryBeaconProxy";
 
 const state = {
   abi: null,
