@@ -250,7 +250,7 @@ const mutations = {
         state.chainName = "Arbitrum Goerli";
         break
       case "0x5":
-        state.chainName = "Arbitrum Goerli";
+        state.chainName = "Goerli";
         break
       default:
         state.chainName = null;

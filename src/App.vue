@@ -4,12 +4,12 @@
 
     <div v-if="isUserConnected && !getChainName" class="alert alert-danger" role="alert">
       You are on an unsupported network. Click here to connect to either 
-      <span @click="switchToGoerli" class="network-switch-link">Arbitrum Goerli testnet</span>.
+      <span @click="switchToGoerli" class="network-switch-link">Goerli testnet</span>.
       <span @click="switchToPolygon" class="network-switch-link">Polygon</span> or 
       <span @click="switchToKovan" class="network-switch-link">Kovan testnet</span> or 
       <span @click="switchToMumbai" class="network-switch-link">Mumbai testnet</span> or 
       <span @click="switchToFuji" class="network-switch-link">Fuji testnet</span> or
-      <span @click="switchToCantoTestnet" class="network-switch-link">Canto testnet</span>.
+      <span @click="switchToCantoTestnet" class="network-switch-link">Canto testnet</span> or
       <span @click="switchToArbitrumGoerli" class="network-switch-link">Arbitrum Goerli testnet</span>.
     </div>
 
@@ -102,9 +102,18 @@ export default {
   watch: {
     getChainName: function () {
       // update everything whenever the network is changed
-      /*
-        this.$store.dispatch("governableFundFactory/fetchContract");
-      */
+      this.$store.dispatch("fundFactory/fetchContract");
+      this.$store.dispatch("fundFactory/storeAddress");
+
+
+      this.$store.dispatch("dai/fetchContract");
+      this.$store.dispatch("dai/storeAddress");
+      this.$store.dispatch("usdc/fetchContract");
+      this.$store.dispatch("usdc/storeAddress");
+
+
+      this.$store.dispatch("dai/fetchUserBalance");
+      this.$store.dispatch("usdc/fetchUserBalance");
     }
   }
 }

@@ -307,16 +307,31 @@ export default {
   name: "Home",
 
   computed: {
-    ...mapGetters("accounts", ["getChainName", "isUserConnected"]),
+    ...mapGetters("accounts", ["getWeb3", "getChainName", "isUserConnected"]),
 
     isGoerli() {
       return this.getChainName == "Goerli";
+    },
+
+    isMumbai() {
+      return this.getChainName == "Mumbai";
+    },
+
+    isCantoTestnet() {
+      return this.getChainName == "Canto Testnet";
+    },
+
+    isPolygon() {
+      return this.getChainName == "Polygon";
     }
   },
 
   created() {
+    this.$store.dispatch("accounts/initWeb3Modal");
+    this.$store.dispatch("accounts/ethereumListener");
     // check if user has already confirmed the compliance modal (this modal is in Navbar)
     this.isCompliant = localStorage.getItem('isCompliant');
+    this.$store.dispatch("fundFactory/fetchContract");
   },
 
   data() {

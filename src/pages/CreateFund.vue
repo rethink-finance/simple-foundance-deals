@@ -7,15 +7,14 @@
       <FundInput :fund="fund" />
       <span></span>
     </div>
+    <div class="fund-submit-buttons">
+      <button @click="createFund" class="btn btn-success">
+        <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+        Create Fund
+      </button>
+    </div>
   </div>
 </template>
-
-<div class="pool-submit-buttons">
-  <button @click="createFund" class="btn btn-success">
-    <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-    Create Fund
-  </button>
-</div>
 
 <script>
 import { mapGetters, mapActions } from "vuex";
@@ -25,16 +24,19 @@ export default {
   name: "CreateFund",
 
   computed: {
+    ...mapGetters("accounts", ["getActiveAccount", "getChainName", "getWeb3", "isUserConnected"]),
     ...mapGetters("fundFactory", ["getFundFactoryContract"]),
   },
 
   created() {
-    // check if user has already confirmed the compliance modal (this modal is in Navbar)
-    this.isCompliant = localStorage.getItem('isCompliant');
+    if (!this.getWeb3 || !this.isUserConnected) {
+      this.$router.push({ name: 'home'});
+    }
   },
 
   data() {
     return {
+      loading: false,
       fund: {
         depositFee: null,
         withdrawFee: null,
@@ -42,9 +44,9 @@ export default {
         managementFee: null,
         //performaceHurdleRateBps: null,//TODO: not imp 
         baseToken: "",
-        allowedDepositAddrs: [],
-        allowedManagers: [],
-        governanceToken: "",
+        allowedDepositAddrs: "",
+        allowedManagers: "",
+        governanceToken: "0x0000000000000000000000000000000000000000",
         fundName: "",
         fundSymbol: ""
       }
@@ -71,6 +73,7 @@ export default {
     },
     async createFund () {
       let component = this;
+      component.loading = true;
       /*
         struct Settings {
             uint256 depositFee;
@@ -86,25 +89,27 @@ export default {
             address[] allowedManagers;
             address governanceToken;
             address governor; //TODO: needs to be set after upload
+            address fundAddress;//TODO: this may not be needed if delegatecall has balance refs to callee addr
             string fundName;
             string fundSymbol;
           }
       */
       if (component.validateFund(component.fund)) {
-        component.getFundFactoryContract.methods.createFund(
+        await component.getFundFactoryContract.methods.createFund(
           [
             parseInt(component.fund.depositFee),
             parseInt(component.fund.withdrawFee),
-            0,//bps
+            0,//performanceFee bps
             parseInt(component.fund.managementFee),
-            0,//bps
+            0,//performaceHurdleRateBps bps
             component.fund.baseToken,
             "0x0000000000000000000000000000000000000000",
-            0,//false
-            0,//false
-            component.fund.allowedDepositAddrs,
-            component.fund.allowedManagers,
+            false,//false
+            false,//false
+            component.fund.allowedDepositAddrs.split(",").filter((val) => (val != "") ? true :  false),
+            component.fund.allowedManagers.split(",").filter((val) => (val != "") ? true :  false),
             component.fund.governanceToken,
+            "0x0000000000000000000000000000000000000000",
             "0x0000000000000000000000000000000000000000",
             component.fund.fundName,
             component.fund.fundSymbol

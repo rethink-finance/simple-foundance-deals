@@ -9,7 +9,7 @@ export default {
   name: "UpdateFundNAV",
 
   computed: {
-    ...mapGetters("accounts", ["getChainName", "isUserConnected"]),
+    ...mapGetters("accounts", ["getWeb3", "getChainName", "isUserConnected"]),
 
     isGoerli() {
       return this.getChainName == "Goerli";
@@ -17,8 +17,9 @@ export default {
   },
 
   created() {
-    // check if user has already confirmed the compliance modal (this modal is in Navbar)
-    this.isCompliant = localStorage.getItem('isCompliant');
+    if (!this.getWeb3 || !this.isUserConnected) {
+      this.$store.dispatch("fundFactory/fetchContract");
+    }
   },
 
   data() {

@@ -1,4 +1,4 @@
-import ContractJson from "../../contracts/ERC20.json";
+import ContractJson from "../../contracts/GovernableFundFactory.json";
 import addresses from "../../contracts/addresses.json";
 
 const ContractName = "GovernableFundFactoryBeaconProxy";
@@ -27,6 +27,7 @@ const actions = {
     let chainIdDec = parseInt(rootState.accounts.chainId);
     let address = addresses[ContractName][chainIdDec];
     let contract = new web3.eth.Contract(ContractJson.abi, address);
+    console.log("fund factory contract fetch");
     commit("setContract", contract);
   },
   storeAbi({commit}) {

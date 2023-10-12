@@ -1,7 +1,7 @@
 import ContractJson from "../../contracts/ERC20Mock.json";
 import addresses from "../../contracts/addresses.json";
 
-const ContractName = "Dai";
+const ContractName = "DAI";
 
 const state = {
   abi: null,
