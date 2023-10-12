@@ -57,18 +57,16 @@ export default {
 
   methods: {
     ...mapActions("accounts", ["connectWeb3Modal"]),
-    validateObj(obj) {
-      if (obj.length == 0)
-        return false;
-
-      for (let i =0; i < obj.length; i++) {
-        for (const key in obj[i]) {
-          if (obj[i][key] === null) {
-            return false;
-          }
-        }
-      }
-
+    validateFund(obj) {
+      if(obj.depositFee == null) return false;
+      if(obj.withdrawFee == null) return false;
+      //if(obj.performanceFee == null) return false;//TODO: not imp 
+      if(obj.managementFee == null) return false;
+      //if(obj.performaceHurdleRateBps == null) return false;//TODO: not imp 
+      if(obj.baseToken.length == 0) return false;
+      if(obj.allowedManagers.length == 0) return false;
+      if(obj.fundName.length == 0) return false;
+      if(obj.fundSymbol.length == 0) return false;
       return true;
     },
     async createFund () {
@@ -92,7 +90,7 @@ export default {
             string fundSymbol;
           }
       */
-      if (component.validateObj(component.fund)) {
+      if (component.validateFund(component.fund)) {
         component.getFundFactoryContract.methods.createFund(
           [
             parseInt(component.fund.depositFee),

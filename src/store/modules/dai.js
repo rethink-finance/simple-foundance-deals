@@ -27,14 +27,8 @@ const getters = {
   getDaiContract(state) {
     return state.contract;
   },
-  getLpDaiAllowance(state) {
+  getFundDaiAllowance(state) {
     return state.lpAllowance;
-  },
-  getExchangeDaiAllowance(state) {
-    return state.exchangeAllowance;
-  },
-  getPERDaiAllowance(state) {
-    return state.perAllowance;
   },
   getUserDaiBalance(state) {
     return state.userBalance;
@@ -52,7 +46,7 @@ const actions = {
     let contract = new web3.eth.Contract(ContractJson.abi, address);
     commit("setContract", contract);
   },
-  async fetchLpAllowance({ commit, dispatch, state, rootState }) {
+  async fetchFundllowance({ commit, dispatch, state, rootState }) {
     if (!state.contract) {
       dispatch("fetchContract");
     }
@@ -65,39 +59,7 @@ const actions = {
     let web3 = rootState.accounts.web3;
     let allowance = web3.utils.fromWei(allowanceWei, "ether");
 
-    commit("setLpAllowance", allowance);
-  },
-  async fetchExchangeAllowance({ commit, dispatch, state, rootState }) {
-    if (!state.contract) {
-      dispatch("fetchContract");
-    }
-
-    let userAddress = rootState.accounts.activeAccount;
-    let chainIdDec = parseInt(rootState.accounts.chainId);
-    let exchangeAddress = addresses.OptionsExchange[chainIdDec];
-
-    let allowanceWei = await state.contract.methods.allowance(userAddress, exchangeAddress).call();
-
-    let web3 = rootState.accounts.web3;
-    let allowance = web3.utils.fromWei(allowanceWei, "ether");
-
-    commit("setExchangeAllowance", allowance);
-  },
-  async fetchPERAllowance({ commit, dispatch, state, rootState }) {
-    if (!state.contract) {
-      dispatch("fetchContract");
-    }
-
-    let userAddress = rootState.accounts.activeAccount;
-    let chainIdDec = parseInt(rootState.accounts.chainId);
-    let perAddress = addresses.PendingExposureRouter[chainIdDec];
-
-    let allowanceWei = await state.contract.methods.allowance(userAddress, perAddress).call();
-
-    let web3 = rootState.accounts.web3;
-    let allowance = web3.utils.fromWei(allowanceWei, "ether");
-
-    commit("setPERAllowance", allowance);
+    commit("setFundAllowance", allowance);
   },
   async fetchUserBalance({ commit, dispatch, state, rootState }) {
     if (!state.contract) {
@@ -131,14 +93,8 @@ const mutations = {
   setContract(state, _contract) {
     state.contract = _contract;
   },
-  setLpAllowance(state, allowance) {
-    state.lpAllowance = allowance;
-  },
-  setExchangeAllowance(state, allowance) {
-    state.exchangeAllowance = allowance;
-  },
-  setPERAllowance(state, allowance) {
-    state.perAllowance = allowance;
+  setFundAllowance(state, allowance) {
+    state.fundAllowance = allowance;
   },
   setUserBalance(state, balance) {
     state.userBalance = balance;
