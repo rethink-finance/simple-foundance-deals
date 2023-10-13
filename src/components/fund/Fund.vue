@@ -6,9 +6,9 @@
 
     <!-- Fund data -->
     <div class="div-flex justify-content-center flex-wrap">
-      <FundDataItem class="data-item" title="Address" :data="formatAddress" :divider="true" :info="formatAddressInfo" />
-      <FundDataItem class="data-item" title="Governance" :data="formatGovernanceAddress" :divider="true" :info="formatAddressInfo" />
-      <FundDataItem class="data-item" title="Safe" :data="formatSafeAddress" :divider="true" :info="formatAddressInfo" />
+      <button @click="toggleFund" style="background: inherit !important; border: 0 !important;"><FundDataItem class="data-item" title="Fund" :data="formatAddress" :divider="true" :info="formatAddressInfo" /></button>
+      <button @click="toggleGovernor" style="background: inherit !important; border: 0 !important;"><FundDataItem class="data-item" title="Governance" :data="formatGovernanceAddress" :divider="true" :info="formatAddressInfo"/></button>
+      <button @click="toggleSafe" style="background: inherit !important; border: 0 !important;"><FundDataItem class="data-item" title="Safe" :data="formatSafeAddress" :divider="true" :info="formatAddressInfo"/></button>
       
       <div class="data-item" >
         <button @click="toggleFund" class="btn btn-success">
@@ -56,11 +56,11 @@ export default {
     }, 
 
     formatGovernanceAddress () {
-      return this.fund.address.substring(0, 6) + '...' + this.fund.address.substring(38, 42)
+      return this.fund.governor.substring(0, 6) + '...' + this.fund.governor.substring(38, 42)
     }, 
 
     formatSafeAddress () {
-      return this.fund.address.substring(0, 6) + '...' + this.fund.address.substring(38, 42)
+      return this.fund.safe.substring(0, 6) + '...' + this.fund.safe.substring(38, 42)
     }, 
 
     formatAddressInfo () {
@@ -93,10 +93,30 @@ export default {
       this.copyPoolAddr();*/
 
     },
+    async toggleSafe() {
+      this.copySafeAddr()
+    },
+    async toggleGovernor() {
+      this.copyGovernorAddr()
+    },
     async copyFundAddr() {
       try {
         await navigator.clipboard.writeText(this.fund.address);
         let msg = "Copied Fund Address (" + this.fund.address + ") to clipboard";
+        this.$toast.success(msg);
+      } catch($e) {return;}
+    },
+    async copyGovernorAddr() {
+      try {
+        await navigator.clipboard.writeText(this.fund.governor);
+        let msg = "Copied Governor Address (" + this.fund.governor + ") to clipboard";
+        this.$toast.success(msg);
+      } catch($e) {return;}
+    },
+    async copySafeAddr() {
+      try {
+        await navigator.clipboard.writeText(this.fund.safe);
+        let msg = "Copied Safe Address (" + this.fund.safe + ") to clipboard";
         this.$toast.success(msg);
       } catch($e) {return;}
     }

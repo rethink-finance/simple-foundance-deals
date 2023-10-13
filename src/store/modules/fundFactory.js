@@ -41,33 +41,39 @@ const actions = {
     let fundAmount = await state.contract.methods.registeredFundsLength().call();
     let fundsInfo = await state.contract.methods.registeredFundsData(0, fundAmount).call();
     let fundData = [];
-    /*
-      struct Settings {
-        uint256 depositFee;
-        uint256 withdrawFee;
-        uint256 performanceFee;
-        uint256 managementFee;
-        uint256 performaceHurdleRateBps;
-        address baseToken;
-        address safe; //TODO: needs to be set after safe creation
-        bool isExternalGovTokenInUse;
-        bool isWhitelistedDeposits;
-        address[] allowedDepositAddrs;
-        address[] allowedManagers;
-        address governanceToken;
-        address fundAddress;//TODO: this may not be needed if delegatecall has balance refs to callee addr
-        address governor;
-        string fundName;
-        string fundSymbol;
-      }
-    */
-    for(var i=0;i<funds.length;i++){
+
+
+    let settingsNames = [
+      "depositFee",
+      "withdrawFee",
+      "performanceFee",
+      "managementFee",
+      "performaceHurdleRateBps",
+      "baseToken",
+      "safe", //TODO: needs to be set after safe creation
+      "isExternalGovTokenInUse",
+      "isWhitelistedDeposits",
+      "allowedDepositAddrs",
+      "allowedManagers",
+      "governanceToken",
+      "fundAddress", //TODO: this may not be needed if delegatecall has balance refs to callee addr
+      "governor",
+      "fundName",
+      "fundSymbol",
+    ];
+
+    for(var i=0;i<fundsInfo[0].length;i++){
       fundData.push({
-          "address": fundsInfo[0][i],
-          "data": fundsInfo[1][i]
+          "address": fundsInfo[0][i]
+          //"data": fundsInfo[1][i]
       });
 
-      console.log(fundsInfo[1][i])
+      for (var j=0; j < fundsInfo[1][i].length;j++){
+        //console.log(fundsInfo[1][i][j]);
+        fundData[i][settingsNames[j]] = fundsInfo[1][i][j];
+      }
+
+      console.log(fundData[i])
     }
     commit("setFunds", fundData);
   },
