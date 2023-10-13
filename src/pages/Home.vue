@@ -332,6 +332,7 @@ export default {
     // check if user has already confirmed the compliance modal (this modal is in Navbar)
     this.isCompliant = localStorage.getItem('isCompliant');
     this.$store.dispatch("fundFactory/fetchContract");
+    this.$store.dispatch("fundFactory/fetchFunds");
   },
 
   data() {

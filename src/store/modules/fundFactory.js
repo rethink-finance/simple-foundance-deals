@@ -16,6 +16,9 @@ const getters = {
   getFundFactoryAddress(state) {
     return state.address;
   },
+  getFunds(state) {
+    return state.funds;
+  },
   getFundFactoryContract(state) {
     return state.contract;
   }
@@ -29,6 +32,21 @@ const actions = {
     let contract = new web3.eth.Contract(ContractJson.abi, address);
     console.log("fund factory contract fetch");
     commit("setContract", contract);
+  },
+  async fetchFunds({ commit, dispatch, rootState, state }) {
+    if (!state.contract) {
+      dispatch("fetchContract");
+    }
+    let fundAmount = await state.contract.methods.registeredFundsLength().call();
+    let funds = await state.contract.methods.registeredFunds(0, fundAmount).call();
+    let fundData = {};
+    for(var i=0;i<funds.length;i++){
+      fundData[funds[i]] = {
+          "address": funds[i]
+      }
+    }
+    console.log(fundData)
+    commit("setFunds", fundData);
   },
   storeAbi({commit}) {
     commit("setAbi", ContractJson.abi);
@@ -45,6 +63,9 @@ const mutations = {
   },
   setAddress(state, address) {
     state.address = address;
+  },
+  setFunds(state, funds) {
+    state.funds = funds;
   },
   setContract(state, _contract) {
     state.contract = _contract;

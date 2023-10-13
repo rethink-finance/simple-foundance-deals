@@ -1,30 +1,38 @@
 /* eslint-disable */
 <template>
+
+<div class="section-big row mt-4 mx-3">
+  <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+  <div class="col-md-12">
+    <FundToggle :fund="getFunds" />
+  </div>
+</div>
+
 </template>
 
 <script>
 import { mapGetters, mapActions } from "vuex";
+import FundToggle from '../components/fund/FundToggle.vue';
+
 
 export default {
   name: "DisplayFund",
 
-  computed: {
-    ...mapGetters("accounts", ["getWeb3", "getChainName", "isUserConnected"]),
+  components: {
+    FundToggle
+  },
 
-    isGoerli() {
-      return this.getChainName == "Goerli";
-    }
+  computed: {
+    ...mapGetters("fundFactory", ["getFundFactoryContract", "getFunds"]),
   },
 
   created() {
-    if (!this.getWeb3 || !this.isUserConnected) {
-      this.$store.dispatch("fundFactory/fetchContract");
-    }
+      this.$store.dispatch("fundFactory/fetchFunds");
   },
 
   data() {
     return {
-      isCompliant: null
+      loading: false
     }
   },
 
