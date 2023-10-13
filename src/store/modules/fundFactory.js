@@ -7,6 +7,7 @@ const state = {
   abi: null,
   address: null,
   contract: null,
+  funds:[],
 };
 
 const getters = {
@@ -38,14 +39,36 @@ const actions = {
       dispatch("fetchContract");
     }
     let fundAmount = await state.contract.methods.registeredFundsLength().call();
-    let funds = await state.contract.methods.registeredFunds(0, fundAmount).call();
-    let fundData = {};
-    for(var i=0;i<funds.length;i++){
-      fundData[funds[i]] = {
-          "address": funds[i]
+    let fundsInfo = await state.contract.methods.registeredFundsData(0, fundAmount).call();
+    let fundData = [];
+    /*
+      struct Settings {
+        uint256 depositFee;
+        uint256 withdrawFee;
+        uint256 performanceFee;
+        uint256 managementFee;
+        uint256 performaceHurdleRateBps;
+        address baseToken;
+        address safe; //TODO: needs to be set after safe creation
+        bool isExternalGovTokenInUse;
+        bool isWhitelistedDeposits;
+        address[] allowedDepositAddrs;
+        address[] allowedManagers;
+        address governanceToken;
+        address fundAddress;//TODO: this may not be needed if delegatecall has balance refs to callee addr
+        address governor;
+        string fundName;
+        string fundSymbol;
       }
+    */
+    for(var i=0;i<funds.length;i++){
+      fundData.push({
+          "address": fundsInfo[0][i],
+          "data": fundsInfo[1][i]
+      });
+
+      console.log(fundsInfo[1][i])
     }
-    console.log(fundData)
     commit("setFunds", fundData);
   },
   storeAbi({commit}) {
