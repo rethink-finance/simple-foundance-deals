@@ -32,14 +32,6 @@
           </router-link>
           <!-- END Nav Item - Create Funds -->
 
-          <!-- Nav Item - Update NAV -->
-          <router-link to="/update-nav" style="text-decoration: none" v-if="isUserConnected">
-            <li class="nav-item">
-                <a class="nav-link" :class="{active:this.$route.name === 'update-nav'}" href="/update-nav">Update NAV</a>
-            </li>
-          </router-link>
-          <!-- END Nav Item - Update NAV  -->
-
           <!-- Nav Item - Prep Role Mod -->
           <router-link to="/prep-role-mod" style="text-decoration: none" v-if="isUserConnected">
             <li class="nav-item">

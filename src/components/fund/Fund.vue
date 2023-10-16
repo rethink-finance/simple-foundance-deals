@@ -17,6 +17,14 @@
           </router-link>
         </div>
       </div>
+
+      <div class="data-item" >
+        <div class="data-item" @mouseover="toggleFund">
+          <router-link to="/update-nav" class="btn btn-success">
+            Update Fund NAV
+          </router-link>
+        </div>
+      </div>
     </div>
 
     <!-- Action button -->
