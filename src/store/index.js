@@ -7,7 +7,10 @@ import nav from "./modules/nav";
 
 import dai from "./modules/dai";
 import usdc from "./modules/usdc";
-import mockusd from "./modules/mockusd";
+import btc from "./modules/btc";
+import eth from "./modules/eth";
+import matic from "./modules/matic";
+import avax from "./modules/avax";
 
 Vue.use(Vuex);
 
@@ -19,6 +22,9 @@ export default new Vuex.Store({
         fundFactory,
         nav,
         usdc,
-        mockusd
+        btc,
+        eth,
+        matic,
+        avax
     }
 });

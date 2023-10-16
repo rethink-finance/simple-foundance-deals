@@ -1,45 +1,39 @@
 import ContractJson from "../../contracts/ERC20Mock.json";
 import addresses from "../../contracts/addresses.json";
 
-const ContractName = "MockUSD";
+const ContractName = "WETH";
 
 const state = {
   abi: null,
   address: null,
   contract: null,
   decimals: 18,
-  lpAllowance: 0, // liquidity pool contract MockUSD allowance for current user
-  exchangeAllowance: 0,// exchange contract MockUSD allowance for current user
+  lpAllowance: 0, // liquidity pool contract Eth allowance for current user
+  exchangeAllowance: 0,// exchange contract dai allowance for current user
   permit: true, // does this token have the permit() method?
   userBalance: null
 };
 
 const getters = {
-  getMockUSDDecimals(state) {
+  getEthDecimals(state) {
     return state.decimals;
   },
-  getMockUSDAbi(state) {
+  getEthAbi(state) {
     return state.abi;
   },
-  getMockUSDAddress(state) {
+  getEthAddress(state) {
     return state.address;
   },
-  getMockUSDContract(state) {
+  getEthContract(state) {
     return state.contract;
   },
-  getLpMockUSDAllowance(state) {
+  getFundEthAllowance(state) {
     return state.lpAllowance;
   },
-  getExchangeMockUSDAllowance(state) {
-    return state.exchangeAllowance;
-  },
-  getPERMockUSDAllowance(state) {
-    return state.perAllowance;
-  },
-  getUserMockUSDBalance(state) {
+  getUserEthBalance(state) {
     return state.userBalance;
   },
-  usesPermitMockUSD(state) {
+  usesPermitEth(state) {
     return state.permit;
   }
 };
@@ -52,7 +46,7 @@ const actions = {
     let contract = new web3.eth.Contract(ContractJson.abi, address);
     commit("setContract", contract);
   },
-  async fetchLpAllowance({ commit, dispatch, state, rootState }) {
+  async fetchFundllowance({ commit, dispatch, state, rootState }) {
     if (!state.contract) {
       dispatch("fetchContract");
     }
@@ -65,39 +59,7 @@ const actions = {
     let web3 = rootState.accounts.web3;
     let allowance = web3.utils.fromWei(allowanceWei, "ether");
 
-    commit("setLpAllowance", allowance);
-  },
-  async fetchExchangeAllowance({ commit, dispatch, state, rootState }) {
-    if (!state.contract) {
-      dispatch("fetchContract");
-    }
-
-    let userAddress = rootState.accounts.activeAccount;
-    let chainIdDec = parseInt(rootState.accounts.chainId);
-    let exchangeAddress = addresses.OptionsExchange[chainIdDec];
-
-    let allowanceWei = await state.contract.methods.allowance(userAddress, exchangeAddress).call();
-
-    let web3 = rootState.accounts.web3;
-    let allowance = web3.utils.fromWei(allowanceWei, "ether");
-
-    commit("setExchangeAllowance", allowance);
-  },
-  async fetchPERAllowance({ commit, dispatch, state, rootState }) {
-    if (!state.contract) {
-      dispatch("fetchContract");
-    }
-
-    let userAddress = rootState.accounts.activeAccount;
-    let chainIdDec = parseInt(rootState.accounts.chainId);
-    let perAddress = addresses.PendingExposureRouter[chainIdDec];
-
-    let allowanceWei = await state.contract.methods.allowance(userAddress, perAddress).call();
-
-    let web3 = rootState.accounts.web3;
-    let allowance = web3.utils.fromWei(allowanceWei, "ether");
-
-    commit("setPERAllowance", allowance);
+    commit("setFundAllowance", allowance);
   },
   async fetchUserBalance({ commit, dispatch, state, rootState }) {
     if (!state.contract) {
@@ -131,14 +93,8 @@ const mutations = {
   setContract(state, _contract) {
     state.contract = _contract;
   },
-  setLpAllowance(state, allowance) {
-    state.lpAllowance = allowance;
-  },
-  setExchangeAllowance(state, allowance) {
-    state.exchangeAllowance = allowance;
-  },
-  setPERAllowance(state, allowance) {
-    state.perAllowance = allowance;
+  setFundAllowance(state, allowance) {
+    state.fundAllowance = allowance;
   },
   setUserBalance(state, balance) {
     state.userBalance = balance;

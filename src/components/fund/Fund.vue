@@ -11,9 +11,11 @@
       <button @click="toggleSafe" style="background: inherit !important; border: 0 !important;"><FundDataItem class="data-item" title="Safe" :data="formatSafeAddress" :divider="true" :info="formatAddressInfo"/></button>
       
       <div class="data-item" >
-        <button @click="toggleFund" class="btn btn-success">
-          Select Fund
-        </button>
+        <div class="data-item" @mouseover="toggleFund">
+          <router-link to="/fund" class="btn btn-success">
+            View Fund
+          </router-link>
+        </div>
       </div>
     </div>
 
