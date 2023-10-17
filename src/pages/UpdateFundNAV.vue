@@ -147,7 +147,7 @@ export default {
       }
     */
 
-    AddLiquidUpdate: function () {
+    addLiquidUpdate: function () {
       this.liquidUpdates.push({
         tokenPair: null,
         aggregatorAddress: null,
@@ -174,7 +174,7 @@ export default {
         }
     */
 
-    AddIlliquidUpdate: function () {
+    addIlliquidUpdate: function () {
       this.illiquidUpdate.push({
         baseCurrencySpent: null,
         amountAquiredTokens: null,
@@ -197,7 +197,7 @@ export default {
         
     */
 
-    AddNftUpdate: function () {
+    addNftUpdate: function () {
       this.nftUpdates.push({
         oracleAddress: null,
         nftAddress: null,
@@ -221,7 +221,7 @@ export default {
         }
     */
 
-    AddComposableUpdate: function () {
+    addComposableUpdate: function () {
       this.composableUpdates.push({
         remoteContractAddress: null,
         functionSignatures: null,

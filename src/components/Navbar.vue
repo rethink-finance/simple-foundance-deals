@@ -33,9 +33,9 @@
           <!-- END Nav Item - Create Funds -->
 
           <!-- Nav Item - Prep Role Mod -->
-          <router-link to="/prep-role-mod" style="text-decoration: none" v-if="isUserConnected">
+          <router-link to="/role-mod" style="text-decoration: none" v-if="isUserConnected">
             <li class="nav-item">
-                <a class="nav-link" :class="{active:this.$route.name === 'prep-role-mod'}" href="/prep-role-mod">Prep Role Mod</a>
+                <a class="nav-link" :class="{active:this.$route.name === 'role-mod'}" href="/role-mod">Prep Role Mod</a>
             </li>
           </router-link>
           <!-- END Nav Item - Prep Role Mod -->

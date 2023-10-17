@@ -1,19 +1,28 @@
 /* eslint-disable */
 <template>
-  <div>
+  <!------ Add Role Mod Transaction ------>
 
+  <div class="section-big row mt-4 mx-3">
+    <div class="col-md-12">
+      <RoleModFormatting :transactions="transactions" />
+      <span></span>
+    </div>
+    <button @click="addTransaction" class="btn btn-success">
+      Add Role Mod Transaction
+    </button>
   </div>
+
 </template>
 
 <script>
-import { mapGetters, mapActions } from "vuex";
-import MintFakeStablecoin from '../components/tokens/MintFakeTokens.vue';
+import { mapGetters } from "vuex";
+import RoleModFormatting from '../components/gov/RoleModFormatting.vue';
 
 export default {
   name: "PrepRoleMod",
 
   computed: {
-    ...mapGetters("accounts", ["getWeb3", "getChainName", "isUserConnected"]),
+      ...mapGetters("accounts", ["getActiveAccount", "getChainName", "getWeb3", "isUserConnected"]),
 
   },
 
@@ -25,12 +34,21 @@ export default {
 
   data() {
     return {
-      isCompliant: null
+      transactions: [],
+      txIdx: 0,
     }
+  },
+  components: {
+    RoleModFormatting
   },
 
   methods: {
-    ...mapActions("accounts", ["connectWeb3Modal"]),
+    addTransaction: function () {
+      this.transactions.push({
+        idx: this.txIdx++,
+        data: null,
+      });
+    },
   }
 }
 </script>
