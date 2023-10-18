@@ -42,6 +42,8 @@ const actions = {
     let fundsInfo = await state.contract.methods.registeredFundsData(0, fundAmount).call();
     let fundData = [];
 
+    //TODO: NEEDS TO STORE THIS IN fund.js state
+
 
     let settingsNames = [
       "depositFee",

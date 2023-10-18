@@ -39,6 +39,11 @@
 </template>
 
 <script>
+/*
+
+TODO: needs to set the selected fund when clicked in fund.js
+*/
+
 import { mapGetters } from "vuex";
 import FundDataItem from './FundDataItem.vue';
 
@@ -80,28 +85,9 @@ export default {
 
   methods: {
     async toggleFund() {
-      this.copyFundAddr()
-    /*
-      this.$root.$emit('poolToggleEvent', [this.pool.symbol, this.pool.address]);
-      this.$store.commit("optionsExchange/setSelectedPool", this.pool.symbol);
-      this.$store.state.liquidityPool["selectedPoolAddress"] = this.pool.address;
-
-      this.$store.dispatch("liquidityPool/fetchContract");
-      this.$store.dispatch("liquidityPool/fetchUserBalance");
-      this.$store.dispatch("optionsExchange/fetchLiquidityPoolBalance");
-      this.$store.dispatch("optionsExchange/fetchPoolOptions");
-      this.$store.dispatch("liquidityPool/fetchApy");
-      this.$store.dispatch("liquidityPool/storeAddress");
-      this.$store.dispatch("liquidityPool/fetchUserPoolUsdValue");
-      this.$store.dispatch("liquidityPool/fetchPoolFreeBalance");
-      this.$store.dispatch("liquidityPool/fetchPoolMaturityDate");
-      this.$store.dispatch("liquidityPool/fetchPoolWithdrawalFee");
-      this.$store.dispatch("liquidityPool/fetchSymbolsList");
-
-
-      this.$store.commit("liquidityPool/setSelectedPoolAddress", this.pool.address);
-      this.copyPoolAddr();*/
-
+      this.$store.state.fund["selectedFundAddress"] = this.fund.address;
+      this.$store.commit("fund/setSelectedFundAddress", this.fund.address);
+      this.copyFundAddr();
     },
     async toggleSafe() {
       this.copySafeAddr()

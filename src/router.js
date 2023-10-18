@@ -4,7 +4,6 @@ import Home from "./pages/Home";
 import CreateFund from "./pages/CreateFund";
 import DisplayFunds from "./pages/DisplayFunds";
 import UpdateFundNAV from "./pages/UpdateFundNAV";
-import PrepRoleMod from "./pages/PrepRoleMod";
 import ViewFund from "./pages/ViewFund";
 
 Vue.use(Router);
@@ -39,11 +38,6 @@ export default new Router({
             path: "/fund",
             name: "fund",
             component: ViewFund
-        },
-        {
-            path: "/role-mod",
-            name: "role-mod",
-            component: PrepRoleMod
         },
         {
             path: "/update-nav",

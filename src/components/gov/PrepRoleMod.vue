@@ -4,7 +4,7 @@
 
   <div class="section-big row mt-4 mx-3">
     <div class="col-md-12">
-      <RoleModFormatting :transactions="transactions" />
+      <RoleModFormatting :transactions="transactions" :fund="fund" />
       <span></span>
     </div>
     <button @click="addTransaction" class="btn btn-success">
@@ -16,10 +16,11 @@
 
 <script>
 import { mapGetters } from "vuex";
-import RoleModFormatting from '../components/gov/RoleModFormatting.vue';
+import RoleModFormatting from './RoleModFormatting.vue';
 
 export default {
   name: "PrepRoleMod",
+  props: ["fund"],
 
   computed: {
       ...mapGetters("accounts", ["getActiveAccount", "getChainName", "getWeb3", "isUserConnected"]),
@@ -30,6 +31,7 @@ export default {
     if (!this.getWeb3 || !this.isUserConnected) {
       this.$router.push({ name: 'home'});
     }
+    console.log(this.fund)
   },
 
   data() {

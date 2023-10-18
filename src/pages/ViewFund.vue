@@ -2,6 +2,8 @@
 <template>
   <div>
 
+    <PrepRoleMod :fund="getFundData" />
+
     <MintFakeTokens v-if="getChainName === 'Kovan'" class="mb-5" />
     <MintFakeTokens v-if="getChainName === 'Mumbai'" class="mb-5" />
     <MintFakeTokens v-if="getChainName === 'Localhost'" class="mb-5" />
@@ -12,14 +14,28 @@
 </template>
 
 <script>
+
 import { mapGetters, mapActions } from "vuex";
 import MintFakeTokens from '../components/tokens/MintFakeTokens.vue';
+import PrepRoleMod from '../components/gov/PrepRoleMod.vue';
 
 export default {
   name: "ViewFund",
 
   computed: {
     ...mapGetters("accounts", ["getWeb3", "getChainName", "isUserConnected"]),
+    ...mapGetters("fundFactory", ["getFundFactoryContract", "getFunds"]),
+    ...mapGetters("fund", ["getSelectedFundAddress"]),
+
+    getFundData(){
+      console.log(this.getSelectedFundAddress);
+      console.log(this.getFunds[fidx]);
+      for (var fidx in this.getFunds){
+        if (this.getFunds[fidx].fundAddress == this.getSelectedFundAddress) {
+          return this.getFunds[fidx];
+        }
+      }
+    },
 
     allowanceNeeded() {
       if (this.buyWith === "DAI") {
@@ -70,12 +86,14 @@ export default {
   },
 
   components: {
-    MintFakeTokens
+    MintFakeTokens,
+    PrepRoleMod
   },
 
   data() {
     return {
       loading: false,
+      fund: {}
     }
   },
 

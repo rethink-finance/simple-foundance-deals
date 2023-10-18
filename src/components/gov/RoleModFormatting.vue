@@ -22,7 +22,7 @@ import GnosisSafeL2JSON from '../../contracts/safe/GnosisSafeL2_v1_3_0.json';
 
 export default {
   name: "RoleModFormatting",
-  props: ["transactions"],
+  props: ["transactions", "fund"],
 
   data() {
     return {
@@ -43,8 +43,8 @@ export default {
         ...mapGetters("accounts", ["getActiveAccount", "getChainName", "getWeb3", "isUserConnected", "getChainId"]),
 
         getSelectedFundGovenerAddress(){
-          //TODO: need to set up fund.js state to support getting this info for funds
-          return ""
+          console.log(this.fund);
+          return this.fund.governor;
         }
   },
 
