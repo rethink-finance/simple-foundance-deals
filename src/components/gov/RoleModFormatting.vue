@@ -17,7 +17,8 @@
 
 <script>
 import { mapGetters } from "vuex";
-import SafeMultiSendJSON from "../../contracts/safe/SafeMultiSend.json";
+import SafeMultiSendCallOnlyJSON from "../../contracts/safe/SafeMultiSendCallOnly.json";
+import GnosisSafeL2JSON from '../../contracts/safe/GnosisSafeL2_v1_3_0.json';
 
 export default {
   name: "RoleModFormatting",
@@ -39,16 +40,44 @@ export default {
   },
 
   computed: {
-        ...mapGetters("accounts", ["getActiveAccount", "getChainName", "getWeb3", "isUserConnected"]),
+        ...mapGetters("accounts", ["getActiveAccount", "getChainName", "getWeb3", "isUserConnected", "getChainId"]),
+
+        getSelectedFundGovenerAddress(){
+          //TODO: need to set up fund.js state to support getting this info for funds
+          return ""
+        }
   },
 
   methods: {
     formatRoleMods(){
-      let multisendAbiJSON = SafeMultiSendJSON.abi[0];
-      this.processedTxs = []
+      let to = SafeMultiSendCallOnlyJSON.networkAddresses[parseInt(this.getChainId).toString()];
+      console.log(to);
+      let multisendAbiJSON = SafeMultiSendCallOnlyJSON.abi[0];
+      this.processedTxs = [];
+      
+      //execTransaction function
+      let execTransactionAbiJSON = GnosisSafeL2JSON.abi[29];
+
+      const signature = '0x000000000000000000000000' + this.getSelectedFundGovenerAddress.slice(2) + '0000000000000000000000000000000000000000000000000000000000000000' + '01';
       for (var tx in this.transactions){
-        let filteredTx = this.getWeb3.eth.abi.encodeFunctionCall(multisendAbiJSON, [this.transactions[tx].data]);
-        this.processedTxs.push(filteredTx);
+        let filteredTxData = this.getWeb3.eth.abi.encodeFunctionCall(multisendAbiJSON, [this.transactions[tx].data]);
+
+        let formatSafeTxInput = [
+          to,//MultiSendCallOnly
+          0,//value
+          filteredTxData,//data
+          1,//operation
+          0,//safeTxGas
+          0,//baseGas
+          0,//gasPrice
+          "0x0000000000000000000000000000000000000000",//gasToken
+          "0x0000000000000000000000000000000000000000",//refundReceiver
+          signature
+        ];
+
+        let filteredFinalTxData = this.getWeb3.eth.abi.encodeFunctionCall(execTransactionAbiJSON, formatSafeTxInput);
+
+        this.processedTxs.push(filteredFinalTxData);
       }
     }
   }
