@@ -2,6 +2,21 @@
 <template>
   <div>
 
+    <div>
+      <h1>FundDAO: {{formattedFundSymbol}}({{formattedFundAddress.substring(0, 6)}}...{{formattedFundAddress.substring(38, 42)}})</h1>
+    </div>
+
+
+
+    <div class="section-big row mt-4 mx-3">
+
+      <div class="col-md-9">
+        <FundDeposit />
+
+        <FundWithdraw />
+      </div>
+    </div>
+
     <PrepRoleMod :fund="getFundData" />
 
     <MintFakeTokens v-if="getChainName === 'Kovan'" class="mb-5" />
@@ -18,6 +33,8 @@
 import { mapGetters, mapActions } from "vuex";
 import MintFakeTokens from '../components/tokens/MintFakeTokens.vue';
 import PrepRoleMod from '../components/gov/PrepRoleMod.vue';
+import FundDeposit from '../components/fund/FundDeposit.vue';
+import FundWithdraw from '../components/fund/FundWithdraw.vue';
 
 export default {
   name: "ViewFund",
@@ -32,8 +49,25 @@ export default {
       console.log(this.getFunds[fidx]);
       for (var fidx in this.getFunds){
         if (this.getFunds[fidx].fundAddress == this.getSelectedFundAddress) {
+          this.fund = this.getFunds[fidx];
           return this.getFunds[fidx];
         }
+      }
+    },
+
+    formattedFundSymbol() {
+      if (this.fund.fundSymbol) {
+        return this.fund.fundSymbol
+      } else {
+        return "N/A"
+      }
+    },
+
+    formattedFundAddress() {
+      if (this.fund.fundAddress) {
+        return this.fund.fundAddress
+      } else {
+        return ""
       }
     },
 
@@ -87,7 +121,9 @@ export default {
 
   components: {
     MintFakeTokens,
-    PrepRoleMod
+    PrepRoleMod,
+    FundWithdraw,
+    FundDeposit
   },
 
   data() {

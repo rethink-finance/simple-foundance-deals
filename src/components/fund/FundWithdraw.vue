@@ -6,16 +6,14 @@
         class="fas fa-info-circle" 
         data-bs-toggle="tooltip" 
         data-bs-placement="bottom" 
-        title="Withdrawing funds from the pool means increasing your portfolio account balance. It does NOT 
-        mean you receive stablecoins. If you want to receive stablecoins, you need to go to 
-        the Portfolio page and withdraw from there, too."
+        title="Withdrawing funds from the fund means burning your fund tokens for your share of the overall value of the fund in base token currency"
       ></i>
     </h3>
 
     <div class="section-small">
 
       <p class="text-white">
-        Withdraw funds from the pool to your Portfolio account balance:
+        Withdraw funds to your account balance:
       </p>
 
       <div class="d-flex flex-wrap">
@@ -114,6 +112,9 @@ export default {
   },
 
   methods: {
+    async requestWithdraw(){
+    
+    },
     async withdraw() {
       let component = this;
       component.loading = true;

@@ -238,6 +238,9 @@ export default {
     changeStablecoin(token) {
       this.selectedToken = token;
     },
+    async requestDeposit () {
+
+    },
     async depositIntoFund() {
       let component = this;
       component.loading = true;
@@ -250,7 +253,7 @@ export default {
       let tokensWei = component.getWeb3.utils.toWei(component.depositValue, unit);
 
       // make a deposit
-      await component.getFundContract.methods.depositTokens(
+      await component.getFundContract.methods.deposit(
         component.getActiveAccount, 
         component.getStablecoinContract._address, 
         tokensWei
@@ -294,7 +297,13 @@ export default {
         component.$toast.error("There has been an error. Please contact the DeFi Options support.");
       });
  
-    }
+    },
+    async requestRedeem() {
+
+    },
+    async redeemFromFund() {
+
+    },
   }
 }
 </script>

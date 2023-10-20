@@ -30,7 +30,10 @@ const getters = {
     return state.contract[state.selectedFundAddress];
   },
   getUserFundUsdValue(state) {
-    return state.userPoolUsdValue[state.selectedFundAddress];
+    return state.userFundUsdValue[state.selectedFundAddress];
+  },
+  getUserFundUsdValue(state) {
+    return state.userBalance[state.selectedFundAddress];
   }
 };
 
@@ -50,12 +53,12 @@ const actions = {
     }
 
     //let activeAccount = rootState.accounts.activeAccount;
-    let balanceWei = state.fund[state.selectedFundAddress]["userPoolBalance"];//await state.contract[state.selectedFundAddress].methods.balanceOf(activeAccount).call();
+    let balanceWei = state.fund[state.selectedFundAddress]["userFundBalance"];//await state.contract[state.selectedFundAddress].methods.balanceOf(activeAccount).call();
 
     let web3 = rootState.accounts.web3;
     let balance = web3.utils.fromWei(balanceWei, "ether");
 
-    commit("setUserLiquidityPoolBalance", balance);
+    commit("setUserFundBalance", balance);
   },
   async fetchUserFundUsdValue({ commit, dispatch, state, rootState }) {
     if (!state.contract) {
@@ -66,15 +69,15 @@ const actions = {
 
     let balanceWei = "0";
     try {
-      balanceWei = state.fund[state.selectedFundAddress]["userPoolUsdValue"];//await state.contract[state.selectedFundAddress].methods.valueOf(activeAccount).call();
+      balanceWei = state.fund[state.selectedFundAddress]["userFundUsdValue"];//await state.contract[state.selectedFundAddress].methods.valueOf(activeAccount).call();
     } catch(e) {
-      console.log("The total pool balance is probably 0, which is why MetaMask may be showing the 'Internal JSON-RPC... division by 0' error.");
+      console.log("The total fund balance is probably 0, which is why MetaMask may be showing the 'Internal JSON-RPC... division by 0' error.");
     }
 
     let web3 = rootState.accounts.web3;
     let value = web3.utils.fromWei(balanceWei, "ether");
 
-    commit("setUserPoolUsdValue", value);
+    commit("setUserFundUsdValue", value);
   },
   storeAbi({commit}) {
     commit("setAbi", GovernableFund.abi);
@@ -103,7 +106,7 @@ const mutations = {
     state.userBalance[state.selectedFundAddress] = balance;
   },
   setUserFundUsdValue(state, value) {
-    state.userPoolUsdValue[state.selectedFundAddress] = value;
+    state.userFundUsdValue[state.selectedFundAddress] = value;
   },
   setSelectedFundAddress(state, address) {
     state.selectedFundAddress = address;
