@@ -104,10 +104,7 @@ export default {
         "NAVNFTUpdateType": 2,
         "NAVComposableUpdateType": 3
       },
-      liquidUpdates: [], //gov
-      iliquidUpdates: [],//gov
-      nftUpdates: [],// gov
-      composableUpdates: []// gov
+      navUpdateEntry: []
     }
   },
   components: {
@@ -174,8 +171,17 @@ export default {
         }
     */
 
+    addNavUpdateEntry: function (){
+        this.navUpdateEntry.push({
+          liquidUpdates: [],
+          iliquidUpdates: [],
+          nftUpdates: [],
+          composableUpdates: []
+        })
+    }
+
     addIlliquidUpdate: function () {
-      this.illiquidUpdate.push({
+      this.navUpdateEntry[this.navUpdateEntry.length - 1].illiquidUpdate.push({
         baseCurrencySpent: null,
         amountAquiredTokens: null,
         tokenAddress: null, 
@@ -198,7 +204,7 @@ export default {
     */
 
     addNftUpdate: function () {
-      this.nftUpdates.push({
+      this.navUpdateEntry[this.navUpdateEntry.length - 1].nftUpdates.push({
         oracleAddress: null,
         nftAddress: null,
         nftType: null, 
@@ -222,7 +228,7 @@ export default {
     */
 
     addComposableUpdate: function () {
-      this.composableUpdates.push({
+      this.navUpdateEntry[this.navUpdateEntry.length - 1].composableUpdates.push({
         remoteContractAddress: null,
         functionSignatures: null,
         encodedFunctionSignatureWithInputs: null, 
