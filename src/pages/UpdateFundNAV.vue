@@ -3,66 +3,15 @@
 
     <h1> Current Fund: ({{getSelectedFundAddress.substring(0, 6)}}...{{getSelectedFundAddress.substring(38, 42)}})</h1>
 
-    <!------ Adding/reference LiquidUpdate ------>
+    <NavEntryList :entries="navUpdateEntries"/>
 
-    <div class="section-big row mt-4 mx-3">
-      <div class="col-md-12">
-        <AddLiquidUpdate :positions="liquidUpdates" />
-        <span></span>
-      </div>
-      <button @click="addLiquidUpdate" class="btn btn-success">
-        Add/Reference Liquid Update (GOV REQUIRED)
+    <div class="pool-submit-buttons">
+
+      <button @click="addNavUpdateEntry" class="btn btn-success">
+        Add NAV Update Entry
       </button>
     </div>
 
-    <span></span>
-    <span></span>
-
-    <!------ Adding/ref iliquidUpdates ------>
-
-    <div class="section-big row mt-4 mx-3">
-      <div class="col-md-12">
-        <AddIlliquidUpdate :positions="illiquidUpdates" />
-        <span></span>
-      </div>
-      <button @click="addIlliquidUpdate" class="btn btn-success">
-        Add/Reference Illiquid Update (GOV REQUIRED)
-      </button>
-    </div>
-
-    <span></span>
-    <span></span>
-
-        <!------ Adding/Reference NftUpdate ------>
-
-    <div class="section-big row mt-4 mx-3">
-      <div class="col-md-12">
-        <AddNftUpdate :positions="nftUpdates" />
-        <span></span>
-      </div>
-      <button @click="addNftUpdate" class="btn btn-success">
-        Add/Reference Nft Update (GOV REQUIRED)
-      </button>
-    </div>
-
-    <span></span>
-    <span></span>
-
-        <!------ Adding/Reference symbols ------>
-
-    <div class="section-big row mt-4 mx-3">
-      <div class="col-md-12">
-        <AddComposableUpdate :positions="composableUpdates" />
-        <span></span>
-      </div>
-      <button @click="addComposableUpdate" class="btn btn-success">
-        Add/Reference Composable Update (GOV REQUIRED)
-      </button>
-    </div>
-
-    <span></span>
-    <span></span>
-    
     <div class="pool-submit-buttons">
       <button @click="createProposal" class="btn btn-success">
         <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
@@ -75,12 +24,7 @@
 
 <script>
 import { mapGetters } from "vuex";
-
-import AddLiquidUpdate from '../components/nav/AddLiquidUpdate.vue';
-import AddIlliquidUpdate from '../components/nav/AddIlliquidUpdate.vue';
-import AddNftUpdate from '../components/nav/AddNftUpdate.vue';
-import AddComposableUpdate from '../components/nav/AddComposableUpdate.vue';
-
+import NavEntryList from '../components/nav/NavEntryList.vue';
 
 import addresses from "../contracts/addresses.json";
 import RethinkFundGovernorJSON from "../contracts/RethinkFundGovernor.json";
@@ -90,6 +34,8 @@ export default {
   data() {
     return {
       loading: false,
+      fund: {},
+      entryIdx: 0,
       NAVNFTType: {
         "ERC1155": 0,
         "ERC721": 1,
@@ -104,21 +50,27 @@ export default {
         "NAVNFTUpdateType": 2,
         "NAVComposableUpdateType": 3
       },
-      navUpdateEntry: []
+      navUpdateEntries: []
     }
   },
   components: {
-    AddLiquidUpdate,
-    AddIlliquidUpdate,
-    AddNftUpdate,
-    AddComposableUpdate,
+    NavEntryList
   },
   computed: {
     ...mapGetters("accounts", ["getActiveAccount", "getChainId", "getChainName", "getWeb3", "isUserConnected"]),
+    ...mapGetters("fundFactory", ["getFundFactoryContract", "getFunds"]),
+    ...mapGetters("fund", ["getSelectedFundAddress"]),
 
-    getSelectedFundAddress(){
-      return ""
-    }
+    getFundData(){
+      console.log(this.getSelectedFundAddress);
+      console.log(this.getFunds[fidx]);
+      for (var fidx in this.getFunds){
+        if (this.getFunds[fidx].fundAddress == this.getSelectedFundAddress) {
+          this.fund = this.getFunds[fidx];
+          return this.getFunds[fidx];
+        }
+      }
+    },
 
   },
   created() {
@@ -130,116 +82,17 @@ export default {
 
   methods: {
 
-    /*
-      struct NAVLiquidUpdate {
-        address tokenPair;
-        address aggregatorAddress;
-        bytes functionSignatureWithEncodedInputs;
-        address assetTokenAddress;
-        address nonAssetTokenAddress;
-        bool isReturnArray;
-        uint256 returnLength;
-        uint256 returnIndex;
-        uint256 pastNAVUpdateIndex;
-      }
-    */
-
-    addLiquidUpdate: function () {
-      this.liquidUpdates.push({
-        tokenPair: null,
-        aggregatorAddress: null,
-        functionSignatureWithEncodedInputs: null, 
-        assetTokenAddress: null,
-        nonAssetTokenAddress: null,
-        isReturnArray: null,
-        returnLength: null,
-        returnIndex: null,
-        pastNAVUpdateIndex: null
-      });
-    },
-
-    /*
-        struct NAVIlliquidUpdate {
-          uint256 baseCurrencySpent;
-          uint256 amountAquiredTokens;
-          address tokenAddress;
-          bool isNFT;
-          string[] otcTxHashes;
-          NAVNFTType nftType;
-          uint256 nftIndex;
-          uint256 pastNAVUpdateIndex;
-        }
-    */
-
     addNavUpdateEntry: function (){
-        this.navUpdateEntry.push({
+        this.navUpdateEntries.push({
+          index: this.entryIdx++,
           liquidUpdates: [],
           iliquidUpdates: [],
           nftUpdates: [],
           composableUpdates: []
         })
-    }
-
-    addIlliquidUpdate: function () {
-      this.navUpdateEntry[this.navUpdateEntry.length - 1].illiquidUpdate.push({
-        baseCurrencySpent: null,
-        amountAquiredTokens: null,
-        tokenAddress: null, 
-        isNFT: null,
-        otcTxHashes: null,
-        nftType: null,
-        nftIndex: null,
-        pastNAVUpdateIndex: null,
-      });
     },
 
-    /*
-        struct NAVNFTUpdate {
-          address oracleAddress;
-          address nftAddress;
-          NAVNFTType nftType;
-          uint256 nftIndex;
-          uint256 pastNAVUpdateIndex;
-        
-    */
-
-    addNftUpdate: function () {
-      this.navUpdateEntry[this.navUpdateEntry.length - 1].nftUpdates.push({
-        oracleAddress: null,
-        nftAddress: null,
-        nftType: null, 
-        nftIndex: null,
-        pastNAVUpdateIndex: null,
-      });
-    },
-
-    /*
-        struct NAVComposableUpdate {
-          address remoteContractAddress;
-          string functionSignatures;
-          bytes encodedFunctionSignatureWithInputs;
-          uint256 normalizationDecimals;
-          bool isReturnArray;
-          uint256 returnValIndex;
-          uint256 returnArraySize;
-          NAVComposableUpdateReturnType returnValType;
-          uint256 pastNAVUpdateIndex;
-        }
-    */
-
-    addComposableUpdate: function () {
-      this.navUpdateEntry[this.navUpdateEntry.length - 1].composableUpdates.push({
-        remoteContractAddress: null,
-        functionSignatures: null,
-        encodedFunctionSignatureWithInputs: null, 
-        normalizationDecimals: null,
-        isReturnArray: null,
-        returnValIndex: null,
-        returnArraySize: null,
-        returnValType: null,
-        pastNAVUpdateIndex: null
-      });
-    },
+    
 
     validateObj(obj) {
       if (obj.length == 0)
