@@ -39,10 +39,6 @@
         <router-link to="/display" style="text-decoration: none">
           <a class="btn btn-success m-1" href="/invest">Discover Funds</a>
         </router-link>
-
-        <router-link to="/update-nav" style="text-decoration: none">
-          <a class="btn btn-success m-1" href="/update-nav">Update NAV</a>
-        </router-link>
       </div> 
 
       <div class="d-flex flex-wrap flex-row justify-content-center text-uppercase hero-buttons" v-if="!isUserConnected">

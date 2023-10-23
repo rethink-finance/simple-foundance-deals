@@ -122,10 +122,9 @@ export default {
     ...mapGetters("accounts", ["getWeb3"]),
   },
 
-  watch: {
-      entry: async function() {
-
-        if (this.entry.liquidUpdate.length > 0) {
+  methods: {
+    toggleHidden() {
+      if (this.entry.liquidUpdates.length > 0) {
           this.showIliq = false;
           this.showNft = false;
           this.showComp = false;
@@ -141,11 +140,8 @@ export default {
           this.showLiq = false;
           this.showIliq = false;
           this.showNft = false;
-        }         
-      },
-  },
-
-  methods: {
+        }
+    },
     toggleForm() {
       if (this.showForm) {
         this.showForm = false;
@@ -180,6 +176,7 @@ export default {
         returnIndex: null,
         pastNAVUpdateIndex: null
       });
+      this.toggleHidden();
     },
 
     /*
@@ -206,6 +203,7 @@ export default {
         nftIndex: null,
         pastNAVUpdateIndex: null,
       });
+      this.toggleHidden();
     },
 
     /*
@@ -226,6 +224,7 @@ export default {
         nftIndex: null,
         pastNAVUpdateIndex: null,
       });
+      this.toggleHidden();
     },
 
     /*
@@ -254,6 +253,7 @@ export default {
         returnValType: null,
         pastNAVUpdateIndex: null
       });
+      this.toggleHidden();
     },
 
   }

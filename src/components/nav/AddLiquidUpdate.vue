@@ -1,7 +1,7 @@
 <template>
   <div>
     <div v-for="pos in positions" v-bind:key="pos.tokenPair" class="flex flex-col gap-2">
-      <h3>Add/Reference Existing NAV Liquid Update </h3>
+      <h3>Add/Reference Existing NAV Liquid Update</h3>
       <input v-model="pos.tokenPair" class="form-control deposit-input" placeholder="(Token Pair), Ex: 0xd81F810fc394e96c5D67af8395607C71B0a42d52">
       <input v-model="pos.aggregatorAddress" class="form-control deposit-input" placeholder="(Aggregator), Ex: 0xd81F810fc394e96c5D67af8395607C71B0a42d52">
       <input v-model="pos.functionSignatureWithEncodedInputs" class="form-control deposit-input" placeholder="(Encoded Function Input Data)">

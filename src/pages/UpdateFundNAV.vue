@@ -82,13 +82,31 @@ export default {
 
   methods: {
 
+  /*
+    struct NavUpdateEntry {
+      NavUpdateType entryType;
+      NAVLiquidUpdate[] liquid;
+      NAVIlliquidUpdate[] illiquid;
+      NAVNFTUpdate[] nft;
+      NAVComposableUpdate[] composable;
+      bool isPastNAVUpdate;
+      uint256 pastNAVUpdateIndex;
+      uint256 pastNAVUpdateEntryIndex;
+    }
+
+  */
+
     addNavUpdateEntry: function (){
         this.navUpdateEntries.push({
           index: this.entryIdx++,
           liquidUpdates: [],
-          iliquidUpdates: [],
+          illiquidUpdates: [],
           nftUpdates: [],
-          composableUpdates: []
+          composableUpdates: [],
+          entryType: null, //auto set based on what is clicked
+          isPastNAVUpdate: null,
+          pastNAVUpdateIndex: null,
+          pastNAVUpdateEntryIndex: null,
         })
     },
 
