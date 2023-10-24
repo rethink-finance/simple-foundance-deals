@@ -36,6 +36,14 @@ export default {
       loading: false,
       fund: {},
       entryIdx: 0,
+      BOOL_TYPE: {
+        "true": 1,
+        "false": 0
+      },
+      PastNAVUpdateMap: {
+        "true": 1,
+        "false": 0
+      },
       NAVNFTType: {
         "ERC1155": 0,
         "ERC721": 1,
@@ -127,13 +135,83 @@ export default {
       return true;
     },
 
+    prepNAVLiquidUpdate(liquidUpdates) {
+      let data = [];
+      for(let i=0; i<liquidUpdates.length; i++) {
+        let parameters = [
+          liquidUpdates[i].tokenPair,
+          liquidUpdates[i].aggregatorAddress,
+          liquidUpdates[i].functionSignatureWithEncodedInputs, 
+          liquidUpdates[i].assetTokenAddress,
+          liquidUpdates[i].nonAssetTokenAddress,
+          this.BOOL_TYPE[liquidUpdates[i].isReturnArray],
+          parseInt(liquidUpdates[i].returnLength),
+          parseInt(liquidUpdates[i].returnIndex),
+          parseInt(liquidUpdates[i].pastNAVUpdateIndex)
+        ];
+        data.push(parameters);
+      }
+      return data;
+    },
+
+    prepNAVIlliquidUpdate(illiquidUpdates) {
+      let data = [];
+
+      for(let i=0; i<illiquidUpdates.length; i++) {
+        let parameters = [
+          String((Number(illiquidUpdates[i].baseCurrencySpent) * (10 ** 18)).toLocaleString('fullwide', {useGrouping:false})), //price * 10 ** 18 TODO: need to use base currency decimals
+          parseInt(illiquidUpdates[i].amountAquiredTokens),
+          illiquidUpdates[i].tokenAddress,
+          components.BOOL_TYPE[illiquidUpdates[i].isNFT], 
+          illiquidUpdates[i].otcTxHashes.split(",").filter((val) => (val != "") ? true :  false),
+          components.NAVNFTType[illiquidUpdates[i].nftType],
+          parseInt(illiquidUpdates[i].nftIndex),
+          parseInt(illiquidUpdates[i].pastNAVUpdateIndex)
+        ];
+        data.push(parameters);
+      }
+      return data;
+    },
+
+    prepNAVNFTUpdate(nftUpdates) {
+      let data = [];
+      for(let i=0; i<nftUpdates.length; i++) {
+        let parameters = [
+          nftUpdates[i].oracleAddress,
+          nftUpdates[i].nftAddress,
+          this.NAVNFTType[illiquidUpdates[i].nftType],
+          parseInt(nftUpdates[i].nftIndex),
+          parseInt(nftUpdates[i].pastNAVUpdateIndex)
+        ];
+        data.push(parameters);
+      }
+      return data;
+    },
+
+    prepNAVComposableUpdate(composableUpdates) {
+      let data = [];
+      for(let i=0; i<composableUpdates.length; i++) {
+        let parameters = [
+          composableUpdates[i].remoteContractAddress,
+          composableUpdates[i].functionSignatures,
+          composableUpdates[i].encodedFunctionSignatureWithInputs, 
+          parseInt(composableUpdates[i].normalizationDecimals),
+          this.BOOL_TYPE[composableUpdates[i].isReturnArray],
+          parseInt(composableUpdates[i].returnValIndex),
+          parseInt(composableUpdates[i].returnArraySize),
+          this.NAVComposableUpdateReturnType[composableUpdates[i].returnValType],
+          parseInt(composableUpdates[i].pastNAVUpdateIndex)
+        ];
+        data.push(parameters);
+      }
+      return data;
+    },
+
     async createProposal () {
       let component = this;
       component.loading = true;
 
       /*
-
-
         struct NavUpdateEntry {
           NavUpdateType entryType;
           NAVLiquidUpdate[] liquid;
@@ -144,131 +222,71 @@ export default {
           uint256 pastNAVUpdateIndex;
           uint256 pastNAVUpdateEntryIndex;
         }
-
       */
 
       let addLiquidUpdateAbiJSON = component.getFundAbi[8];
       let addIlliquidUpdateAbiJSON = component.getFundAbi[33];
       let addNftUpdateAbiJSON = component.getFundAbi[32];
       let addComposableUpdateAbiJSON = component.getFundAbi[32];
+      let addNavUpdateEntryAbiJSON = component.getFundAbi[32];
 
-      let encodedDataLiquid = [];
-      let encodedDataIlliquid = [];
-      let encodedDataNFT = [];
-      let encodedDataComposeable = [];
+      for (var i in component.getFundAbi) {
+        console.log(i + " " + JSON.stringify(component.getFundAbi[i]));
+      }
+
+      let dataNavUpdateEntries = [];
 
       //encode all liquid, push back onto NavUpdateEntry
-      if (component.validateObj(component.liquidUpdates)) {
-        for(let i=0; i<component.addSymbols.length; i++) {
+      if (component.validateObj(component.navUpdateEntries)) {
+        for(let i=0; i<component.navUpdateEntries.length; i++) {
           let parameters = [
-            component.addSymbols[i].udlFeed, 
-            String((parseInt(component.addSymbols[i].strike) * (10 ** 18)).toLocaleString('fullwide', {useGrouping:false})),//strike * (10**EXCHG['decimals'])
-            component.addSymbols[i].maturity, //unix timestamp format
-            component.optTypes[component.addSymbols[i].optionType], //0 if optionType == 'CALL' else 1
-            Number(component.addSymbols[i].t0), // unix timestamp format
-            Number(component.addSymbols[i].t1), //unix timestamp format
-            component.addSymbols[i].x.split(",").map(val => String((parseInt(val) * (10 ** 18)).toLocaleString('fullwide', {useGrouping:false}))),// x * (10**EXCHG['decimals'])
-            component.addSymbols[i].y.split(",").map(val => String((parseInt(val) * (10 ** 18)).toLocaleString('fullwide', {useGrouping:false}))),// y * (10**EXCHG['decimals'])
-            [
-              String((parseInt(component.addSymbols[i].bsStockSpread.split(",")[0]) * (10 ** 18)).toLocaleString('fullwide', {useGrouping:false})),
-              String((parseInt(component.addSymbols[i].bsStockSpread.split(",")[1]) * (10 ** 18)).toLocaleString('fullwide', {useGrouping:false})),
-              String((parseInt(component.addSymbols[i].bsStockSpread.split(",")[2]) * (10 ** 7)).toLocaleString('fullwide', {useGrouping:false}))
-            ]//[buyStock * (10**EXCHG['decimals']),sellStock * (10**EXCHG['decimals']), spreadPercent * (10**7)]
-
+            component.NavUpdateType[component.navUpdateEntries[i].entryType],
+            component.prepNAVLiquidUpdate(
+              component.navUpdateEntries[i].liquidUpdates
+            ),//NAVLiquidUpdate[] liquid;
+            component.prepNAVIlliquidUpdate(
+              component.navUpdateEntries[i].illiquidUpdates
+            ),//NAVIlliquidUpdate[] illiquid;
+            component.prepNAVNFTUpdate(
+              component.navUpdateEntries[i].nftUpdates
+            ),//NAVNFTUpdate[] nft;
+            component.prepNAVComposableUpdate(
+              component.navUpdateEntries[i].composableUpdates
+            ),//NAVComposableUpdate[] composable;
+            component.PastNAVUpdateMap[component.navUpdateEntries[i].isPastNAVUpdate],
+            parseInt(component.navUpdateEntries[i].pastNAVUpdateIndex),
+            parseInt(component.navUpdateEntries[i].pastNAVUpdateEntryIndex),            
           ];
-          encodedDataLiquid.push(
-            component.getWeb3.eth.abi.encodeFunctionCall(addLiquidUpdateAbiJSON, parameters)
+
+          dataNavUpdateEntries.push(
+            parameters
           );
         }
       }
 
-      //encode all illiquid, push back onto NavUpdateEntry
-      if (component.validateObj(component.illiquidUpdate)) {
-        for(let i=0; i<component.addSymbols.length; i++) {
-          let parameters = [
-            component.addSymbols[i].udlFeed, 
-            String((parseInt(component.addSymbols[i].strike) * (10 ** 18)).toLocaleString('fullwide', {useGrouping:false})),//strike * (10**EXCHG['decimals'])
-            component.addSymbols[i].maturity, //unix timestamp format
-            component.optTypes[component.addSymbols[i].optionType], //0 if optionType == 'CALL' else 1
-            Number(component.addSymbols[i].t0), // unix timestamp format
-            Number(component.addSymbols[i].t1), //unix timestamp format
-            component.addSymbols[i].x.split(",").map(val => String((parseInt(val) * (10 ** 18)).toLocaleString('fullwide', {useGrouping:false}))),// x * (10**EXCHG['decimals'])
-            component.addSymbols[i].y.split(",").map(val => String((parseInt(val) * (10 ** 18)).toLocaleString('fullwide', {useGrouping:false}))),// y * (10**EXCHG['decimals'])
-            [
-              String((parseInt(component.addSymbols[i].bsStockSpread.split(",")[0]) * (10 ** 18)).toLocaleString('fullwide', {useGrouping:false})),
-              String((parseInt(component.addSymbols[i].bsStockSpread.split(",")[1]) * (10 ** 18)).toLocaleString('fullwide', {useGrouping:false})),
-              String((parseInt(component.addSymbols[i].bsStockSpread.split(",")[2]) * (10 ** 7)).toLocaleString('fullwide', {useGrouping:false}))
-            ]//[buyStock * (10**EXCHG['decimals']),sellStock * (10**EXCHG['decimals']), spreadPercent * (10**7)]
-
-          ];
-          encodedDataIlliquid.push(
-            component.getWeb3.eth.abi.encodeFunctionCall(addIlliquidUpdateAbiJSON, parameters)
-          );
-        }
-      }
-
-      //encode all nfts, push back onto NavUpdateEntry
-      if (component.validateObj(component.nftUpdates)) {
-        for(let i=0; i<component.addSymbols.length; i++) {
-          let parameters = [
-            component.addSymbols[i].udlFeed, 
-            String((parseInt(component.addSymbols[i].strike) * (10 ** 18)).toLocaleString('fullwide', {useGrouping:false})),//strike * (10**EXCHG['decimals'])
-            component.addSymbols[i].maturity, //unix timestamp format
-            component.optTypes[component.addSymbols[i].optionType], //0 if optionType == 'CALL' else 1
-            Number(component.addSymbols[i].t0), // unix timestamp format
-            Number(component.addSymbols[i].t1), //unix timestamp format
-            component.addSymbols[i].x.split(",").map(val => String((parseInt(val) * (10 ** 18)).toLocaleString('fullwide', {useGrouping:false}))),// x * (10**EXCHG['decimals'])
-            component.addSymbols[i].y.split(",").map(val => String((parseInt(val) * (10 ** 18)).toLocaleString('fullwide', {useGrouping:false}))),// y * (10**EXCHG['decimals'])
-            [
-              String((parseInt(component.addSymbols[i].bsStockSpread.split(",")[0]) * (10 ** 18)).toLocaleString('fullwide', {useGrouping:false})),
-              String((parseInt(component.addSymbols[i].bsStockSpread.split(",")[1]) * (10 ** 18)).toLocaleString('fullwide', {useGrouping:false})),
-              String((parseInt(component.addSymbols[i].bsStockSpread.split(",")[2]) * (10 ** 7)).toLocaleString('fullwide', {useGrouping:false}))
-            ]//[buyStock * (10**EXCHG['decimals']),sellStock * (10**EXCHG['decimals']), spreadPercent * (10**7)]
-
-          ];
-          encodedDataNFT.push(
-            component.getWeb3.eth.abi.encodeFunctionCall(addNftUpdateAbiJSON, parameters)
-          );
-        }
-      }
-
-      //encode all composable, push back onto NavUpdateEntry
-      if (component.validateObj(component.composableUpdates)) {
-        for(let i=0; i<component.addSymbols.length; i++) {
-          let parameters = [
-            component.addSymbols[i].udlFeed, 
-            String((parseInt(component.addSymbols[i].strike) * (10 ** 18)).toLocaleString('fullwide', {useGrouping:false})),//strike * (10**EXCHG['decimals'])
-            component.addSymbols[i].maturity, //unix timestamp format
-            component.optTypes[component.addSymbols[i].optionType], //0 if optionType == 'CALL' else 1
-            Number(component.addSymbols[i].t0), // unix timestamp format
-            Number(component.addSymbols[i].t1), //unix timestamp format
-            component.addSymbols[i].x.split(",").map(val => String((parseInt(val) * (10 ** 18)).toLocaleString('fullwide', {useGrouping:false}))),// x * (10**EXCHG['decimals'])
-            component.addSymbols[i].y.split(",").map(val => String((parseInt(val) * (10 ** 18)).toLocaleString('fullwide', {useGrouping:false}))),// y * (10**EXCHG['decimals'])
-            [
-              String((parseInt(component.addSymbols[i].bsStockSpread.split(",")[0]) * (10 ** 18)).toLocaleString('fullwide', {useGrouping:false})),
-              String((parseInt(component.addSymbols[i].bsStockSpread.split(",")[1]) * (10 ** 18)).toLocaleString('fullwide', {useGrouping:false})),
-              String((parseInt(component.addSymbols[i].bsStockSpread.split(",")[2]) * (10 ** 7)).toLocaleString('fullwide', {useGrouping:false}))
-            ]//[buyStock * (10**EXCHG['decimals']),sellStock * (10**EXCHG['decimals']), spreadPercent * (10**7)]
-
-          ];
-          encodedDataComposeable.push(
-            component.getWeb3.eth.abi.encodeFunctionCall(encodedDataComposeable, parameters)
-          );
-        }
-      }
+      let encodedDataNavUpdateEntries = component.getWeb3.eth.abi.encodeFunctionCall(addNavUpdateEntryAbiJSON, dataNavUpdateEntries);
 
       const rethinkFundGovernorContract = new component.getWeb3.eth.Contract(
         RethinkFundGovernorJSON.abi,
         component.fundAddress
       );
 
+      /*
+
+        function propose(
+          address[] memory targets,
+          uint256[] memory values,
+          bytes[] memory calldatas,
+          string memory description
+      ) 
+        */
+
       //proposae nav update for fund (target: fund addr, payloadL bytes)
       await rethinkFundGovernorContract.methods.propose(
-        deployPoolManagmentProposal.options.address,
-        component.getSelectedPoolAddress,
-        2, //enum Quorum { SIMPLE_MAJORITY, TWO_THIRDS, QUADRATIC } 0,1,2
-        1, //enum VoteType {PROTOCOL_SETTINGS, POOL_SETTINGS, ORACLE_SETTINGS} 0,1,2
-        Number(Math.floor(Date.now() / 1000) + (60 * 60)) //30 min to vote
+        [this.fund.fundAddress],
+        [0],
+        [encodedDataNavUpdateEntries],
+        "NAV UPDATE"
       ).send({
         from: component.getActiveAccount,
         maxPriorityFeePerGas: null,
