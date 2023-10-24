@@ -38,7 +38,7 @@ const getters = {
 };
 
 const actions = {
-  async fetchContract({ commit, rootState }) {
+  async fetchContract({ commit, state, rootState }) {
     let web3 = rootState.accounts.web3;
     //let chainIdDec = parseInt(rootState.accounts.chainId);
     let address = state.selectedFundAddress;

@@ -15,7 +15,7 @@ const state = {
 
 const getters = {
   getFundUsdcAllowance(state) {
-    return state.lpAllowance;
+    return state.fundAllowance;
   },
   getUsdcDecimals(state) {
     return state.decimals;
@@ -45,15 +45,15 @@ const actions = {
     let contract = new web3.eth.Contract(ContractJson.abi, address);
     commit("setContract", contract);
   },
-  async getFundUsdcAllowance({ commit, dispatch, state, rootState }) {
+  async fetchFundAllowance({ commit, dispatch, state, rootState }) {
     if (!state.contract) {
       dispatch("fetchContract");
     }
 
     let userAddress = rootState.accounts.activeAccount;
-    let lpAddress = rootState.liquidityPool.selectedPoolAddress;
+    let fundAddress = rootState.fund.selectedFundAddress;
 
-    let allowanceWei = await state.contract.methods.allowance(userAddress, lpAddress).call();
+    let allowanceWei = await state.contract.methods.allowance(userAddress, fundAddress).call();
 
     let web3 = rootState.accounts.web3;
     let allowance = web3.utils.fromWei(allowanceWei, "mwei");

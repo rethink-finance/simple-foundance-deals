@@ -26,10 +26,9 @@
           <button 
             class="btn btn-success btn-user btn-block text-uppercase form-control" 
             data-bs-toggle="modal" data-bs-target="#depositModal"
-            :disabled="isDepositValueNotValid.status || Number(this.depositValue) === 0"
-          >
+            :disabled="isDepositValueNotValid.status || Number(this.depositValue) === 0">
             <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-            Deposit
+            Request Deposit
           </button>
           <div></div>
         </div>
@@ -38,10 +37,20 @@
           <button 
             class="btn btn-success btn-user btn-block text-uppercase form-control" 
             :disabled="isDepositValueNotValid.status || Number(this.depositValue) === 0" 
-            @click="approveAllowance"
-          >
+            @click="approveAllowance">
             <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
             Approve
+          </button>
+          <div></div>
+        </div>
+
+        <div class="deposit-button form-button-mobile" v-if="isEnoughAllowance">
+          <button 
+            class="btn btn-success btn-user btn-block text-uppercase form-control" 
+            :disabled="isDepositValueNotValid.status 
+            @click="depositIntoFund">
+            <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            Deposit
           </button>
           <div></div>
         </div>
@@ -77,16 +86,18 @@
               By making a deposit you confirm being aware that:
 
               <ul>
-                <li>Deposits are held by the liquidity pool until its maturity date ({{getFundMaturityDate}}).</li>
-                <li>Depositors receive pool tokens proportionally to the amount of funds deposited</li>
-                <li>Upon maturity, each depositor is able to redeem their share of the pool's stablecoin balance free of any charge.</li>
-                <li> Withdrawal of funds is possible, but the Withdrawal Fee of {{getFundWithdrawalFee}}% is charged in that case.</li>
-                <li>The Early Withdrawal Fee can be changed at any time by the DeFi Options DAO.</li>
+                <li>Deposits are held by the governable fund</li>
+                <li>The Deposit Fee of {{getFundWithdrawalFee}}% is charged.</li>
+                <li>Depositors receive Fund DAO tokens proportionally to the amount of funds deposited minus any deposit fee</li>
+                <li>Upon depositor request, each depositor is able to redeem their share of the Fund DAO's base asset balance free of any charge.</li>
+                <li> Withdrawal of funds is possible, and the Withdrawal Fee of {{getFundWithdrawalFee}}% is charged in that case.</li>
+                <li>The Withdrawal Fee can be changed at any time by the Governable FUnd</li>
+                <li>The Deposit Fee can be changed at any time by the Governable FUnd</li>
               </ul>
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Cancel</button>
-              <button @click="depositIntoFund" type="button" class="btn btn-success" data-bs-dismiss="modal">Deposit</button>
+              <button @click="requestDeposit" type="button" class="btn btn-success" data-bs-dismiss="modal">Deposit</button>
             </div>
           </div>
         </div>
@@ -101,6 +112,8 @@ import { mapGetters } from "vuex";
 
 export default {
   name: 'FundDeposit',
+
+  props: ["fund"],
   computed: {
     ...mapGetters("accounts", ["getActiveAccount", "getWeb3"]),
     ...mapGetters("fund", ["getFundContract", "getFundAddress", 
@@ -197,7 +210,7 @@ export default {
       const allowanceValue = component.depositValue;
 
       // call the approve method
-      await component.getStablecoinContract.methods.approve(component.getFundAddress, tokensWei).send({
+      await component.getStablecoinContract.methods.approve(component.fund.fundAddress, tokensWei).send({
         from: component.getActiveAccount,
         maxPriorityFeePerGas: null,
         maxFeePerGas: null
@@ -223,7 +236,7 @@ export default {
           
           
         } else {
-          component.$toast.error("The transaction has failed. Please contact the DeFi Options support.");
+          component.$toast.error("The transaction has failed. Please contact the Rethink Finance support.");
         }
         
         component.loading = false;
@@ -231,33 +244,18 @@ export default {
       }).on('error', function(error){
         console.log(error);
         component.loading = false;
-        component.$toast.error("There has been an error. Please contact the DeFi Options support.");
+        component.$toast.error("There has been an error. Please contact the Rethink Finance support.");
       });
 
     },
     changeStablecoin(token) {
       this.selectedToken = token;
     },
-    async requestDeposit () {
-
-    },
-    async depositIntoFund() {
+    async depositIntoFund () {
       let component = this;
       component.loading = true;
-
-      let unit = "ether"; // DAI
-      if (component.selectedToken === "USDC") {
-        unit = "mwei"; // USDC
-      }
-
-      let tokensWei = component.getWeb3.utils.toWei(component.depositValue, unit);
-
       // make a deposit
-      await component.getFundContract.methods.deposit(
-        component.getActiveAccount, 
-        component.getStablecoinContract._address, 
-        tokensWei
-      ).send({
+      await component.getFundContract.methods.deposit().send({
         from: component.getActiveAccount,
         maxPriorityFeePerGas: null,
         maxFeePerGas: null
@@ -271,7 +269,7 @@ export default {
         if (receipt.status) {
           component.$toast.success("Your deposit was successfull.");
 
-          component.$store.dispatch("optionsExchange/fetchFundBalance");
+          component.$store.dispatch("fund/fetchFundBalance");
           component.$store.dispatch("fund/fetchUserBalance");
           component.$store.dispatch("fund/fetchUserFundUsdValue");
 
@@ -286,7 +284,7 @@ export default {
           
           component.depositValue = null;
         } else {
-          component.$toast.error("The transaction has failed. Please contact the DeFi Options support.");
+          component.$toast.error("The transaction has failed. Please contact the Rethink Finance support.");
         }
         
         component.loading = false;
@@ -294,15 +292,49 @@ export default {
       }).on('error', function(error){
         console.log(error);
         component.loading = false;
-        component.$toast.error("There has been an error. Please contact the DeFi Options support.");
+        component.$toast.error("There has been an error. Please contact the Rethink Finance support.");
+      });
+    },
+    async requestDeposit() {
+      let component = this;
+      component.loading = true;
+
+      let unit = "ether"; // DAI
+      if (component.selectedToken === "USDC") {
+        unit = "mwei"; // USDC
+      }
+
+      let tokensWei = component.getWeb3.utils.toWei(component.depositValue, unit);
+
+      // make a deposit request
+      await component.getFundContract.methods.requestDeposit(
+        tokensWei
+      ).send({
+        from: component.getActiveAccount,
+        maxPriorityFeePerGas: null,
+        maxFeePerGas: null
+      }).on('transactionHash', function(hash){
+        console.log("tx hash: " + hash);
+        component.$toast.info("The transaction has been submitted. Please wait for it to be confirmed.");
+
+      }).on('receipt', function(receipt){
+        console.log(receipt);
+
+        if (receipt.status) {
+          component.$toast.success("Your deposit request was successfull.");
+          component.depositValue = null;
+        } else {
+          component.$toast.error("Your deposit request has failed. Please contact the Rethink Finance support.");
+        }
+        
+        component.loading = false;
+
+      }).on('error', function(error){
+        console.log(error);
+        component.loading = false;
+        component.$toast.error("There has been an error. Please contact the Rethink Finance support.");
       });
  
-    },
-    async requestRedeem() {
-
-    },
-    async redeemFromFund() {
-
     },
   }
 }

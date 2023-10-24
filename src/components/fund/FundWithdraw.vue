@@ -23,6 +23,17 @@
 
         <div class="withdraw-button form-button-mobile">
           <button 
+            @click="requestWithdraw" 
+            class="btn btn-success btn-user btn-block text-uppercase form-control"
+            :disabled="isWithdrawAmountNotValid.status || Number(this.withdrawAmount) === 0">
+            <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            Request Withdraw
+          </button>
+          <div></div>
+        </div>
+
+        <div class="withdraw-button form-button-mobile">
+          <button 
             @click="withdraw" 
             class="btn btn-success btn-user btn-block text-uppercase form-control"
             :disabled="isWithdrawAmountNotValid.status || Number(this.withdrawAmount) === 0"
@@ -63,6 +74,9 @@ import { mapGetters } from "vuex";
 
 export default {
   name: "FundWithdraw",
+
+  props: ["fund"],
+
 
   data() {
     return {
@@ -112,17 +126,12 @@ export default {
   },
 
   methods: {
-    async requestWithdraw(){
-    
-    },
-    async withdraw() {
+    async withdraw(){
       let component = this;
       component.loading = true;
 
-      const amountWei = component.getWeb3.utils.toWei(component.withdrawAmount, "ether");
-
       // make a withdrawal
-      await component.getFundContract.methods.withdraw(amountWei).send({
+      await component.getFundContract.methods.withdraw().send({
         from: component.getActiveAccount,
         maxPriorityFeePerGas: null,
         maxFeePerGas: null
@@ -137,17 +146,17 @@ export default {
           component.$toast.success("Your withdrawal was successfull. It may take 10 seconds or more for values to update.");
 
           // refresh values
-          component.$store.dispatch("optionsExchange/fetchFundBalance");
-          component.$store.dispatch("liquidityPool/fetchUserBalance");
-          component.$store.dispatch("liquidityPool/fetchUserPoolUsdValue");
+          component.$store.dispatch("fund/fetchFundBalance");
+          component.$store.dispatch("fund/fetchUserBalance");
+          component.$store.dispatch("fund/fetchUserFundUsdValue");
           component.$store.dispatch("dai/fetchUserBalance");
           component.$store.dispatch("usdc/fetchUserBalance");
-          component.$store.dispatch("liquidityPool/fetchPoolFreeBalance");
+          component.$store.dispatch("fund/fetchFundBalance");
 
           component.withdrawAmount = null;
           
         } else {
-          component.$toast.error("The transaction has failed. Please contact the DeFi Options support.");
+          component.$toast.error("The transaction has failed. Please contact the Rethink Finance support.");
         }
         
         component.loading = false;
@@ -155,7 +164,41 @@ export default {
       }).on('error', function(error){
         console.log(error);
         component.loading = false;
-        component.$toast.error("There has been an error. Please contact the DeFi Options support.");
+        component.$toast.error("There has been an error. Please contact the Rethink Finance support.");
+      });
+    },
+    async requestWithdraw() {
+      let component = this;
+      component.loading = true;
+
+      const amountWei = component.getWeb3.utils.toWei(component.withdrawAmount, "ether");
+
+      // make a withdrawal request
+      await component.getFundContract.methods.requestWithdraw(amountWei).send({
+        from: component.getActiveAccount,
+        maxPriorityFeePerGas: null,
+        maxFeePerGas: null
+      }).on('transactionHash', function(hash){
+        console.log("tx hash: " + hash);
+        component.$toast.info("The transaction has been submitted. Please wait for it to be confirmed.");
+
+      }).on('receipt', function(receipt){
+        console.log(receipt);
+
+        if (receipt.status) {
+          component.$toast.success("Your withdrawal request was successfull. It may take 10 seconds or more for values to update.");
+          component.withdrawAmount = null;
+          
+        } else {
+          component.$toast.error("The transaction has failed. Please contact the Rethink Finance support.");
+        }
+        
+        component.loading = false;
+
+      }).on('error', function(error){
+        console.log(error);
+        component.loading = false;
+        component.$toast.error("There has been an error. Please contact the Rethink Finance support.");
       });
     }
   }

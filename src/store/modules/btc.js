@@ -8,7 +8,7 @@ const state = {
   address: null,
   contract: null,
   decimals: 18,
-  lpAllowance: 0, // liquidity pool contract Btc allowance for current user
+  fundAllowance: 0, // liquidity pool contract Btc allowance for current user
   exchangeAllowance: 0,// exchange contract dai allowance for current user
   permit: true, // does this token have the permit() method?
   userBalance: null
@@ -28,7 +28,7 @@ const getters = {
     return state.contract;
   },
   getFundBtcAllowance(state) {
-    return state.lpAllowance;
+    return state.fundAllowance;
   },
   getUserBtcBalance(state) {
     return state.userBalance;
@@ -46,15 +46,15 @@ const actions = {
     let contract = new web3.eth.Contract(ContractJson.abi, address);
     commit("setContract", contract);
   },
-  async fetchFundllowance({ commit, dispatch, state, rootState }) {
+  async fetchFundAllowance({ commit, dispatch, state, rootState }) {
     if (!state.contract) {
       dispatch("fetchContract");
     }
 
     let userAddress = rootState.accounts.activeAccount;
-    let lpAddress = rootState.liquidityPool.selectedPoolAddress;
+    let fundAddress = rootState.fund.selectedFundAddress;
 
-    let allowanceWei = await state.contract.methods.allowance(userAddress, lpAddress).call();
+    let allowanceWei = await state.contract.methods.allowance(userAddress, fundAddress).call();
 
     let web3 = rootState.accounts.web3;
     let allowance = web3.utils.fromWei(allowanceWei, "ether");

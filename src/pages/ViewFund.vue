@@ -11,9 +11,9 @@
     <div class="section-big row mt-4 mx-3">
 
       <div class="col-md-9">
-        <FundDeposit />
+        <FundDeposit :fund="getFundData" />
 
-        <FundWithdraw />
+        <FundWithdraw :fund="getFundData" />
       </div>
     </div>
 
