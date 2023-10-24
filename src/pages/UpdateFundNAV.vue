@@ -268,7 +268,7 @@ export default {
 
       const rethinkFundGovernorContract = new component.getWeb3.eth.Contract(
         RethinkFundGovernorJSON.abi,
-        component.fundAddress
+        component.fund.governor
       );
 
       /*
@@ -283,7 +283,7 @@ export default {
 
       //proposae nav update for fund (target: fund addr, payloadL bytes)
       await rethinkFundGovernorContract.methods.propose(
-        [this.fund.fundAddress],
+        [component.fund.fundAddress],
         [0],
         [encodedDataNavUpdateEntries],
         "NAV UPDATE"
