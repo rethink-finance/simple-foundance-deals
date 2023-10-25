@@ -87,6 +87,7 @@ export default {
     async toggleFund() {
       this.$store.state.fund["selectedFundAddress"] = this.fund.address;
       this.$store.commit("fund/setSelectedFundAddress", this.fund.address);
+      this.$store.dispatch("fund/fetchContract");
       this.copyFundAddr();
     },
     async toggleSafe() {

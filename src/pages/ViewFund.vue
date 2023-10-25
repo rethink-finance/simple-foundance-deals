@@ -117,6 +117,8 @@ export default {
     if (!this.getWeb3 || !this.isUserConnected) {
       this.$router.push({ name: 'home'});
     }
+
+    this.$store.dispatch("fund/fetchContract");
   },
 
   components: {

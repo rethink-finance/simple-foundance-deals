@@ -45,10 +45,7 @@
         </div>
 
         <div class="deposit-button form-button-mobile" v-if="isEnoughAllowance">
-          <button 
-            class="btn btn-success btn-user btn-block text-uppercase form-control" 
-            :disabled="isDepositValueNotValid.status 
-            @click="depositIntoFund">
+          <button class="btn btn-success btn-user btn-block text-uppercase form-control" :disabled="isDepositValueNotValid.status" @click="depositIntoFund">
             <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
             Deposit
           </button>

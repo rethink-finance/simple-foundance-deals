@@ -42,6 +42,7 @@ const actions = {
     let web3 = rootState.accounts.web3;
     //let chainIdDec = parseInt(rootState.accounts.chainId);
     let address = state.selectedFundAddress;
+    console.log("fetchContract: " + state.selectedFundAddress);
 
     let contract = new web3.eth.Contract(GovernableFund.abi, address);
     commit("setContract", contract);
