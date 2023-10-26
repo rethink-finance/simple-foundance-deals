@@ -660,7 +660,7 @@
               "type": "string"
             }
           ],
-          "internalType": "struct IGovernableFund.Settings",
+          "internalType": "struct IGovernableFundStorage.Settings",
           "name": "",
           "type": "tuple"
         }
@@ -681,7 +681,7 @@
         {
           "components": [
             {
-              "internalType": "enum IGovernableFund.NavUpdateType",
+              "internalType": "enum IGovernableFundStorage.NavUpdateType",
               "name": "entryType",
               "type": "uint8"
             },
@@ -733,7 +733,7 @@
                   "type": "uint256"
                 }
               ],
-              "internalType": "struct IGovernableFund.NAVLiquidUpdate[]",
+              "internalType": "struct IGovernableFundStorage.NAVLiquidUpdate[]",
               "name": "liquid",
               "type": "tuple[]"
             },
@@ -765,7 +765,7 @@
                   "type": "string[]"
                 },
                 {
-                  "internalType": "enum IGovernableFund.NAVNFTType",
+                  "internalType": "enum IGovernableFundStorage.NAVNFTType",
                   "name": "nftType",
                   "type": "uint8"
                 },
@@ -780,7 +780,7 @@
                   "type": "uint256"
                 }
               ],
-              "internalType": "struct IGovernableFund.NAVIlliquidUpdate[]",
+              "internalType": "struct IGovernableFundStorage.NAVIlliquidUpdate[]",
               "name": "illiquid",
               "type": "tuple[]"
             },
@@ -797,7 +797,7 @@
                   "type": "address"
                 },
                 {
-                  "internalType": "enum IGovernableFund.NAVNFTType",
+                  "internalType": "enum IGovernableFundStorage.NAVNFTType",
                   "name": "nftType",
                   "type": "uint8"
                 },
@@ -812,7 +812,7 @@
                   "type": "uint256"
                 }
               ],
-              "internalType": "struct IGovernableFund.NAVNFTUpdate[]",
+              "internalType": "struct IGovernableFundStorage.NAVNFTUpdate[]",
               "name": "nft",
               "type": "tuple[]"
             },
@@ -854,7 +854,7 @@
                   "type": "uint256"
                 },
                 {
-                  "internalType": "enum IGovernableFund.NAVComposableUpdateReturnType",
+                  "internalType": "enum IGovernableFundStorage.NAVComposableUpdateReturnType",
                   "name": "returnValType",
                   "type": "uint8"
                 },
@@ -864,7 +864,7 @@
                   "type": "uint256"
                 }
               ],
-              "internalType": "struct IGovernableFund.NAVComposableUpdate[]",
+              "internalType": "struct IGovernableFundStorage.NAVComposableUpdate[]",
               "name": "composable",
               "type": "tuple[]"
             },
@@ -884,7 +884,7 @@
               "type": "uint256"
             }
           ],
-          "internalType": "struct IGovernableFund.NavUpdateEntry[]",
+          "internalType": "struct IGovernableFundStorage.NavUpdateEntry[]",
           "name": "",
           "type": "tuple[]"
         }
@@ -1073,7 +1073,7 @@
               "type": "string"
             }
           ],
-          "internalType": "struct IGovernableFund.Settings",
+          "internalType": "struct IGovernableFundStorage.Settings",
           "name": "_fundSettings",
           "type": "tuple"
         },
@@ -1328,7 +1328,7 @@
         {
           "components": [
             {
-              "internalType": "enum IGovernableFund.NavUpdateType",
+              "internalType": "enum IGovernableFundStorage.NavUpdateType",
               "name": "entryType",
               "type": "uint8"
             },
@@ -1380,7 +1380,7 @@
                   "type": "uint256"
                 }
               ],
-              "internalType": "struct IGovernableFund.NAVLiquidUpdate[]",
+              "internalType": "struct IGovernableFundStorage.NAVLiquidUpdate[]",
               "name": "liquid",
               "type": "tuple[]"
             },
@@ -1412,7 +1412,7 @@
                   "type": "string[]"
                 },
                 {
-                  "internalType": "enum IGovernableFund.NAVNFTType",
+                  "internalType": "enum IGovernableFundStorage.NAVNFTType",
                   "name": "nftType",
                   "type": "uint8"
                 },
@@ -1427,7 +1427,7 @@
                   "type": "uint256"
                 }
               ],
-              "internalType": "struct IGovernableFund.NAVIlliquidUpdate[]",
+              "internalType": "struct IGovernableFundStorage.NAVIlliquidUpdate[]",
               "name": "illiquid",
               "type": "tuple[]"
             },
@@ -1444,7 +1444,7 @@
                   "type": "address"
                 },
                 {
-                  "internalType": "enum IGovernableFund.NAVNFTType",
+                  "internalType": "enum IGovernableFundStorage.NAVNFTType",
                   "name": "nftType",
                   "type": "uint8"
                 },
@@ -1459,7 +1459,7 @@
                   "type": "uint256"
                 }
               ],
-              "internalType": "struct IGovernableFund.NAVNFTUpdate[]",
+              "internalType": "struct IGovernableFundStorage.NAVNFTUpdate[]",
               "name": "nft",
               "type": "tuple[]"
             },
@@ -1501,7 +1501,7 @@
                   "type": "uint256"
                 },
                 {
-                  "internalType": "enum IGovernableFund.NAVComposableUpdateReturnType",
+                  "internalType": "enum IGovernableFundStorage.NAVComposableUpdateReturnType",
                   "name": "returnValType",
                   "type": "uint8"
                 },
@@ -1511,7 +1511,7 @@
                   "type": "uint256"
                 }
               ],
-              "internalType": "struct IGovernableFund.NAVComposableUpdate[]",
+              "internalType": "struct IGovernableFundStorage.NAVComposableUpdate[]",
               "name": "composable",
               "type": "tuple[]"
             },
@@ -1531,7 +1531,7 @@
               "type": "uint256"
             }
           ],
-          "internalType": "struct IGovernableFund.NavUpdateEntry[]",
+          "internalType": "struct IGovernableFundStorage.NavUpdateEntry[]",
           "name": "navUpdateData",
           "type": "tuple[]"
         }
@@ -1626,7 +1626,7 @@
               "type": "string"
             }
           ],
-          "internalType": "struct IGovernableFund.Settings",
+          "internalType": "struct IGovernableFundStorage.Settings",
           "name": "_fundSettings",
           "type": "tuple"
         }

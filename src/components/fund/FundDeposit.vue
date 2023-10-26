@@ -22,13 +22,22 @@
           </div>
         </div>
 
-        <div class="deposit-button form-button-mobile" v-if="isEnoughAllowance">
+        <div class="deposit-button form-button-mobile">
           <button 
             class="btn btn-success btn-user btn-block text-uppercase form-control" 
-            data-bs-toggle="modal" data-bs-target="#depositModal"
-            :disabled="isDepositValueNotValid.status || Number(this.depositValue) === 0">
+            :disabled="isDepositValueNotValid.status || Number(this.depositValue) === 0" @click="requestDeposit">
             <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
             Request Deposit
+          </button>
+          <div></div>
+        </div>
+
+        <div class="deposit-button form-button-mobile">
+          <button 
+            class="btn btn-success btn-user btn-block text-uppercase form-control" 
+            @click="cancelDeposit">
+            <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            Cancel Deposit
           </button>
           <div></div>
         </div>
@@ -94,7 +103,7 @@
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Cancel</button>
-              <button @click="requestDeposit" type="button" class="btn btn-success" data-bs-dismiss="modal">Deposit</button>
+              <button @click="deposit" type="button" class="btn btn-success" data-bs-dismiss="modal">Deposit</button>
             </div>
           </div>
         </div>
@@ -333,6 +342,39 @@ export default {
       });
  
     },
+
+    async cancelDeposit() {
+      let component = this;
+      component.loading = true;
+      // cancel a deposit request
+      await component.getFundContract.methods.revokeDepositWithrawal(
+        1
+      ).send({
+        from: component.getActiveAccount,
+        maxPriorityFeePerGas: null,
+        maxFeePerGas: null
+      }).on('transactionHash', function(hash){
+        console.log("tx hash: " + hash);
+        component.$toast.info("The transaction has been submitted. Please wait for it to be confirmed.");
+
+      }).on('receipt', function(receipt){
+        console.log(receipt);
+
+        if (receipt.status) {
+          component.$toast.success("Your deposit request was successfull.");
+          component.depositValue = null;
+        } else {
+          component.$toast.error("Your deposit request has failed. Please contact the Rethink Finance support.");
+        }
+        
+        component.loading = false;
+
+      }).on('error', function(error){
+        console.log(error);
+        component.loading = false;
+        component.$toast.error("There has been an error. Please contact the Rethink Finance support.");
+      });
+    }
   }
 }
 </script>
