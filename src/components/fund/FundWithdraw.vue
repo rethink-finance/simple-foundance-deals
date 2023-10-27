@@ -34,6 +34,16 @@
 
         <div class="withdraw-button form-button-mobile">
           <button 
+            class="btn btn-success btn-user btn-block text-uppercase form-control" 
+            @click="cancelWithdraw">
+            <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            Cancel Withdraw
+          </button>
+          <div></div>
+        </div>
+
+        <div class="withdraw-button form-button-mobile">
+          <button 
             @click="withdraw" 
             class="btn btn-success btn-user btn-block text-uppercase form-control"
             :disabled="isWithdrawAmountNotValid.status || Number(this.withdrawAmount) === 0"
@@ -191,6 +201,39 @@ export default {
           
         } else {
           component.$toast.error("The transaction has failed. Please contact the Rethink Finance support.");
+        }
+        
+        component.loading = false;
+
+      }).on('error', function(error){
+        console.log(error);
+        component.loading = false;
+        component.$toast.error("There has been an error. Please contact the Rethink Finance support.");
+      });
+    },
+
+    async cancelWithdraw() {
+      let component = this;
+      component.loading = true;
+      // cancel a deposit request
+      await component.getFundContract.methods.revokeDepositWithrawal(
+        0
+      ).send({
+        from: component.getActiveAccount,
+        maxPriorityFeePerGas: null,
+        maxFeePerGas: null
+      }).on('transactionHash', function(hash){
+        console.log("tx hash: " + hash);
+        component.$toast.info("The transaction has been submitted. Please wait for it to be confirmed.");
+
+      }).on('receipt', function(receipt){
+        console.log(receipt);
+
+        if (receipt.status) {
+          component.$toast.success("Your deposit request was successfull.");
+          component.depositValue = null;
+        } else {
+          component.$toast.error("Your deposit request has failed. Please contact the Rethink Finance support.");
         }
         
         component.loading = false;

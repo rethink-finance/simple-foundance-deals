@@ -103,7 +103,7 @@
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Cancel</button>
-              <button @click="deposit" type="button" class="btn btn-success" data-bs-dismiss="modal">Deposit</button>
+              <button @click="depositIntoFund" type="button" class="btn btn-success" data-bs-dismiss="modal">Deposit</button>
             </div>
           </div>
         </div>
