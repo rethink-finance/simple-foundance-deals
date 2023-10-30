@@ -47,6 +47,7 @@ export default {
       NAVNFTType: {
         "ERC1155": 0,
         "ERC721": 1,
+        "NONE": 2
       },
       NAVComposableUpdateReturnType: {
         "UINT256": 0,
@@ -67,7 +68,7 @@ export default {
   computed: {
     ...mapGetters("accounts", ["getActiveAccount", "getChainId", "getChainName", "getWeb3", "isUserConnected"]),
     ...mapGetters("fundFactory", ["getFundFactoryContract", "getFunds"]),
-    ...mapGetters("fund", ["getSelectedFundAddress"]),
+    ...mapGetters("fund", ["getSelectedFundAddress", "getFundAbi"]),
 
     getFundData(){
       console.log(this.getSelectedFundAddress);

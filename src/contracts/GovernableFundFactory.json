@@ -190,30 +190,6 @@
           "type": "uint256"
         }
       ],
-      "name": "registeredFunds",
-      "outputs": [
-        {
-          "internalType": "address[]",
-          "name": "",
-          "type": "address[]"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "start",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "end",
-          "type": "uint256"
-        }
-      ],
       "name": "registeredFundsData",
       "outputs": [
         {

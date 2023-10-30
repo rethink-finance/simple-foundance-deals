@@ -3,7 +3,8 @@
 <div class="section-small">
 
   <div class="d-flex justify-content-between flex-wrap">
-    <h3>Nav Update Entry</h3>
+    <h3>Nav Update Entry</h3>    
+
     <!-- Action button -->
     <div>
       <button @click="toggleForm" class="btn btn-success" v-if="!showForm">
@@ -19,6 +20,20 @@
       <span></span>
     </div>
   </div>
+
+
+  <div v-if="showForm">
+    <div class="section-big row mt-4 mx-3">
+      <div class="col-md-12">
+        <AddPastNavEntryRef :entry="entry" />
+        <span></span>
+      </div>
+    </div>
+
+    <span></span>
+    <span></span>
+  </div>
+
 
   <div v-if="showForm">
     <!------ Adding/reference LiquidUpdate ------>
@@ -93,6 +108,7 @@ import AddLiquidUpdate from './AddLiquidUpdate.vue';
 import AddIlliquidUpdate from './AddIlliquidUpdate.vue';
 import AddNftUpdate from './AddNftUpdate.vue';
 import AddComposableUpdate from './AddComposableUpdate.vue';
+import AddPastNavEntryRef from './AddPastNavEntryRef.vue';
 
 
 export default {
@@ -113,6 +129,7 @@ export default {
     AddIlliquidUpdate,
     AddNftUpdate,
     AddComposableUpdate,
+    AddPastNavEntryRef,
   },
 
   created() {
@@ -122,24 +139,43 @@ export default {
     ...mapGetters("accounts", ["getWeb3"]),
   },
 
+  /*
+
+    NavUpdateType: {
+        "NAVLiquidUpdateType": 0,
+        "NAVIlliquidUpdateType": 1,
+        "NAVNFTUpdateType": 2,
+        "NAVComposableUpdateType": 3
+      },
+
+  */
+
   methods: {
     toggleHidden() {
       if (this.entry.liquidUpdates.length > 0) {
           this.showIliq = false;
           this.showNft = false;
           this.showComp = false;
+
+          this.entry.entryType = "NAVLiquidUpdateType";
         } else if (this.entry.illiquidUpdates.length > 0) {
           this.showLiq = false;
           this.showNft = false;
           this.showComp = false;
+
+          this.entry.entryType = "NAVIlliquidUpdateType";
         } else if (this.entry.nftUpdates.length > 0) {
           this.showLiq = false;
           this.showIliq = false;
           this.showComp = false;
+
+          this.entry.entryType = "NAVNFTUpdateType";
         } else if (this.entry.composableUpdates.length > 0) {
           this.showLiq = false;
           this.showIliq = false;
           this.showNft = false;
+
+          this.entry.entryType = "NAVComposableUpdateType";
         }
     },
     toggleForm() {
