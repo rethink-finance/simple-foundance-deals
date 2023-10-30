@@ -86,6 +86,7 @@ export default {
     if (!this.getWeb3 || !this.isUserConnected) {
       this.$router.push({ name: 'home'});
     }
+    this.$store.dispatch("fund/fetchContract");
 
   },
 
@@ -163,9 +164,9 @@ export default {
           String((Number(illiquidUpdates[i].baseCurrencySpent) * (10 ** 18)).toLocaleString('fullwide', {useGrouping:false})), //price * 10 ** 18 TODO: need to use base currency decimals
           parseInt(illiquidUpdates[i].amountAquiredTokens),
           illiquidUpdates[i].tokenAddress,
-          components.BOOL_TYPE[illiquidUpdates[i].isNFT], 
+          this.BOOL_TYPE[illiquidUpdates[i].isNFT], 
           illiquidUpdates[i].otcTxHashes.split(",").filter((val) => (val != "") ? true :  false),
-          components.NAVNFTType[illiquidUpdates[i].nftType],
+          this.NAVNFTType[illiquidUpdates[i].nftType],
           parseInt(illiquidUpdates[i].nftIndex),
           parseInt(illiquidUpdates[i].pastNAVUpdateIndex)
         ];
@@ -225,15 +226,18 @@ export default {
         }
       */
 
+      /*
       let addLiquidUpdateAbiJSON = component.getFundAbi[8];
       let addIlliquidUpdateAbiJSON = component.getFundAbi[33];
       let addNftUpdateAbiJSON = component.getFundAbi[32];
       let addComposableUpdateAbiJSON = component.getFundAbi[32];
-      let addNavUpdateEntryAbiJSON = component.getFundAbi[32];
+      */
+      let addNavUpdateEntryAbiJSON = component.getFundAbi[47];
 
+      /*
       for (var i in component.getFundAbi) {
         console.log(i + " " + JSON.stringify(component.getFundAbi[i]));
-      }
+      }*/
 
       let dataNavUpdateEntries = [];
 

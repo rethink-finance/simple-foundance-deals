@@ -20,7 +20,7 @@ const getters = {
   getSelectedFundAddress(state){
     return state.selectedFundAddress;
   },
-  geFundAbi(state) {
+  getFundAbi(state) {
     return state.abi[state.selectedFundAddress];
   },
   getFundAddress(state) {
