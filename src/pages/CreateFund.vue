@@ -4,7 +4,7 @@
 
   <div class="section-big row mt-4 mx-3">
     <div class="col-md-12">
-      <FundInput :fund="fund" />
+      <FundInput :fund="fund" :governor="governor"/>
       <span></span>
     </div>
     <div class="fund-submit-buttons">
@@ -49,6 +49,12 @@ export default {
         governanceToken: "0x0000000000000000000000000000000000000000",
         fundName: "",
         fundSymbol: ""
+      },
+      governor: {
+        quorumFraction: null,
+        lateQuorum: null,
+        votingDelay: null,
+        votingPeriod: null
       }
     }
   },
@@ -69,6 +75,13 @@ export default {
       if(obj.allowedManagers.length == 0) return false;
       if(obj.fundName.length == 0) return false;
       if(obj.fundSymbol.length == 0) return false;
+      return true;
+    },
+    validateGovernor(obj) {
+      if(obj.quorumFraction == null) return false;
+      if(obj.lateQuorum == null) return false;
+      if(obj.votingDelay == null) return false;
+      if(obj.votingPeriod == null) return false;
       return true;
     },
     async createFund () {
@@ -94,7 +107,7 @@ export default {
             string fundSymbol;
           }
       */
-      if (component.validateFund(component.fund)) {
+      if (component.validateFund(component.fund) && component.validateGovernor(component.governor)) {
         await component.getFundFactoryContract.methods.createFund(
           [
             parseInt(component.fund.depositFee),
@@ -112,7 +125,11 @@ export default {
             "0x0000000000000000000000000000000000000000",
             "0x0000000000000000000000000000000000000000",
             component.fund.fundName,
-            component.fund.fundSymbol
+            component.fund.fundSymbol,
+            parseInt(component.governor.quorumFraction),
+            parseInt(component.governor.lateQuorum),
+            parseInt(component.governor.votingDelay),
+            parseInt(component.governor.votingPeriod),
           ]
         ).send({
           from: component.getActiveAccount,
