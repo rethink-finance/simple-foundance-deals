@@ -37,12 +37,12 @@ export default {
       fund: {},
       entryIdx: 0,
       BOOL_TYPE: {
-        "true": 1,
-        "false": 0
+        "true": true,
+        "false": false
       },
       PastNAVUpdateMap: {
-        "true": 1,
-        "false": 0
+        "true": true,
+        "false": false
       },
       NAVNFTType: {
         "ERC1155": 0,
@@ -160,12 +160,16 @@ export default {
       let data = [];
 
       for(let i=0; i<illiquidUpdates.length; i++) {
+        let hashes = illiquidUpdates[i].otcTxHashes.split(",");
+        console.log(this.NAVNFTType);
+        console.log(illiquidUpdates[i].nftType);
+        console.log(this.NAVNFTType[illiquidUpdates[i].nftType]);
         let parameters = [
           String((Number(illiquidUpdates[i].baseCurrencySpent) * (10 ** 18)).toLocaleString('fullwide', {useGrouping:false})), //price * 10 ** 18 TODO: need to use base currency decimals
           parseInt(illiquidUpdates[i].amountAquiredTokens),
           illiquidUpdates[i].tokenAddress,
           this.BOOL_TYPE[illiquidUpdates[i].isNFT], 
-          illiquidUpdates[i].otcTxHashes.split(",").filter((val) => (val != "") ? true :  false),
+          hashes.filter((val) => (val != "") ? true :  false),
           this.NAVNFTType[illiquidUpdates[i].nftType],
           parseInt(illiquidUpdates[i].nftIndex),
           parseInt(illiquidUpdates[i].pastNAVUpdateIndex)
@@ -181,7 +185,7 @@ export default {
         let parameters = [
           nftUpdates[i].oracleAddress,
           nftUpdates[i].nftAddress,
-          this.NAVNFTType[illiquidUpdates[i].nftType],
+          this.NAVNFTType[nftUpdates[i].nftType],
           parseInt(nftUpdates[i].nftIndex),
           parseInt(nftUpdates[i].pastNAVUpdateIndex)
         ];
@@ -263,12 +267,22 @@ export default {
             parseInt(component.navUpdateEntries[i].pastNAVUpdateEntryIndex),            
           ];
 
+
           dataNavUpdateEntries.push(
             parameters
           );
         }
       }
 
+      /*
+        TODO: ISSUE WITH ENCODING illiquidUpdates
+
+        TypeError: can't assign to property 0 on 1: not an object
+
+      */
+
+      console.log(JSON.stringify(dataNavUpdateEntries));
+      console.log(addNavUpdateEntryAbiJSON);
       let encodedDataNavUpdateEntries = component.getWeb3.eth.abi.encodeFunctionCall(addNavUpdateEntryAbiJSON, dataNavUpdateEntries);
 
       const rethinkFundGovernorContract = new component.getWeb3.eth.Contract(
