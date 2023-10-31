@@ -70,16 +70,7 @@ export default {
     ...mapGetters("fundFactory", ["getFundFactoryContract", "getFunds"]),
     ...mapGetters("fund", ["getSelectedFundAddress", "getFundAbi"]),
 
-    getFundData(){
-      console.log(this.getSelectedFundAddress);
-      console.log(this.getFunds[fidx]);
-      for (var fidx in this.getFunds){
-        if (this.getFunds[fidx].fundAddress == this.getSelectedFundAddress) {
-          this.fund = this.getFunds[fidx];
-          return this.getFunds[fidx];
-        }
-      }
-    },
+    
 
   },
   created() {
@@ -87,10 +78,21 @@ export default {
       this.$router.push({ name: 'home'});
     }
     this.$store.dispatch("fund/fetchContract");
+    this.getFundData()
 
   },
 
   methods: {
+    getFundData(){
+      console.log(this.getSelectedFundAddress);
+      for (var fidx in this.getFunds){
+        if (this.getFunds[fidx].fundAddress == this.getSelectedFundAddress) {
+          this.fund = this.getFunds[fidx];
+          console.log(this.getFunds[fidx]);
+          return this.getFunds[fidx];
+        }
+      }
+    },
 
   /*
     struct NavUpdateEntry {
@@ -264,9 +266,8 @@ export default {
             ),//NAVComposableUpdate[] composable;
             component.PastNAVUpdateMap[component.navUpdateEntries[i].isPastNAVUpdate],
             parseInt(component.navUpdateEntries[i].pastNAVUpdateIndex),
-            parseInt(component.navUpdateEntries[i].pastNAVUpdateEntryIndex),            
+            parseInt(component.navUpdateEntries[i].pastNAVUpdateEntryIndex)         
           ];
-
 
           dataNavUpdateEntries.push(
             parameters
@@ -283,7 +284,11 @@ export default {
 
       console.log(JSON.stringify(dataNavUpdateEntries));
       console.log(addNavUpdateEntryAbiJSON);
-      let encodedDataNavUpdateEntries = component.getWeb3.eth.abi.encodeFunctionCall(addNavUpdateEntryAbiJSON, dataNavUpdateEntries);
+      let encodedDataNavUpdateEntries = component.getWeb3.eth.abi.encodeFunctionCall(addNavUpdateEntryAbiJSON, [dataNavUpdateEntries]);
+
+      console.log(component.fund.governor);
+      console.log(component.getSelectedFundAddress);
+      console.log(component.getActiveAccount);
 
       const rethinkFundGovernorContract = new component.getWeb3.eth.Contract(
         RethinkFundGovernorJSON.abi,
@@ -302,10 +307,10 @@ export default {
 
       //proposae nav update for fund (target: fund addr, payloadL bytes)
       await rethinkFundGovernorContract.methods.propose(
-        [component.fund.fundAddress],
+        [component.getSelectedFundAddress],
         [0],
         [encodedDataNavUpdateEntries],
-        "NAV UPDATE"
+        "NAV UPDATE ILLIQUID TEST"
       ).send({
         from: component.getActiveAccount,
         maxPriorityFeePerGas: null,
@@ -319,14 +324,14 @@ export default {
           component.$toast.success("Register the proposal transactions was successfull. You can now vote on the proposal in the pool governance page.");
           
         } else {
-          component.$toast.error("The register proposal tx has failed. Please contact the DeFi Options support.");
+          component.$toast.error("The register proposal tx has failed. Please contact the Rethink Finance support.");
         }
         component.loading = false;
 
       }).on('error', function(error){
         console.log(error);
         component.loading = false;
-        component.$toast.error("There has been an error. Please contact the DeFi Options support.");
+        component.$toast.error("There has been an error. Please contact the Rethink Finance support.");
       });
 
     },
