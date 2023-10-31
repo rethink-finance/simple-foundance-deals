@@ -11,6 +11,20 @@
     <div class="section-big row mt-4 mx-3">
 
       <div class="col-md-9">
+        <!------ Delegate Gov Tokens ------>
+        <div class="section-big row mt-4 mx-3">
+          <div class="col-md-12">
+            <SetAddress :data="DelegateTo" />
+            <span></span>
+            <button @click="delegate" class="btn btn-success">
+              <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+              Delegate {{formattedFundSymbol}}
+            </button>
+          </div>
+        </div>
+        <span></span>
+        <span></span>
+
         <FundDeposit :fund="getFundData" />
 
         <FundWithdraw :fund="getFundData" />
@@ -31,6 +45,7 @@
 <script>
 
 import { mapGetters, mapActions } from "vuex";
+import SetAddress from '../components/gov/SetAddress.vue';
 import MintFakeTokens from '../components/tokens/MintFakeTokens.vue';
 import PrepRoleMod from '../components/gov/PrepRoleMod.vue';
 import FundDeposit from '../components/fund/FundDeposit.vue';
@@ -40,9 +55,9 @@ export default {
   name: "ViewFund",
 
   computed: {
-    ...mapGetters("accounts", ["getWeb3", "getChainName", "isUserConnected"]),
+    ...mapGetters("accounts", ["getActiveAccount", "getChainId", "getChainName", "getWeb3", "isUserConnected"]),
     ...mapGetters("fundFactory", ["getFundFactoryContract", "getFunds"]),
-    ...mapGetters("fund", ["getSelectedFundAddress"]),
+    ...mapGetters("fund", ["getSelectedFundAddress", "getFundContract"]),
 
     getFundData(){
       console.log(this.getSelectedFundAddress);
@@ -125,47 +140,33 @@ export default {
     MintFakeTokens,
     PrepRoleMod,
     FundWithdraw,
-    FundDeposit
+    FundDeposit,
+    SetAddress
   },
 
   data() {
     return {
       loading: false,
-      fund: {}
+      fund: {},
+      DelegateTo: {
+        addr: null,
+        desc: "Delegate Governance Token To Address"
+      },
     }
   },
 
   methods: {
     ...mapActions("accounts", ["connectWeb3Modal"]),
 
-    async approveAllowance() {
+    async delegate() {
       let component = this;
-      component.loading = true;
-      component.getOptionPrice(); // refresh the option price
-      // define unit and token contract
-      let unit = "ether"; // Exchange Balance & DAI - 18 decimals
-      let tokenContract = component.getOptionsExchangeContract; // Exchange Balance contract
-      if (component.buyWith === "USDT") {
-        unit = "kwei"; // USDT (Tether) - 4 decimals
-        // TODO: tokenContract = ...; // USDT contract
-      }
-      if (component.buyWith === "USDC") {
-        unit = "mwei"; // USDC - 6 decimals
-        tokenContract = component.getUsdcContract; // USDC contract
-      }
-      if (component.buyWith === "DAI") {
-        tokenContract = component.getDaiContract; // DAI contract
-      }
-      // define allowance value
-      let allowanceValue = component.getTotal * 1.05; // make it 5% bigger to avoid slippage issues
-      if (component.unlimitedApproval) {
-        allowanceValue = 10 ** 9; // 1B tokens as "unlimited" value
-      }
-      const allowanceValueWei = component.getWeb3.utils.toWei(String(allowanceValue.toFixed(4)), unit); // round to 4 decimals
-      
-      // call the approve method
-      try {
-        await tokenContract.methods.approve(component.option.poolAddr, allowanceValueWei).send({
+      if (component.fund.fundAddress != null) {
+        component.loading = true;
+        //  gov contract
+
+        await component.getFundContract.methods.delegate(
+          component.DelegateTo.addr
+        ).send({
           from: component.getActiveAccount,
           maxPriorityFeePerGas: null,
           maxFeePerGas: null
@@ -175,37 +176,20 @@ export default {
         }).on('receipt', function(receipt){
           console.log(receipt);
           if (receipt.status) {
-            component.$toast.success("The approval was successfull. You can buy the option now.");
-            // refresh values
-            if (component.buyWith === "DAI") {
-              // needs to be updated this way because Polygon RPC nodes are slow with updating state
-              component.$store.state.dai.lpAllowance = allowanceValue;
-            } else if (component.buyWith === "USDC") {
-              // needs to be updated this way because Polygon RPC nodes are slow with updating state
-              component.$store.state.usdc.lpAllowance = allowanceValue;
-            } else if (component.buyWith === "USDT") {
-              // needs to be updated this way because Polygon RPC nodes are slow with updating state
-              // component.$store.state.tether.lpAllowance = allowanceValue;
-            } else if (component.buyWith === "Exchange Balance") {
-              // needs to be updated this way because Polygon RPC nodes are slow with updating state
-              component.$store.state.optionsExchange.userExchangeBalanceAllowance = allowanceValue;
-            }
-            component.getOptionPrice(); // refresh the option price
-            
+            component.$toast.success("Delegation of Governance Tokens Succeeded");
           } else {
-            component.$toast.error("The transaction has failed. Please contact the DeFi Options support.");
+            component.$toast.error("The delegateTo tx has failed. Please contact the Rethink Finance support.");
           }
+          component.loading = false;
+
         }).on('error', function(error){
           console.log(error);
-          component.$toast.error("There has been an error. Please contact the DeFi Options support.");
+          component.loading = false;
+          component.$toast.error("There has been an error. Please contact the Rethink Finance support.");
         });
-      } catch (e) {
-          window.console.log("Error:", e);
-          component.$toast.error("The transaction has been reverted. Please try again or contact DeFi Options support.");
-      } finally {
-        component.loading = false;
       }
-    },
+
+    }
 
   }
 }
