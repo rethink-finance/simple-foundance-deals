@@ -106,6 +106,33 @@
           "internalType": "struct IGovernableFundStorage.Settings",
           "name": "fundSettings",
           "type": "tuple"
+        },
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "quorumFraction",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "lateQuorum",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "votingDelay",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "votingPeriod",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct GovernableFundFactory.GovernorParams",
+          "name": "governorSettings",
+          "type": "tuple"
         }
       ],
       "name": "createFund",
@@ -169,6 +196,11 @@
         {
           "internalType": "address",
           "name": "fundDelgateCallNavSingletonAddress",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "governableContractFactorySingletonAddress",
           "type": "address"
         }
       ],
