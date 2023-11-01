@@ -125,7 +125,9 @@ export default {
             "0x0000000000000000000000000000000000000000",
             "0x0000000000000000000000000000000000000000",
             component.fund.fundName,
-            component.fund.fundSymbol,
+            component.fund.fundSymbol
+          ],
+          [
             parseInt(component.governor.quorumFraction),
             parseInt(component.governor.lateQuorum),
             parseInt(component.governor.votingDelay),
