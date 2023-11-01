@@ -19,6 +19,7 @@
 import { mapGetters } from "vuex";
 import SafeMultiSendCallOnlyJSON from "../../contracts/safe/SafeMultiSendCallOnly.json";
 import GnosisSafeL2JSON from '../../contracts/safe/GnosisSafeL2_v1_3_0.json';
+import RethinkFundGovernorJSON from "../../contracts/RethinkFundGovernor.json";
 
 export default {
   name: "RoleModFormatting",
@@ -49,18 +50,21 @@ export default {
   },
 
   methods: {
-    formatRoleMods(){
-      let to = SafeMultiSendCallOnlyJSON.networkAddresses[parseInt(this.getChainId).toString()];
+    async formatRoleMods() {
+      let component = this;
+      let to = SafeMultiSendCallOnlyJSON.networkAddresses[parseInt(component.getChainId).toString()];
       console.log(to);
       let multisendAbiJSON = SafeMultiSendCallOnlyJSON.abi[0];
-      this.processedTxs = [];
+      component.processedTxs = [];
+      let targets = [];
+      let gasVals = [];
       
       //execTransaction function
       let execTransactionAbiJSON = GnosisSafeL2JSON.abi[29];
 
-      const signature = '0x000000000000000000000000' + this.getSelectedFundGovenerAddress.slice(2) + '0000000000000000000000000000000000000000000000000000000000000000' + '01';
-      for (var tx in this.transactions){
-        let filteredTxData = this.getWeb3.eth.abi.encodeFunctionCall(multisendAbiJSON, [this.transactions[tx].data]);
+      const signature = '0x000000000000000000000000' + component.getSelectedFundGovenerAddress.slice(2) + '0000000000000000000000000000000000000000000000000000000000000000' + '01';
+      for (var tx in component.transactions){
+        let filteredTxData = component.getWeb3.eth.abi.encodeFunctionCall(multisendAbiJSON, [component.transactions[tx].data]);
 
         let formatSafeTxInput = [
           to,//MultiSendCallOnly
@@ -75,10 +79,56 @@ export default {
           signature
         ];
 
-        let filteredFinalTxData = this.getWeb3.eth.abi.encodeFunctionCall(execTransactionAbiJSON, formatSafeTxInput);
+        let filteredFinalTxData = component.getWeb3.eth.abi.encodeFunctionCall(execTransactionAbiJSON, formatSafeTxInput);
 
-        this.processedTxs.push(filteredFinalTxData);
+        component.processedTxs.push(filteredFinalTxData);
+        targets.push(component.fund.safe);
+        gasVals.push(0);
       }
+
+      const rethinkFundGovernorContract = new component.getWeb3.eth.Contract(
+        RethinkFundGovernorJSON.abi,
+        component.fund.governor
+      );
+
+      /*
+
+        function propose(
+          address[] memory targets,
+          uint256[] memory values,
+          bytes[] memory calldatas,
+          string memory description
+      ) 
+        */
+
+      //propose rolemods or generic tx's for safe (target: safe, payloadL bytes)
+      await rethinkFundGovernorContract.methods.propose(
+        targets,
+        gasVals,
+        component.processedTxs,
+        "SUBMIT SAFE (ROLE MOD) TRANSACTIONS"
+      ).send({
+        from: component.getActiveAccount,
+        maxPriorityFeePerGas: null,
+        maxFeePerGas: null
+      }).on('transactionHash', function(hash){
+        console.log("tx hash: " + hash);
+        component.$toast.info("The transaction has been submitted. Please wait for it to be confirmed.");
+      }).on('receipt', function(receipt){
+        console.log(receipt);
+        if (receipt.status) {
+          component.$toast.success("Register the proposal (role mod) tx was successfull. You can now vote on the proposal in the pool governance page.");
+          
+        } else {
+          component.$toast.error("The register proposal tx has failed. Please contact the Rethink Finance support.");
+        }
+        component.loading = false;
+
+      }).on('error', function(error){
+        console.log(error);
+        component.loading = false;
+        component.$toast.error("There has been an error. Please contact the Rethink Finance support.");
+      });
     }
   }
 }

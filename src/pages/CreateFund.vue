@@ -95,13 +95,13 @@ export default {
             uint256 managementFee;
             uint256 performaceHurdleRateBps;//TODO: not imp 
             address baseToken;
-            address safe; //TODO: needs to be set after safe creation
-            bool isExternalGovTokenInUse; //TODO: needs to be set after upload
-            bool isWhitelistedDeposits; //TODO: needs to be set after upload
+            address safe; 
+            bool isExternalGovTokenInUse;
+            bool isWhitelistedDeposits;
             address[] allowedDepositAddrs;
             address[] allowedManagers;
             address governanceToken;
-            address governor; //TODO: needs to be set after upload
+            address governor;
             address fundAddress;//TODO: this may not be needed if delegatecall has balance refs to callee addr
             string fundName;
             string fundSymbol;
