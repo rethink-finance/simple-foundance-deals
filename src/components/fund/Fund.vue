@@ -6,6 +6,7 @@
 
     <!-- Fund data -->
     <div class="div-flex justify-content-center flex-wrap">
+      <FundDataItem class="data-item" title="Symbol" :data="fund.fundSymbol" :divider="true" :info="formatAddressInfo" />
       <button @click="toggleFund" style="background: inherit !important; border: 0 !important;"><FundDataItem class="data-item" title="Fund" :data="formatAddress" :divider="true" :info="formatAddressInfo" /></button>
       <button @click="toggleGovernor" style="background: inherit !important; border: 0 !important;"><FundDataItem class="data-item" title="Governance" :data="formatGovernanceAddress" :divider="true" :info="formatAddressInfo"/></button>
       <button @click="toggleSafe" style="background: inherit !important; border: 0 !important;"><FundDataItem class="data-item" title="Safe" :data="formatSafeAddress" :divider="true" :info="formatAddressInfo"/></button>

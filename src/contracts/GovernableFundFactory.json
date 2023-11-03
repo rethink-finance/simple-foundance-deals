@@ -175,6 +175,11 @@
         },
         {
           "internalType": "address",
+          "name": "safeMultisendAddress",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
           "name": "wrappedTokenFactory",
           "type": "address"
         },

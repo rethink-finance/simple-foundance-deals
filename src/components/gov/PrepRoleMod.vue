@@ -49,6 +49,9 @@ export default {
       this.transactions.push({
         idx: this.txIdx++,
         data: null,
+        to: null,
+        gasValue: null,
+        role: null
       });
     },
   }

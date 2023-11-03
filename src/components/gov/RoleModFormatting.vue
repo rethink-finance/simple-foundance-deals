@@ -3,11 +3,18 @@
     <div v-for="tx in transactions" v-bind:key="tx.idx" class="flex flex-col gap-2">
       <h3>Add or Modify Existing Symbol </h3>
       <textarea v-model="tx.data" class="form-control deposit-input" placeholder="(Raw Tx Bytes), Ex: 0xd81F810fc394e96c5D67af8395607C71B0a42d52"></textarea>
+      <input v-model="tx.role" class="form-control deposit-input" placeholder="(Rold Mod ID), Ex: 1">
+      <input v-model="tx.gasValue" class="form-control deposit-input" placeholder="(gas to send with transaction), Ex: 0">
+      <input v-model="tx.target" class="form-control deposit-input" placeholder="(addrrss of contract interaction allowed by role mod), Ex: 0xd81F810fc394e96c5D67af8395607C71B0a42d52">
+
     </div>
 
     <div class="pool-submit-buttons">
-      <button @click="formatRoleMods" class="btn btn-success">
+      <button @click="executeRoleMod" class="btn btn-success" :disabled="true">
         Format Role Mods
+      </button>
+      <button @click="formatRoleMods" class="btn btn-success">
+        Exec Role Mod
       </button>
     </div>
 
@@ -19,6 +26,7 @@
 import { mapGetters } from "vuex";
 import SafeMultiSendCallOnlyJSON from "../../contracts/safe/SafeMultiSendCallOnly.json";
 import GnosisSafeL2JSON from '../../contracts/safe/GnosisSafeL2_v1_3_0.json';
+import ZodiacRoles from '../../contracts/zodiac/Roles.json';
 import RethinkFundGovernorJSON from "../../contracts/RethinkFundGovernor.json";
 
 export default {
@@ -50,6 +58,48 @@ export default {
   },
 
   methods: {
+    async executeRoleMod() {
+
+      const safeContract = new component.getWeb3.eth.Contract(
+        GnosisSafeL2JSON.abi,
+        component.fund.safe
+      );
+
+      let safeModules = await safeContract.methods.getModulesPaginated(0,1).call();
+      const rolesModContract = new component.getWeb3.eth.Contract(
+        ZodiacRoles.abi,
+        safeModules[0]
+      );
+      //execute rolemods transaction
+      await rolesModContract.methods.execTransactionWithRole(
+        component.transactions[0].target,//to
+        component.transactions[0].gasValue,//value
+        component.transactions[0].data,//data
+        component.transactions[0].role,//role
+        1, //shouldRevert
+      ).send({
+        from: component.getActiveAccount,
+        maxPriorityFeePerGas: null,
+        maxFeePerGas: null
+      }).on('transactionHash', function(hash){
+        console.log("tx hash: " + hash);
+        component.$toast.info("The transaction has been submitted. Please wait for it to be confirmed.");
+      }).on('receipt', function(receipt){
+        console.log(receipt);
+        if (receipt.status) {
+          component.$toast.success("Register the proposal (role mod) tx was successfull. You can now vote on the proposal in the pool governance page.");
+          
+        } else {
+          component.$toast.error("The register proposal tx has failed. Please contact the Rethink Finance support.");
+        }
+        component.loading = false;
+
+      }).on('error', function(error){
+        console.log(error);
+        component.loading = false;
+        component.$toast.error("There has been an error. Please contact the Rethink Finance support.");
+      });
+    },
     async formatRoleMods() {
       let component = this;
       let to = SafeMultiSendCallOnlyJSON.networkAddresses[parseInt(component.getChainId).toString()];
