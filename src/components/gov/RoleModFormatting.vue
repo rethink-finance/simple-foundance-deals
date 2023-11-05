@@ -5,7 +5,8 @@
       <textarea v-model="tx.data" class="form-control deposit-input" placeholder="(Raw Tx Bytes), Ex: 0xd81F810fc394e96c5D67af8395607C71B0a42d52"></textarea>
       <input v-model="tx.role" class="form-control deposit-input" placeholder="(Rold Mod ID), Ex: 1">
       <input v-model="tx.gasValue" class="form-control deposit-input" placeholder="(gas to send with transaction), Ex: 0">
-      <input v-model="tx.target" class="form-control deposit-input" placeholder="(addrrss of contract interaction allowed by role mod), Ex: 0xd81F810fc394e96c5D67af8395607C71B0a42d52">
+      <input v-model="tx.target" class="form-control deposit-input" placeholder="(address of contract interaction allowed by role mod), Ex: 0xd81F810fc394e96c5D67af8395607C71B0a42d52">
+      <input v-model="tx.op" class="form-control deposit-input" placeholder="(operation), Ex: 1">
 
     </div>
 
@@ -50,6 +51,7 @@ export default {
 
   computed: {
         ...mapGetters("accounts", ["getActiveAccount", "getChainName", "getWeb3", "isUserConnected", "getChainId"]),
+        ...mapGetters("fund", ["getSelectedFundAddress", "getFundContract"]),
 
         getSelectedFundGovenerAddress(){
           console.log(this.fund);
@@ -71,12 +73,13 @@ export default {
         safeModules[0]
       );
       //execute rolemods transaction
-      await rolesModContract.methods.execTransactionWithRole(
+      await getFundContract.methods.execTransactionWithRole(
+        safeModules[0], //rolesMod addr
         component.transactions[0].target,//to
         component.transactions[0].gasValue,//value
         component.transactions[0].data,//data
+        component.transactions[0].op,//op
         component.transactions[0].role,//role
-        1, //shouldRevert
       ).send({
         from: component.getActiveAccount,
         maxPriorityFeePerGas: null,

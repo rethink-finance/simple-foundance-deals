@@ -51,7 +51,8 @@ export default {
         data: null,
         to: null,
         gasValue: null,
-        role: null
+        role: null,
+        op: null,
       });
     },
   }
