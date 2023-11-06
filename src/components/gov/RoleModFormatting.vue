@@ -1,5 +1,22 @@
 <template>
   <div>
+    <div class="flex flex-col gap-2">
+      <h3>Execute Governance Proposal</h3>
+      <input v-model="govProposal.targets" class="form-control deposit-input" placeholder="(External Target Addrs), Ex: 0xd81F810fc394e96c5D67af8395607C71B0a42d52,0xd81F810fc394e96c5D67af8395607C71B0a42d52,0xd81F810fc394e96c5D67af8395607C71B0a42d52">
+      <input v-model="govProposal.values" class="form-control deposit-input" placeholder="(gas to send with transaction), Ex: 0,0,0">
+      <input v-model="govProposal.calldatas" class="form-control deposit-input" placeholder="(call data of tx's), Ex: 0xd81F810fc394e96c5D67af8395607C71B0a42d52,0xd81F810fc394e96c5D67af8395607C71B0a42d52,0xd81F810fc394e96c5D67af8395607C71B0a42d52">
+      <input v-model="govProposal.description" class="form-control deposit-input" placeholder="(Desc of Gov Proposal), Ex: Blah Blah Blah">
+
+    </div>
+
+    <div class="pool-submit-buttons">
+      <button @click="executeGovProposal" class="btn btn-success">
+        Exec Gov Proposal
+      </button>
+    </div>
+
+    <pre>{{ govProposal }}</pre>
+
     <div v-for="tx in transactions" v-bind:key="tx.idx" class="flex flex-col gap-2">
       <h3>Add or Modify Existing Symbol </h3>
       <textarea v-model="tx.data" class="form-control deposit-input" placeholder="(Raw Tx Bytes), Ex: 0xd81F810fc394e96c5D67af8395607C71B0a42d52"></textarea>
@@ -20,23 +37,6 @@
     </div>
 
     <pre>{{ processedTxs }}</pre>
-
-    <div class="flex flex-col gap-2">
-      <h3>Execute Governance Proposal</h3>
-      <input v-model="govProposal.targets" class="form-control deposit-input" placeholder="(External Target Addrs), Ex: 0xd81F810fc394e96c5D67af8395607C71B0a42d52,0xd81F810fc394e96c5D67af8395607C71B0a42d52,0xd81F810fc394e96c5D67af8395607C71B0a42d52">
-      <input v-model="govProposal.values" class="form-control deposit-input" placeholder="(gas to send with transaction), Ex: 0,0,0">
-      <input v-model="govProposal.calldatas" class="form-control deposit-input" placeholder="(call data of tx's), Ex: 0xd81F810fc394e96c5D67af8395607C71B0a42d52,0xd81F810fc394e96c5D67af8395607C71B0a42d52,0xd81F810fc394e96c5D67af8395607C71B0a42d52">
-      <input v-model="govProposal.description" class="form-control deposit-input" placeholder="(Desc of Gov Proposal), Ex: Blah Blah Blah">
-
-    </div>
-
-    <div class="pool-submit-buttons">
-      <button @click="executeGovProposal" class="btn btn-success">
-        Exec Gov Proposal
-      </button>
-    </div>
-
-    <pre>{{ govProposal }}</pre>
   </div>
 </template>
 
