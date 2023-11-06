@@ -20,6 +20,23 @@
     </div>
 
     <pre>{{ processedTxs }}</pre>
+
+    <div class="flex flex-col gap-2">
+      <h3>Execute Governance Proposal</h3>
+      <input v-model="govProposal.targets" class="form-control deposit-input" placeholder="(External Target Addrs), Ex: 0xd81F810fc394e96c5D67af8395607C71B0a42d52,0xd81F810fc394e96c5D67af8395607C71B0a42d52,0xd81F810fc394e96c5D67af8395607C71B0a42d52">
+      <input v-model="govProposal.values" class="form-control deposit-input" placeholder="(gas to send with transaction), Ex: 0,0,0">
+      <input v-model="govProposal.calldatas" class="form-control deposit-input" placeholder="(call data of tx's), Ex: 0xd81F810fc394e96c5D67af8395607C71B0a42d52,0xd81F810fc394e96c5D67af8395607C71B0a42d52,0xd81F810fc394e96c5D67af8395607C71B0a42d52">
+      <input v-model="govProposal.description" class="form-control deposit-input" placeholder="(Desc of Gov Proposal), Ex: Blah Blah Blah">
+
+    </div>
+
+    <div class="pool-submit-buttons">
+      <button @click="executeGovProposal" class="btn btn-success">
+        Exec Gov Proposal
+      </button>
+    </div>
+
+    <pre>{{ govProposal }}</pre>
   </div>
 </template>
 
@@ -36,7 +53,13 @@ export default {
 
   data() {
     return {
-      processedTxs: []
+      processedTxs: [],
+      govProposal: {
+        "targets": null,
+        "values": null,
+        "calldatas": null,
+        "description": null
+      }
     }
   },
 
@@ -60,8 +83,53 @@ export default {
   },
 
   methods: {
-    async executeRoleMod() {
+    async executeGovProposal() {
+      let component = this;
+      /*
+        function execute(
+          address[] memory targets,
+          uint256[] memory values,
+          bytes[] memory calldatas,
+          bytes32 descriptionHash
+      ) 
+      */
 
+      const rethinkFundGovernorContract = new component.getWeb3.eth.Contract(
+        RethinkFundGovernorJSON.abi,
+        component.fund.governor
+      );
+
+      //execute rolemods transaction
+      await rethinkFundGovernorContract.methods.execute(
+        component.govProposal.targets.split(",").filter((val) => (val != "") ? true :  false),//targets
+        component.govProposal.values.split(",").filter((val) => (val != "") ? true :  false),//values
+        component.govProposal.calldatas.split(",").filter((val) => (val != "") ? true :  false),//calldatas
+        component.getWeb3.eth.abi.encode(component.govProposal.description),//data
+      ).send({
+        from: component.getActiveAccount,
+        maxPriorityFeePerGas: null,
+        maxFeePerGas: null
+      }).on('transactionHash', function(hash){
+        console.log("tx hash: " + hash);
+        component.$toast.info("The transaction has been submitted. Please wait for it to be confirmed.");
+      }).on('receipt', function(receipt){
+        console.log(receipt);
+        if (receipt.status) {
+          component.$toast.success("Executing gov proposal tx was successfull.");
+          
+        } else {
+          component.$toast.error("The Executing gov proposal tx has failed. Please contact the Rethink Finance support.");
+        }
+        component.loading = false;
+
+      }).on('error', function(error){
+        console.log(error);
+        component.loading = false;
+        component.$toast.error("There has been an error. Please contact the Rethink Finance support.");
+      });
+    },
+    async executeRoleMod() {
+      let component = this;
       const safeContract = new component.getWeb3.eth.Contract(
         GnosisSafeL2JSON.abi,
         component.fund.safe
