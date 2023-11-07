@@ -104,7 +104,7 @@ export default {
         component.govProposal.targets.split(",").filter((val) => (val != "") ? true :  false),//targets
         component.govProposal.values.split(",").filter((val) => (val != "") ? true :  false),//values
         component.govProposal.calldatas.split(",").filter((val) => (val != "") ? true :  false),//calldatas
-        component.getWeb3.eth.abi.encode(component.govProposal.description),//data
+        component.getWeb3.eth.abi.encodeParameters(["bytes32"], [component.govProposal.description]),//data
       ).send({
         from: component.getActiveAccount,
         maxPriorityFeePerGas: null,
