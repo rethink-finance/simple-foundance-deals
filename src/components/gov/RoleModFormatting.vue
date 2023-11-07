@@ -46,6 +46,7 @@ import SafeMultiSendCallOnlyJSON from "../../contracts/safe/SafeMultiSendCallOnl
 import GnosisSafeL2JSON from '../../contracts/safe/GnosisSafeL2_v1_3_0.json';
 import ZodiacRoles from '../../contracts/zodiac/Roles.json';
 import RethinkFundGovernorJSON from "../../contracts/RethinkFundGovernor.json";
+import { ethers } from "ethers";
 
 export default {
   name: "RoleModFormatting",
@@ -58,7 +59,7 @@ export default {
         "targets": null,
         "values": null,
         "calldatas": null,
-        "description": null
+        "description": ""
       }
     }
   },
@@ -85,7 +86,8 @@ export default {
   methods: {
     async executeGovProposal() {
       let component = this;
-      /*
+      component.loading = true;
+     /*
         function execute(
           address[] memory targets,
           uint256[] memory values,
@@ -104,7 +106,7 @@ export default {
         component.govProposal.targets.split(",").filter((val) => (val != "") ? true :  false),//targets
         component.govProposal.values.split(",").filter((val) => (val != "") ? true :  false),//values
         component.govProposal.calldatas.split(",").filter((val) => (val != "") ? true :  false),//calldatas
-        component.getWeb3.eth.abi.encodeParameters(["bytes32"], [component.govProposal.description]),//data
+        ethers.utils.formatBytes32String(component.govProposal.description),//data
       ).send({
         from: component.getActiveAccount,
         maxPriorityFeePerGas: null,
@@ -130,7 +132,8 @@ export default {
     },
     async executeRoleMod() {
       let component = this;
-      const safeContract = new component.getWeb3.eth.Contract(
+      component.loading = true;
+     const safeContract = new component.getWeb3.eth.Contract(
         GnosisSafeL2JSON.abi,
         component.fund.safe
       );
