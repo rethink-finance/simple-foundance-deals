@@ -31,10 +31,10 @@
     </div>
 
     <div class="pool-submit-buttons">
-      <button @click="executeRoleMod" class="btn btn-success" :disabled="true">
+      <button @click="formatRoleMods" class="btn btn-success" :disabled="true">
         Format Role Mods
       </button>
-      <button @click="formatRoleMods" class="btn btn-success">
+      <button @click="executeRoleMod" class="btn btn-success">
         Exec Role Mod
       </button>
     </div>
@@ -146,19 +146,17 @@ export default {
     async executeRoleMod() {
       let component = this;
       component.loading = true;
-     const safeContract = new component.getWeb3.eth.Contract(
+      const safeContract = new component.getWeb3.eth.Contract(
         GnosisSafeL2JSON.abi,
         component.fund.safe
       );
-
-      let safeModules = await safeContract.methods.getModulesPaginated(0,1).call();
-      const rolesModContract = new component.getWeb3.eth.Contract(
-        ZodiacRoles.abi,
-        safeModules[0]
-      );
+      console.log(component.fund.safe);
+      let addr1 = "0x0000000000000000000000000000000000000001";
+      let safeModules = await safeContract.methods.getModulesPaginated(addr1, 10).call();
+      console.log(safeModules[0][1]);
       //execute rolemods transaction
-      await getFundContract.methods.execTransactionWithRole(
-        safeModules[0], //rolesMod addr
+      await component.getFundContract.methods.execTransactionWithRole(
+        safeModules[0][1], //rolesMod addr
         component.transactions[0].target,//to
         component.transactions[0].gasValue,//value
         component.transactions[0].data,//data
