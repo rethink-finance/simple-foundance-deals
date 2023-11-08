@@ -91,7 +91,7 @@ export default {
     formatExecuteGovProposal() {
         let sampleTx = [
           this.govProposal.targets.split(",").filter((val) => (val != "") ? true :  false),//targets
-          this.govProposal.values.split(",").filter((val) => (val != "") ? true :  false),//values
+          this.govProposal.values.split(",").filter((val) => (val != "") ? true :  false).map(val => (parseInt(val))),//values
           this.govProposal.calldatas.split(",").filter((val) => (val != "") ? true :  false),//calldatas
           ethers.utils.formatBytes32String(this.govProposal.description)//data
         ];
@@ -117,7 +117,7 @@ export default {
       //execute rolemods transaction
       await rethinkFundGovernorContract.methods.execute(
         component.govProposal.targets.split(",").filter((val) => (val != "") ? true :  false),//targets
-        component.govProposal.values.split(",").filter((val) => (val != "") ? true :  false),//values
+        component.govProposal.values.split(",").filter((val) => (val != "") ? true :  false).map(val => (parseInt(val))),//values
         component.govProposal.calldatas.split(",").filter((val) => (val != "") ? true :  false),//calldatas
         ethers.utils.formatBytes32String(component.govProposal.description)//data
       ).send({
