@@ -10,12 +10,15 @@
     </div>
 
     <div class="pool-submit-buttons">
+      <button @click="formatExecuteGovProposal" class="btn btn-success">
+        Format Exec Gov Proposal
+      </button>
       <button @click="executeGovProposal" class="btn btn-success">
         Exec Gov Proposal
       </button>
     </div>
 
-    <pre>{{ govProposal }}</pre>
+    <pre>{{ formattedGovProposal }}</pre>
 
     <div v-for="tx in transactions" v-bind:key="tx.idx" class="flex flex-col gap-2">
       <h3>Add or Modify Existing Symbol </h3>
@@ -55,6 +58,7 @@ export default {
   data() {
     return {
       processedTxs: [],
+      formattedGovProposal: [],
       govProposal: {
         "targets": null,
         "values": null,
@@ -84,6 +88,15 @@ export default {
   },
 
   methods: {
+    formatExecuteGovProposal() {
+        let sampleTx = [
+          this.govProposal.targets.split(",").filter((val) => (val != "") ? true :  false),//targets
+          this.govProposal.values.split(",").filter((val) => (val != "") ? true :  false),//values
+          this.govProposal.calldatas.split(",").filter((val) => (val != "") ? true :  false),//calldatas
+          ethers.utils.formatBytes32String(this.govProposal.description)//data
+        ];
+        this.formattedGovProposal = sampleTx;
+    },
     async executeGovProposal() {
       let component = this;
       component.loading = true;
@@ -106,7 +119,7 @@ export default {
         component.govProposal.targets.split(",").filter((val) => (val != "") ? true :  false),//targets
         component.govProposal.values.split(",").filter((val) => (val != "") ? true :  false),//values
         component.govProposal.calldatas.split(",").filter((val) => (val != "") ? true :  false),//calldatas
-        ethers.utils.formatBytes32String(component.govProposal.description),//data
+        ethers.utils.formatBytes32String(component.govProposal.description)//data
       ).send({
         from: component.getActiveAccount,
         maxPriorityFeePerGas: null,
