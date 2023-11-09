@@ -153,15 +153,31 @@ export default {
       console.log(component.fund.safe);
       let addr1 = "0x0000000000000000000000000000000000000001";
       let safeModules = await safeContract.methods.getModulesPaginated(addr1, 10).call();
+
+
       console.log(safeModules[0][1]);
+
+      const rolsModContract = new component.getWeb3.eth.Contract(
+        ZodiacRoles.abi,
+        safeModules[0][1]
+      );
+
       //execute rolemods transaction
-      await component.getFundContract.methods.execTransactionWithRole(
+      /*await component.getFundContract.methods.execTransactionWithRole(
         safeModules[0][1], //rolesMod addr
         component.transactions[0].target,//to
         component.transactions[0].gasValue,//value
         component.transactions[0].data,//data
         component.transactions[0].op,//op
         component.transactions[0].role,//role
+      )*/
+      await rolsModContract.methods.execTransactionWithRole(
+        component.transactions[0].target,//to
+        component.transactions[0].gasValue,//value
+        component.transactions[0].data,//data
+        component.transactions[0].op,//op
+        component.transactions[0].role,//role
+        true
       ).send({
         from: component.getActiveAccount,
         maxPriorityFeePerGas: null,
