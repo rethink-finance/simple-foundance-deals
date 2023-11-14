@@ -2,7 +2,7 @@
     "WrappedTokenFactory": {
         "5":"0x50B55b0792a95508e524224bF7CCA39cA0Ee7dab",
         "42":"",
-        "137":"",
+        "137":"0xB9Ca0051232F773Bd3C6A7823E02449783a2B53F",
         "740":"",
         "7701":"",
         "80001":"",
@@ -13,7 +13,7 @@
     "GovernableFundFactoryBeaconProxy": {
       "5":"0x2e71Eef0AE6C82902B6458655A36BfD7B76E6B2D",
       "42":"",
-      "137":"",
+      "137":"0x4C342E583A7Aa2840e07B4a3afB71533FBE37726",
       "740":"",
       "7701":"",
       "80001":"",
@@ -24,7 +24,7 @@
     "NAVCalculatorBeaconProxy": {
       "5":"0x26d70661664Fc2b4a1519Fa5766ccFF7E384a12F",
       "42":"",
-      "137":"",
+      "137":"0x248a64e3EDd3F521ef2Aa6A3e804845B5A1C8008",
       "740":"",
       "7701":"",
       "80001":"",
@@ -35,7 +35,7 @@
     "RethinkFundGovernerUpgradeableBeacon": {
       "5":"0x30DB0Ca15AfB8a9D6ec6e3e377207B9E995E1901",
       "42":"",
-      "137":"",
+      "137":"0xB4c232f0cF194E530c39174F617Ec4ee9d69398C",
       "740":"",
       "7701":"",
       "80001":"",
@@ -46,7 +46,7 @@
     "GovernableFundUpgradeableBeacon": {
       "5":"0xCEed8bA2ea5B30eDf31a4c022F51FF0FE4d30166",
       "42":"",
-      "137":"",
+      "137":"0x5A7f717B91c998d5DE9764DEA78c2EF20027bDe4",
       "740":"",
       "7701":"",
       "80001":"",
@@ -57,7 +57,7 @@
     "SafeProxyFactory": {
       "5":"0xa6b71e26c5e0845f74c812102ca7114b6a896ab2",
       "42":"",
-      "137":"",
+      "137":"0xa6B71E26C5e0845f74c812102Ca7114b6a896AB2",
       "740":"",
       "7701":"",
       "80001":"",
@@ -68,7 +68,7 @@
     "SafeSingleton": {
       "5":"0x3E5c63644E683549055b9Be8653de26E0B4CD36E",
       "42":"",
-      "137":"",
+      "137":"0x3E5c63644E683549055b9Be8653de26E0B4CD36E",
       "740":"",
       "7701":"",
       "80001":"",
@@ -79,7 +79,7 @@
     "ZodiacRolesV1ModifierUpgradeableBeacon": {
       "5":"0xb3aec0e144e46ee4290ad93cc05609c160413087",
       "42":"",
-      "137":"",
+      "137":"0xdf587D859e76B0a6cE2254f1c0bf64C4aE0eD37f",
       "740":"",
       "7701":"",
       "80001":"",
@@ -87,10 +87,10 @@
       "43113": "",
       "421613":""
     },
-    "GovernableFundFlowsBeaconProxy": {
+    "GovernableFundFlowsUpgradeableBeacon": {
       "5":"0x2C22E878Fd7aD631FFf5369C2ef239237926cDaF",
       "42":"",
-      "137":"",
+      "137":"0x8fE2e9470ceA2E83e8B89502d636CCAb2D1Ca21B",
       "740":"",
       "7701":"",
       "80001":"",
@@ -98,10 +98,10 @@
       "43113": "",
       "421613":""
     },
-    "GovernableFundNavBeaconProxy": {
+    "GovernableFundNavUpgradeableBeacon": {
       "5":"0x81b504b3b20a6B0fDDA0d990E68cf20C526Ae699",
       "42":"",
-      "137":"",
+      "137":"0x89254d6FF377a21aC0b99BD2e456e75b6C76E505",
       "740":"",
       "7701":"",
       "80001":"",
