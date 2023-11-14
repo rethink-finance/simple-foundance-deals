@@ -84,6 +84,122 @@ export default {
       if(obj.votingPeriod == null) return false;
       return true;
     },
+    getCreateFundMutation(){
+      //https://apidocs.tally.xyz/#group-Operations-Mutations
+      /*
+        let OrganizationArgs = {
+          "name": "abc123", //TODO [symbol]-[gov token addr]
+          "description": "abc123"//TODO: [symbol]-[gov token addr], could be other stuff fund manager may want
+        }
+
+        let TokenArgs = {
+          "id": "eip155:1/erc20:0x6b175474e89094c44da98b954eedeac495271d0f", //TODO: need to get from gov factory contract after creation
+          "start": 987 //TODO: need input field for block hight if external gov token and erc20votes compatavle, need to get block of create fund tx from tx hash data returned
+        }
+
+        let GovernanceArgs = {
+          "id": "eip155:1:0x7e90e03654732abedf89Faf87f05BcD03ACEeFdc", //TODO: need to get from gov factory contract after creation
+          "type": "OPENZEPPELINGOVERNOR",
+          "start": 987 //need to get block of create fund tx from tx hash data returned
+        }
+      */
+      var fundMutation = 'mutation CreateGovernorOrganization(
+                            $orgArgs: OrganizationArgs!,
+                            $tokenArgs: TokenArgs!,
+                            $governanceArgs: GovernanceArgs!
+                          ) {
+                            createGovernorOrganization(
+                              orgArgs: $orgArgs,
+                              tokenArgs: $tokenArgs,
+                              governanceArgs: $governanceArgs
+                            ) {
+                              id
+                              slug
+                              name
+                              website
+                              description
+                              visual {
+                                icon
+                                color
+                              }
+                              socialProfiles {
+                                Discord
+                                Telegram
+                                Twitter
+                                Others {
+                                  ...OtherLinkFragment
+                                }
+                              }
+                              creator {
+                                id
+                                address
+                                ens
+                                twitter
+                                name
+                                bio
+                                participations {
+                                  ...ParticipationFragment
+                                }
+                                picture
+                                activity {
+                                  ... on Proposal {
+                                    ...ProposalFragment
+                                  }
+                                  ... on Vote {
+                                    ...VoteFragment
+                                  }
+                                }
+                                safes
+                                type
+                                meta {
+                                  ...AccountMetaFragment
+                                }
+                                votes
+                              }
+                              members {
+                                id
+                                account {
+                                  ...AccountFragment
+                                }
+                                organization {
+                                  ...OrganizationFragment
+                                }
+                              }
+                              issues {
+                                id
+                                organizationId
+                                name
+                                description
+                              }
+                            }
+                          }';
+
+      fetch(process.env.TALLY_API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Api-Key": process.env.TALLY_API_KEY,
+        },
+        body: JSON.stringify({
+          query,
+          variables,
+        }),
+      }).then(
+        (response) => response.json()
+      ).then((json) => {
+        if (json?.errors) {
+          console.error("error when fetching");
+
+          return null;
+        }
+
+        return json.data;
+      }).catch((error) => {
+        console.log("Error when fetching =>", error);
+
+        return null;
+      });
+    }
     async createFund () {
       let component = this;
       component.loading = true;

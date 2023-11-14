@@ -75,7 +75,6 @@ const actions = {
         fundData[i][settingsNames[j]] = fundsInfo[1][i][j];
       }
 
-      console.log(fundData[i])
     }
     commit("setFunds", fundData);
   },

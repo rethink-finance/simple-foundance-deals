@@ -33,6 +33,21 @@
 
     <PrepRoleMod :fund="getFundData" />
 
+    <div class="section-big row mt-4 mx-3">
+      <h3> Assign Role Mod Events </h3>
+      <button @click="getRoleModEvents" class="btn btn-success">
+        <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+        Get Assign Role Mod Events
+      </button>
+      <div class="col-md-9">
+        <div v-for="event in assignRoleEvents" v-bind:key="event.blockNumber">
+          <FundDataItem class="data-item" title="Authorized Address" :data="event.args.module" :divider="true" :info="module" />
+          <FundDataItem class="data-item" title="Role Mod Id" :data="event.args.roles" :divider="true" :info="roles" />
+          <FundDataItem class="data-item" title="Is Member" :data="event.args.memberOf" :divider="true" :info="memberOf" />
+        </div>
+      </div>
+    </div>
+
     <MintFakeTokens v-if="getChainName === 'Kovan'" class="mb-5" />
     <MintFakeTokens v-if="getChainName === 'Mumbai'" class="mb-5" />
     <MintFakeTokens v-if="getChainName === 'Localhost'" class="mb-5" />
@@ -50,6 +65,9 @@ import MintFakeTokens from '../components/tokens/MintFakeTokens.vue';
 import PrepRoleMod from '../components/gov/PrepRoleMod.vue';
 import FundDeposit from '../components/fund/FundDeposit.vue';
 import FundWithdraw from '../components/fund/FundWithdraw.vue';
+import FundDataItem from '../components/fund/FundDataItem.vue';
+import GnosisSafeL2JSON from '../contracts/safe/GnosisSafeL2_v1_3_0.json';
+import ZodiacRoles from '../contracts/zodiac/RolesFull.json';
 
 export default {
   name: "ViewFund",
@@ -148,6 +166,7 @@ export default {
     return {
       loading: false,
       fund: {},
+      assignRoleEvents: [],
       DelegateTo: {
         addr: null,
         desc: "Delegate Governance Token To Address"
@@ -157,6 +176,47 @@ export default {
 
   methods: {
     ...mapActions("accounts", ["connectWeb3Modal"]),
+
+    async getRoleModEvents() {
+      let component = this;
+      component.loading = true;
+
+      const safeContract = new component.getWeb3.eth.Contract(
+        GnosisSafeL2JSON.abi,
+        component.fund.safe
+      );
+      console.log(component.fund.safe);
+      let addr1 = "0x0000000000000000000000000000000000000001";
+      let safeModules = await safeContract.methods.getModulesPaginated(addr1, 10).call();
+
+      const rolsModContract = new component.getWeb3.eth.Contract(
+        ZodiacRoles.abi,
+        safeModules[0][1]
+      );
+
+      let networkIdBlockOffsetMap = {
+        "0x5": 9807545
+      };
+      const latestBlockNum = await component.getWeb3.eth.getBlockNumber();
+
+      console.log("block event range: " + (latestBlockNum-networkIdBlockOffsetMap[component.getChainId]));
+
+      for(var i=latestBlockNum; i>networkIdBlockOffsetMap[component.getChainId]; i-=1000) {
+        await rolsModContract.getPastEvents('AssignRoles', {
+            //filter: {myIndexedParam: [20,23], myOtherIndexedParam: '0x123456789...'}, // Using an array means OR: e.g. 20 or 23
+            fromBlock: i-1000,
+            toBlock: latestBlockNum
+        }, function(error, events){
+          component.loading = false;
+          console.log(events); 
+        })
+        .then(function(events){
+            component.assignRoleEvents = component.assignRoleEvents.concat(events);
+            console.log(events) // same results as the optional callback above
+        });
+      }
+      component.loading = false;
+    },
 
     async delegate() {
       let component = this;
