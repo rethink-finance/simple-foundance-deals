@@ -103,7 +103,7 @@ export default {
           "start": 987 //need to get block of create fund tx from tx hash data returned
         }
       */
-      var fundMutation = 'mutation CreateGovernorOrganization(
+      var fundMutation = `mutation CreateGovernorOrganization(
                             $orgArgs: OrganizationArgs!,
                             $tokenArgs: TokenArgs!,
                             $governanceArgs: GovernanceArgs!
@@ -172,7 +172,7 @@ export default {
                                 description
                               }
                             }
-                          }';
+                          }`;
 
       fetch(process.env.TALLY_API_URL, {
         method: "POST",
@@ -199,7 +199,7 @@ export default {
 
         return null;
       });
-    }
+    },
     async createFund () {
       let component = this;
       component.loading = true;
