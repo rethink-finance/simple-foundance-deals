@@ -68,7 +68,7 @@ export default {
   computed: {
     ...mapGetters("accounts", ["getActiveAccount", "getChainId", "getChainName", "getWeb3", "isUserConnected"]),
     ...mapGetters("fundFactory", ["getFundFactoryContract", "getFunds"]),
-    ...mapGetters("fund", ["getSelectedFundAddress", "getFundAbi"]),
+    ...mapGetters("fund", ["getSelectedFundAddress", "getFundAbi", "getFundContract"]),
 
     
 
@@ -138,6 +138,33 @@ export default {
 
       return true;
     },
+
+    /*
+
+
+  struct NAVLiquidUpdate {
+    address tokenPair;
+    address aggregatorAddress;
+    bytes functionSignatureWithEncodedInputs;
+    address assetTokenAddress;
+    address nonAssetTokenAddress;
+    bool isReturnArray;
+    uint256 returnLength;
+    uint256 returnIndex;
+    uint256 pastNAVUpdateIndex;
+  }
+
+    0x6e7a5FAFcec6BB1e78bAE2A1F0B612012BF14827
+    0x0000000000000000000000000000000000000000
+    0x0000000000000000000000000000000000000000
+    0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270
+    0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174
+    false
+    0
+    0
+    0
+
+    */
 
     prepNAVLiquidUpdate(liquidUpdates) {
       let data = [];
@@ -238,7 +265,7 @@ export default {
       let addNftUpdateAbiJSON = component.getFundAbi[32];
       let addComposableUpdateAbiJSON = component.getFundAbi[32];
       */
-      let addNavUpdateEntryAbiJSON = component.getFundAbi[47];
+      let addNavUpdateEntryAbiJSON = component.getFundAbi[48];
 
       /*
       for (var i in component.getFundAbi) {
@@ -295,6 +322,8 @@ export default {
         component.fund.governor
       );
 
+      let navUpdateIndex = await component.getFundContract.methods._navUpdateLatestIndex().call();
+
       /*
 
         function propose(
@@ -310,7 +339,7 @@ export default {
         [component.getSelectedFundAddress],
         [0],
         [encodedDataNavUpdateEntries],
-        "NAV UPDATE ILLIQUID TEST"
+        "NAV UPDATE: #" + String(navUpdateIndex)
       ).send({
         from: component.getActiveAccount,
         maxPriorityFeePerGas: null,
