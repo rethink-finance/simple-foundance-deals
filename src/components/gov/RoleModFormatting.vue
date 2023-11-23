@@ -119,7 +119,7 @@ export default {
         component.govProposal.targets.split(",").filter((val) => (val != "") ? true :  false),//targets
         component.govProposal.values.split(",").filter((val) => (val != "") ? true :  false).map(val => (parseInt(val))),//values
         component.govProposal.calldatas.split(",").filter((val) => (val != "") ? true :  false),//calldatas
-        ethers.utils.formatBytes32String(component.govProposal.description)//data
+        ethers.utils.keccak256(ethers.utils.toUtf8Bytes(this.govProposal.description))// data
       ).send({
         from: component.getActiveAccount,
         maxPriorityFeePerGas: null,
