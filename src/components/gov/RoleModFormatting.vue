@@ -93,7 +93,7 @@ export default {
           this.govProposal.targets.split(",").filter((val) => (val != "") ? true :  false),//targets
           this.govProposal.values.split(",").filter((val) => (val != "") ? true :  false).map(val => (parseInt(val))),//values
           this.govProposal.calldatas.split(",").filter((val) => (val != "") ? true :  false),//calldatas
-          ethers.utils.formatBytes32String(this.govProposal.description)//data
+          ethers.utils.keccak256(ethers.utils.toUtf8Bytes(this.govProposal.description))// data
         ];
         this.formattedGovProposal = sampleTx;
     },
