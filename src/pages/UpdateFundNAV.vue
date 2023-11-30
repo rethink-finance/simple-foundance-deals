@@ -79,6 +79,10 @@ export default {
     }
     this.$store.dispatch("fund/fetchContract");
     this.getFundData()
+    /*
+    for (var i in this.getFundAbi) {
+      console.log(i + " " + JSON.stringify(this.getFundAbi[i]));
+    }*/
 
   },
 
@@ -119,6 +123,7 @@ export default {
           isPastNAVUpdate: null,
           pastNAVUpdateIndex: null,
           pastNAVUpdateEntryIndex: null,
+          description: "",
         })
     },
 
@@ -138,33 +143,6 @@ export default {
 
       return true;
     },
-
-    /*
-
-
-  struct NAVLiquidUpdate {
-    address tokenPair;
-    address aggregatorAddress;
-    bytes functionSignatureWithEncodedInputs;
-    address assetTokenAddress;
-    address nonAssetTokenAddress;
-    bool isReturnArray;
-    uint256 returnLength;
-    uint256 returnIndex;
-    uint256 pastNAVUpdateIndex;
-  }
-
-    0x6e7a5FAFcec6BB1e78bAE2A1F0B612012BF14827
-    0x0000000000000000000000000000000000000000
-    0x0000000000000000000000000000000000000000
-    0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270
-    0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174
-    false
-    0
-    0
-    0
-
-    */
 
     prepNAVLiquidUpdate(liquidUpdates) {
       let data = [];
@@ -235,7 +213,8 @@ export default {
           parseInt(composableUpdates[i].returnValIndex),
           parseInt(composableUpdates[i].returnArraySize),
           this.NAVComposableUpdateReturnType[composableUpdates[i].returnValType],
-          parseInt(composableUpdates[i].pastNAVUpdateIndex)
+          parseInt(composableUpdates[i].pastNAVUpdateIndex),
+          this.BOOL_TYPE[composableUpdates[i].isNegative],
         ];
         data.push(parameters);
       }
@@ -247,30 +226,12 @@ export default {
       component.loading = true;
 
       /*
-        struct NavUpdateEntry {
-          NavUpdateType entryType;
-          NAVLiquidUpdate[] liquid;
-          NAVIlliquidUpdate[] illiquid;
-          NAVNFTUpdate[] nft;
-          NAVComposableUpdate[] composable;
-          bool isPastNAVUpdate;
-          uint256 pastNAVUpdateIndex;
-          uint256 pastNAVUpdateEntryIndex;
-        }
-      */
-
-      /*
       let addLiquidUpdateAbiJSON = component.getFundAbi[8];
       let addIlliquidUpdateAbiJSON = component.getFundAbi[33];
       let addNftUpdateAbiJSON = component.getFundAbi[32];
       let addComposableUpdateAbiJSON = component.getFundAbi[32];
       */
-      let addNavUpdateEntryAbiJSON = component.getFundAbi[48];
-
-      /*
-      for (var i in component.getFundAbi) {
-        console.log(i + " " + JSON.stringify(component.getFundAbi[i]));
-      }*/
+      let addNavUpdateEntryAbiJSON = component.getFundAbi[47];
 
       let dataNavUpdateEntries = [];
 
@@ -293,7 +254,8 @@ export default {
             ),//NAVComposableUpdate[] composable;
             component.PastNAVUpdateMap[component.navUpdateEntries[i].isPastNAVUpdate],
             parseInt(component.navUpdateEntries[i].pastNAVUpdateIndex),
-            parseInt(component.navUpdateEntries[i].pastNAVUpdateEntryIndex)         
+            parseInt(component.navUpdateEntries[i].pastNAVUpdateEntryIndex),
+            component.navUpdateEntries[i].description
           ];
 
           dataNavUpdateEntries.push(

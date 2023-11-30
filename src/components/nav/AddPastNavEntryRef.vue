@@ -5,12 +5,17 @@
       <input v-model="entry.isPastNAVUpdate" class="form-control deposit-input" placeholder="(Referencing  Past NAV Update?), Ex: false">
       <input v-model="entry.pastNAVUpdateIndex" class="form-control deposit-input" placeholder="(Index of Past NAV Update), Ex: 0">
       <input v-model="entry.pastNAVUpdateEntryIndex" class="form-control deposit-input" placeholder="(Index of NAV Entry In Past NAV Update), Ex: 0">
+      <input v-model="entry.description" class="form-control deposit-input" placeholder="(Description of NAV Update), Ex: Borrwing ETH on AAVE">
     </div>
+
+    <span></span>
+    <span></span>
 
     <pre>
       isPastNAVUpdate: {{ entry.isPastNAVUpdate }}
       pastNAVUpdateIndex: {{ entry.pastNAVUpdateIndex }}
       pastNAVUpdateEntryIndex: {{ entry.pastNAVUpdateEntryIndex }}
+      description: {{ entry.description }}
     </pre>
   </div>
 </template>

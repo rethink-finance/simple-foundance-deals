@@ -116,10 +116,10 @@ export default {
 
       //execute rolemods transaction
       await rethinkFundGovernorContract.methods.execute(
-        component.govProposal.targets.split(",").filter((val) => (val != "") ? true :  false),//targets
-        component.govProposal.values.split(",").filter((val) => (val != "") ? true :  false).map(val => (parseInt(val))),//values
-        component.govProposal.calldatas.split(",").filter((val) => (val != "") ? true :  false),//calldatas
-        ethers.utils.keccak256(ethers.utils.toUtf8Bytes(this.govProposal.description))// data
+        component.formattedGovProposal[0],
+        component.formattedGovProposal[1],
+        component.formattedGovProposal[2],
+        component.formattedGovProposal[3]
       ).send({
         from: component.getActiveAccount,
         maxPriorityFeePerGas: null,

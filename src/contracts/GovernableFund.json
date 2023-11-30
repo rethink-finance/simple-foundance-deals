@@ -574,44 +574,6 @@
       "type": "function"
     },
     {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "roleMod",
-          "type": "address"
-        },
-        {
-          "internalType": "address",
-          "name": "to",
-          "type": "address"
-        },
-        {
-          "internalType": "uint256",
-          "name": "value",
-          "type": "uint256"
-        },
-        {
-          "internalType": "bytes",
-          "name": "data",
-          "type": "bytes"
-        },
-        {
-          "internalType": "enum Enum.Operation",
-          "name": "operation",
-          "type": "uint8"
-        },
-        {
-          "internalType": "uint16",
-          "name": "role",
-          "type": "uint16"
-        }
-      ],
-      "name": "execTransactionWithRole",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
       "inputs": [],
       "name": "getFundSettings",
       "outputs": [
@@ -769,6 +731,11 @@
                   "internalType": "uint256",
                   "name": "pastNAVUpdateIndex",
                   "type": "uint256"
+                },
+                {
+                  "internalType": "string",
+                  "name": "description",
+                  "type": "string"
                 }
               ],
               "internalType": "struct IGovernableFundStorage.NAVLiquidUpdate[]",
@@ -900,6 +867,11 @@
                   "internalType": "uint256",
                   "name": "pastNAVUpdateIndex",
                   "type": "uint256"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "isNegative",
+                  "type": "bool"
                 }
               ],
               "internalType": "struct IGovernableFundStorage.NAVComposableUpdate[]",
@@ -1416,6 +1388,11 @@
                   "internalType": "uint256",
                   "name": "pastNAVUpdateIndex",
                   "type": "uint256"
+                },
+                {
+                  "internalType": "string",
+                  "name": "description",
+                  "type": "string"
                 }
               ],
               "internalType": "struct IGovernableFundStorage.NAVLiquidUpdate[]",
@@ -1547,6 +1524,11 @@
                   "internalType": "uint256",
                   "name": "pastNAVUpdateIndex",
                   "type": "uint256"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "isNegative",
+                  "type": "bool"
                 }
               ],
               "internalType": "struct IGovernableFundStorage.NAVComposableUpdate[]",

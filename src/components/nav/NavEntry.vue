@@ -287,7 +287,8 @@ export default {
         returnValIndex: null,
         returnArraySize: null,
         returnValType: null,
-        pastNAVUpdateIndex: null
+        pastNAVUpdateIndex: null,
+        description: ""
       });
       this.toggleHidden();
     },

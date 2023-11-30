@@ -11,6 +11,7 @@
       <input v-model="pos.returnArraySize" class="form-control deposit-input" placeholder="(Size Of Array), Ex: 5">
       <input v-model="pos.returnValType" class="form-control deposit-input" placeholder="(Type Of Data Returned), Ex: uint256">
       <input v-model="pos.pastNAVUpdateIndex" class="form-control deposit-input" placeholder="Reference Location in Past NAVComposableUpdate, Ex:0">
+      <input v-model="pos.isNegative" class="form-control deposit-input" placeholder="The sign of the return value, Ex:false">
 
     </div>
 
