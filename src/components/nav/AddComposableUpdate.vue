@@ -4,7 +4,7 @@
       <h3>Add or Modify Existing Symbol </h3>
       <input v-model="pos.remoteContractAddress" class="form-control deposit-input" placeholder="(Remote Contract Address), Ex: 0xd81F810fc394e96c5D67af8395607C71B0a42d52">
       <input v-model="pos.functionSignatures" class="form-control deposit-input" placeholder="(Function Signatur), EX: getPositionValueInUSD(address,address,uint256)">
-      <input v-model="pos.functionSignatureWithEncodedInputs" class="form-control deposit-input" placeholder="(Encoded Function Input Data)">
+      <input v-model="pos.encodedFunctionSignatureWithInputs" class="form-control deposit-input" placeholder="(Encoded Function Input Data)">
       <input v-model="pos.normalizationDecimals" class="form-control deposit-input" placeholder="(Decinals Used For Return Value), Ex: 18">
       <input v-model="pos.isReturnArray" class="form-control deposit-input" placeholder="(Are Values Returns in An array?), Ex: true">
       <input v-model="pos.returnValIndex" class="form-control deposit-input" placeholder="(Desired Index In Array), Ex: 2">

@@ -108,6 +108,7 @@ export default {
       bool isPastNAVUpdate;
       uint256 pastNAVUpdateIndex;
       uint256 pastNAVUpdateEntryIndex;
+      string description;
     }
 
   */
@@ -263,13 +264,6 @@ export default {
           );
         }
       }
-
-      /*
-        TODO: ISSUE WITH ENCODING illiquidUpdates
-
-        TypeError: can't assign to property 0 on 1: not an object
-
-      */
 
       console.log(JSON.stringify(dataNavUpdateEntries));
       console.log(addNavUpdateEntryAbiJSON);

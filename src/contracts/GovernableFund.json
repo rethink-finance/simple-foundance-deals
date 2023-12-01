@@ -1388,11 +1388,6 @@
                   "internalType": "uint256",
                   "name": "pastNAVUpdateIndex",
                   "type": "uint256"
-                },
-                {
-                  "internalType": "string",
-                  "name": "description",
-                  "type": "string"
                 }
               ],
               "internalType": "struct IGovernableFundStorage.NAVLiquidUpdate[]",
@@ -1549,6 +1544,11 @@
               "internalType": "uint256",
               "name": "pastNAVUpdateEntryIndex",
               "type": "uint256"
+            },
+            {
+              "internalType": "string",
+              "name": "description",
+              "type": "string"
             }
           ],
           "internalType": "struct IGovernableFundStorage.NavUpdateEntry[]",
