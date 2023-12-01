@@ -9,7 +9,7 @@
       <input v-model="pos.isReturnArray" class="form-control deposit-input" placeholder="(Are Values Returns in An array?), Ex: true">
       <input v-model="pos.returnValIndex" class="form-control deposit-input" placeholder="(Desired Index In Array), Ex: 2">
       <input v-model="pos.returnArraySize" class="form-control deposit-input" placeholder="(Size Of Array), Ex: 5">
-      <input v-model="pos.returnValType" class="form-control deposit-input" placeholder="(Type Of Data Returned), Ex: uint256">
+      <input v-model="pos.returnValType" class="form-control deposit-input" placeholder="(Type Of Data Returned), Ex: UINT256">
       <input v-model="pos.pastNAVUpdateIndex" class="form-control deposit-input" placeholder="Reference Location in Past NAVComposableUpdate, Ex:0">
       <input v-model="pos.isNegative" class="form-control deposit-input" placeholder="The sign of the return value, Ex:false">
 
