@@ -67,11 +67,11 @@
       </div>
 
       <div class="help-text" v-if="!isWithdrawAmountNotValid.status">
-        Your LP balance:
+        Your Fund balance:
         <a href="#" @click="withdrawAmount = String(getFundUserBalance)">
           {{Number(getFundUserBalance).toFixed(2)}}
         </a> tokens 
-        (worth ${{Number(getUserPoolUsdValue).toFixed(2)}}). 
+        (worth ${{Number(getUserFundUsdValue).toFixed(2)}}). 
         An early withdrawal fee of {{getFundWithdrawalFee}}% will be taken.
       </div>
 
@@ -105,7 +105,7 @@ export default {
   computed: {
     ...mapGetters("accounts", ["getActiveAccount", "getWeb3"]),
     ...mapGetters("fund", ["getFundContract", "getFundUserBalance", 
-                                    "getUserPoolUsdValue", "getFundFreeBalance",
+                                    "getUserFundUsdValue",
                                     "getFundWithdrawalFee"]),
 
     isWithdrawAmountNotValid() { // validation for withdrawal amount
@@ -127,10 +127,6 @@ export default {
       return {status: false, message: "Valid withdrawal amount"};
     },
     maxWithdrawalAmount() {
-      if (Number(this.getFundUserBalance) > Number(this.getFundFreeBalance)) {
-        return this.getFundFreeBalance;
-      }
-
       return this.getFundUserBalance;
     }
   },

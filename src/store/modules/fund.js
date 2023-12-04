@@ -32,7 +32,7 @@ const getters = {
   getUserFundUsdValue(state) {
     return state.userFundUsdValue[state.selectedFundAddress];
   },
-  getUserFundUsdValue(state) {
+  getFundUserBalance(state) {
     return state.userBalance[state.selectedFundAddress];
   }
 };
@@ -53,8 +53,8 @@ const actions = {
       dispatch("fetchContract");
     }
 
-    //let activeAccount = rootState.accounts.activeAccount;
-    let balanceWei = state.fund[state.selectedFundAddress]["userFundBalance"];//await state.contract[state.selectedFundAddress].methods.balanceOf(activeAccount).call();
+    let activeAccount = rootState.accounts.activeAccount;
+    let balanceWei = await state.contract[state.selectedFundAddress].methods.balanceOf(activeAccount).call();//state.fund[state.selectedFundAddress]["userFundBalance"];
 
     let web3 = rootState.accounts.web3;
     let balance = web3.utils.fromWei(balanceWei, "ether");
@@ -66,11 +66,11 @@ const actions = {
       dispatch("fetchContract");
     }
 
-    //let activeAccount = rootState.accounts.activeAccount;
+    let activeAccount = rootState.accounts.activeAccount;
 
     let balanceWei = "0";
     try {
-      balanceWei = state.fund[state.selectedFundAddress]["userFundUsdValue"];//await state.contract[state.selectedFundAddress].methods.valueOf(activeAccount).call();
+      balanceWei = await state.contract[state.selectedFundAddress].methods.valueOf(activeAccount).call();//userBalance
     } catch(e) {
       console.log("The total fund balance is probably 0, which is why MetaMask may be showing the 'Internal JSON-RPC... division by 0' error.");
     }
