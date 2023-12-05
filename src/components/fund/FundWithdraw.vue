@@ -60,7 +60,7 @@
         {{ isWithdrawAmountNotValid.message }} 
         <span>
           Try <a href="#" @click="withdrawAmount = String(maxWithdrawalAmount)">
-            {{Number(maxWithdrawalAmount).toFixed(2)}}.
+            {{Number(maxWithdrawalAmount).toFixed(6)}}.
           </a>
         </span>
         An early withdrawal fee of {{getFundWithdrawalFee}}% will be taken.
@@ -68,10 +68,10 @@
 
       <div class="help-text" v-if="!isWithdrawAmountNotValid.status">
         Your Fund balance:
-        <a href="#" @click="withdrawAmount = String(getFundUserBalance)">
-          {{Number(getFundUserBalance).toFixed(2)}}
+        <a href="#" @click="withdrawAmount = String(maxWithdrawalAmount)">
+          {{Number(maxWithdrawalAmount).toFixed(6)}}
         </a> tokens 
-        (worth ${{Number(getUserFundUsdValue).toFixed(2)}}). 
+        (worth ${{Number(userTokenAmountInBase).toFixed(6)}}). 
         An early withdrawal fee of {{getFundWithdrawalFee}}% will be taken.
       </div>
 
@@ -108,6 +108,10 @@ export default {
                                     "getUserFundUsdValue",
                                     "getFundWithdrawalFee"]),
 
+    userTokenAmountInBase(){
+      return this.getUserFundUsdValue  / (10**18);
+    },
+
     isWithdrawAmountNotValid() { // validation for withdrawal amount
       // negative number
       if (Number(this.withdrawAmount) < 0) {
@@ -127,7 +131,7 @@ export default {
       return {status: false, message: "Valid withdrawal amount"};
     },
     maxWithdrawalAmount() {
-      return this.getFundUserBalance;
+      return this.getFundUserBalance / (10**18);
     }
   },
 

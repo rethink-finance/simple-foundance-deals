@@ -64,13 +64,14 @@ const actions = {
   async fetchUserFundUsdValue({ commit, dispatch, state, rootState }) {
     if (!state.contract) {
       dispatch("fetchContract");
+      dispatch("fetchUserBalance");
     }
 
     let activeAccount = rootState.accounts.activeAccount;
 
     let balanceWei = "0";
     try {
-      balanceWei = await state.contract[state.selectedFundAddress].methods.valueOf(activeAccount).call();//userBalance
+      balanceWei = await state.contract[state.selectedFundAddress].methods.valueOf(state.userBalance[state.selectedFundAddress]).call();//userBalanceBaseValue
     } catch(e) {
       console.log("The total fund balance is probably 0, which is why MetaMask may be showing the 'Internal JSON-RPC... division by 0' error.");
     }
