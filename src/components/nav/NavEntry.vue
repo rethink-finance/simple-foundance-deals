@@ -288,7 +288,7 @@ export default {
         returnArraySize: null,
         returnValType: null,
         pastNAVUpdateIndex: null,
-        description: ""
+        isNegative: null
       });
       this.toggleHidden();
     },
