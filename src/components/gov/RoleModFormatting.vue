@@ -31,8 +31,8 @@
     </div>
 
     <div class="pool-submit-buttons">
-      <button @click="formatRoleMods" class="btn btn-success" :disabled="true">
-        Format Role Mods
+      <button @click="submitSafeTransaction" class="btn btn-success">
+        Submit Safe Transaction
       </button>
       <button @click="executeRoleMod" class="btn btn-success">
         Exec Role Mod
@@ -201,7 +201,7 @@ export default {
         component.$toast.error("There has been an error. Please contact the Rethink Finance support.");
       });
     },
-    async formatRoleMods() {
+    async submitSafeTransaction() {
       let component = this;
       let to = SafeMultiSendCallOnlyJSON.networkAddresses[parseInt(component.getChainId).toString()];
       console.log(to);
@@ -218,7 +218,7 @@ export default {
         let filteredTxData = component.getWeb3.eth.abi.encodeFunctionCall(multisendAbiJSON, [component.transactions[tx].data]);
 
         let formatSafeTxInput = [
-          to,//MultiSendCallOnly
+          component.transactions[tx].target,//MultiSendCallOnly
           0,//value
           filteredTxData,//data
           1,//operation
