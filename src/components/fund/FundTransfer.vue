@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="mt-3">
     <h3>Transfer Base Asset Token Into FundDAO contract (NEED TO BE CONNECTED THRU ZODIAC PILOT)</h3>
 
     <div class="section-small">

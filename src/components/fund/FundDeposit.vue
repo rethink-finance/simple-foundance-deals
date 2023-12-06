@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="mt-3">
     <h3>Deposit funds</h3>
 
     <div class="section-small">
