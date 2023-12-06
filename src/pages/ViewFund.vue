@@ -28,6 +28,8 @@
         <FundDeposit :fund="getFundData" />
 
         <FundWithdraw :fund="getFundData" />
+        
+        <FundTransfer :fund="getFundData" />
       </div>
     </div>
 
@@ -65,6 +67,7 @@ import MintFakeTokens from '../components/tokens/MintFakeTokens.vue';
 import PrepRoleMod from '../components/gov/PrepRoleMod.vue';
 import FundDeposit from '../components/fund/FundDeposit.vue';
 import FundWithdraw from '../components/fund/FundWithdraw.vue';
+import FundTransfer from '../components/fund/FundTransfer.vue';
 import FundDataItem from '../components/fund/FundDataItem.vue';
 import GnosisSafeL2JSON from '../contracts/safe/GnosisSafeL2_v1_3_0.json';
 import ZodiacRoles from '../contracts/zodiac/RolesFull.json';
@@ -159,7 +162,8 @@ export default {
     PrepRoleMod,
     FundWithdraw,
     FundDeposit,
-    SetAddress
+    SetAddress,
+    FundTransfer
   },
 
   data() {
