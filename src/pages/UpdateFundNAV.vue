@@ -79,10 +79,10 @@ export default {
     }
     this.$store.dispatch("fund/fetchContract");
     this.getFundData()
-    /*
+    
     for (var i in this.getFundAbi) {
       console.log(i + " " + JSON.stringify(this.getFundAbi[i]));
-    }*/
+    }
 
   },
 
@@ -232,7 +232,8 @@ export default {
       let addNftUpdateAbiJSON = component.getFundAbi[32];
       let addComposableUpdateAbiJSON = component.getFundAbi[32];
       */
-      let addNavUpdateEntryAbiJSON = component.getFundAbi[47];
+      let addNavUpdateEntryAbiJSON = component.getFundAbi[52];
+      let collectFeesAbiJSON = component.getFundAbi[20];
 
       let dataNavUpdateEntries = [];
 
@@ -289,6 +290,15 @@ export default {
           string memory description
       ) 
         */
+
+      /*  
+        TODO:
+           insert calls for claiming fees, need a way to check if claiming fees will error out? dont let function error out by returning early?
+
+           let encodedCollectFlowFeesAbiJSON = component.getWeb3.eth.abi.encodeFunctionCall(collectFeesAbiJSON, [0]);
+           let encodedCollectManagerFeesAbiJSON = component.getWeb3.eth.abi.encodeFunctionCall(collectFeesAbiJSON, [2]);
+           let encodedCollectPerformanceFeesAbiJSON = component.getWeb3.eth.abi.encodeFunctionCall(collectFeesAbiJSON, [3]);
+      */
 
       //proposae nav update for fund (target: fund addr, payloadL bytes)
       await rethinkFundGovernorContract.methods.propose(
