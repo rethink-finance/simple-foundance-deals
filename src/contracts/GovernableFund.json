@@ -348,6 +348,19 @@
       "type": "function"
     },
     {
+      "inputs": [],
+      "name": "calculateAccruedPerformanceFees",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "accruedFees",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
       "inputs": [
         {
           "internalType": "address",
@@ -385,19 +398,6 @@
     },
     {
       "inputs": [],
-      "name": "claimManagementFees",
-      "outputs": [
-        {
-          "internalType": "bool",
-          "name": "",
-          "type": "bool"
-        }
-      ],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [],
       "name": "clock",
       "outputs": [
         {
@@ -410,7 +410,13 @@
       "type": "function"
     },
     {
-      "inputs": [],
+      "inputs": [
+        {
+          "internalType": "enum IGovernableFundStorage.FundFeeType",
+          "name": "feeType",
+          "type": "uint8"
+        }
+      ],
       "name": "collectFees",
       "outputs": [],
       "stateMutability": "nonpayable",
@@ -574,6 +580,25 @@
       "type": "function"
     },
     {
+      "inputs": [
+        {
+          "internalType": "enum IGovernableFundStorage.FundFeeType",
+          "name": "feeType",
+          "type": "uint8"
+        }
+      ],
+      "name": "getFeeCollector",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
       "inputs": [],
       "name": "getFundSettings",
       "outputs": [
@@ -658,6 +683,11 @@
               "internalType": "string",
               "name": "fundSymbol",
               "type": "string"
+            },
+            {
+              "internalType": "address[4]",
+              "name": "feeCollectors",
+              "type": "address[4]"
             }
           ],
           "internalType": "struct IGovernableFundStorage.Settings",
@@ -731,11 +761,6 @@
                   "internalType": "uint256",
                   "name": "pastNAVUpdateIndex",
                   "type": "uint256"
-                },
-                {
-                  "internalType": "string",
-                  "name": "description",
-                  "type": "string"
                 }
               ],
               "internalType": "struct IGovernableFundStorage.NAVLiquidUpdate[]",
@@ -892,6 +917,11 @@
               "internalType": "uint256",
               "name": "pastNAVUpdateEntryIndex",
               "type": "uint256"
+            },
+            {
+              "internalType": "string",
+              "name": "description",
+              "type": "string"
             }
           ],
           "internalType": "struct IGovernableFundStorage.NavUpdateEntry[]",
@@ -1081,6 +1111,11 @@
               "internalType": "string",
               "name": "fundSymbol",
               "type": "string"
+            },
+            {
+              "internalType": "address[4]",
+              "name": "feeCollectors",
+              "type": "address[4]"
             }
           ],
           "internalType": "struct IGovernableFundStorage.Settings",
@@ -1242,6 +1277,32 @@
       "type": "function"
     },
     {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "addr",
+          "type": "address"
+        }
+      ],
+      "name": "setDaoFeeAddr",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "bps",
+          "type": "uint256"
+        }
+      ],
+      "name": "setDaoFeeBps",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
       "inputs": [],
       "name": "symbol",
       "outputs": [
@@ -1249,6 +1310,26 @@
           "internalType": "string",
           "name": "",
           "type": "string"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "toggleDaoFee",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "totalNAV",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
         }
       ],
       "stateMutability": "view",
@@ -1644,6 +1725,11 @@
               "internalType": "string",
               "name": "fundSymbol",
               "type": "string"
+            },
+            {
+              "internalType": "address[4]",
+              "name": "feeCollectors",
+              "type": "address[4]"
             }
           ],
           "internalType": "struct IGovernableFundStorage.Settings",

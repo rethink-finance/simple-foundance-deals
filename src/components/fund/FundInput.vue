@@ -10,11 +10,11 @@
   <input v-model="fund.governanceToken" class="form-control deposit-input" placeholder="(External Governance Token), Ex: 0x0000000000000000000000000000000000000000">
   <input v-model="fund.fundName" class="form-control deposit-input" placeholder="(Name of Fund), Ex: Berlin Community Governance">
   <input v-model="fund.fundSymbol" class="form-control deposit-input" placeholder="(Symbol for Fund), Ex: BGG">
+  <input v-model="fund.feeCollectors" class="form-control deposit-input" placeholder="(Addresses Fees Will Be Sent To - 0:DepositFee, 1:WithdrawFee, 2:ManagementFee, 3:PerformanceFee), Ex: [0x1000000000000000000000000000000000000000, 0x2000000000000000000000000000000000000000, 0x3000000000000000000000000000000000000000, 0x4000000000000000000000000000000000000000]">
   <input v-model="governor.quorumFraction" class="form-control deposit-input" placeholder="(What percent needed to achive governance quorum), Ex: 10">
   <input v-model="governor.lateQuorum" class="form-control deposit-input" placeholder="(Seconds To add to voting period of large last min quorum), Ex: 86400">
   <input v-model="governor.votingDelay" class="form-control deposit-input"  placeholder="(Seconds to delay voting after proposal is made), Ex: 0">
   <input v-model="governor.votingPeriod" class="form-control deposit-input"  placeholder="(How much time to allow for voting), Ex: 21600">
-
 
   <pre>{{ fund }}</pre>
   <pre>{{ governor }}</pre>

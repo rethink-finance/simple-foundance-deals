@@ -101,6 +101,11 @@
               "internalType": "string",
               "name": "fundSymbol",
               "type": "string"
+            },
+            {
+              "internalType": "address[4]",
+              "name": "feeCollectors",
+              "type": "address[4]"
             }
           ],
           "internalType": "struct IGovernableFundStorage.Settings",
@@ -315,6 +320,11 @@
               "internalType": "string",
               "name": "fundSymbol",
               "type": "string"
+            },
+            {
+              "internalType": "address[4]",
+              "name": "feeCollectors",
+              "type": "address[4]"
             }
           ],
           "internalType": "struct IGovernableFundStorage.Settings[]",

@@ -46,6 +46,7 @@ export default {
         baseToken: "",
         allowedDepositAddrs: "",
         allowedManagers: "",
+        feeCollectors: "",
         governanceToken: "0x0000000000000000000000000000000000000000",
         fundName: "",
         fundSymbol: ""
@@ -73,6 +74,7 @@ export default {
       //if(obj.performaceHurdleRateBps == null) return false;//TODO: not imp 
       if(obj.baseToken.length == 0) return false;
       if(obj.allowedManagers.length == 0) return false;
+      if(obj.feeCollectors.length == 0) return false;
       if(obj.fundName.length == 0) return false;
       if(obj.fundSymbol.length == 0) return false;
       return true;
@@ -221,6 +223,7 @@ export default {
             address fundAddress;//TODO: this may not be needed if delegatecall has balance refs to callee addr
             string fundName;
             string fundSymbol;
+            address[4] feeCollectors;
           }
       */
       if (component.validateFund(component.fund) && component.validateGovernor(component.governor)) {
@@ -241,7 +244,8 @@ export default {
             "0x0000000000000000000000000000000000000000",
             "0x0000000000000000000000000000000000000000",
             component.fund.fundName,
-            component.fund.fundSymbol
+            component.fund.fundSymbol,
+            component.fund.feeCollectors.split(",").filter((val) => (val != "") ? true :  false),
           ],
           [
             parseInt(component.governor.quorumFraction),
