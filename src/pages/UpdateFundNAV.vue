@@ -291,20 +291,15 @@ export default {
       ) 
         */
 
-      /*  
-        TODO:
-           insert calls for claiming fees, need a way to check if claiming fees will error out? dont let function error out by returning early?
-
-           let encodedCollectFlowFeesAbiJSON = component.getWeb3.eth.abi.encodeFunctionCall(collectFeesAbiJSON, [0]);
-           let encodedCollectManagerFeesAbiJSON = component.getWeb3.eth.abi.encodeFunctionCall(collectFeesAbiJSON, [2]);
-           let encodedCollectPerformanceFeesAbiJSON = component.getWeb3.eth.abi.encodeFunctionCall(collectFeesAbiJSON, [3]);
-      */
+      let encodedCollectFlowFeesAbiJSON = component.getWeb3.eth.abi.encodeFunctionCall(collectFeesAbiJSON, [0]);
+      let encodedCollectManagerFeesAbiJSON = component.getWeb3.eth.abi.encodeFunctionCall(collectFeesAbiJSON, [2]);
+      let encodedCollectPerformanceFeesAbiJSON = component.getWeb3.eth.abi.encodeFunctionCall(collectFeesAbiJSON, [3]);
 
       //proposae nav update for fund (target: fund addr, payloadL bytes)
       await rethinkFundGovernorContract.methods.propose(
-        [component.getSelectedFundAddress],
-        [0],
-        [encodedDataNavUpdateEntries],
+        [component.getSelectedFundAddress, component.getSelectedFundAddress, component.getSelectedFundAddress, component.getSelectedFundAddress],
+        [0,0,0,0],
+        [encodedDataNavUpdateEntries, encodedCollectFlowFeesAbiJSON, encodedCollectManagerFeesAbiJSON, encodedCollectPerformanceFeesAbiJSON],
         "NAV UPDATE: #" + String(navUpdateIndex)
       ).send({
         from: component.getActiveAccount,
