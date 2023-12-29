@@ -4,7 +4,7 @@
 
   <div class="section-big row mt-4 mx-3">
     <div class="col-md-12">
-      <FundInput :fund="fund" :governor="governor"/>
+      <FundInput :fund="fund" :governor="governor" :fundMetadata="fundMetadata"/>
       <span></span>
     </div>
     <div class="fund-submit-buttons">
@@ -51,11 +51,16 @@ export default {
         fundName: "",
         fundSymbol: ""
       },
+      fundMetadata : {
+        description: null,
+        photoUrl: null
+      },
       governor: {
         quorumFraction: null,
         lateQuorum: null,
         votingDelay: null,
-        votingPeriod: null
+        votingPeriod: null,
+        proposalThreshold: null
       }
     }
   },
@@ -84,6 +89,12 @@ export default {
       if(obj.lateQuorum == null) return false;
       if(obj.votingDelay == null) return false;
       if(obj.votingPeriod == null) return false;
+      if(obj.proposalThreshold == null) return false;
+      return true;
+    },
+    validateFundMetadata(obj) {
+      if(obj.description == null) return false;
+      if(obj.photoUrl == null) return false;
       return true;
     },
     getCreateFundMutation(){
@@ -226,7 +237,7 @@ export default {
             address[4] feeCollectors;
           }
       */
-      if (component.validateFund(component.fund) && component.validateGovernor(component.governor)) {
+      if (component.validateFund(component.fund) && component.validateGovernor(component.governor) && (component.validateFundMetadata(component.fundMetadata))) {
         await component.getFundFactoryContract.methods.createFund(
           [
             parseInt(component.fund.depositFee),
@@ -252,7 +263,9 @@ export default {
             parseInt(component.governor.lateQuorum),
             parseInt(component.governor.votingDelay),
             parseInt(component.governor.votingPeriod),
-          ]
+            parseInt(component.governor.proposalThreshold),
+          ],
+          JSON.stringify(component.fundMetadata),//fundMetadata
         ).send({
           from: component.getActiveAccount,
           maxPriorityFeePerGas: null,

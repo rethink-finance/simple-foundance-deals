@@ -133,11 +133,21 @@
               "internalType": "uint256",
               "name": "votingPeriod",
               "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "proposalThreshold",
+              "type": "uint256"
             }
           ],
           "internalType": "struct GovernableFundFactory.GovernorParams",
           "name": "governorSettings",
           "type": "tuple"
+        },
+        {
+          "internalType": "string",
+          "name": "_fundMetadata",
+          "type": "string"
         }
       ],
       "name": "createFund",

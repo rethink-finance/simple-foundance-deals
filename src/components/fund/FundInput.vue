@@ -15,8 +15,15 @@
   <input v-model="governor.lateQuorum" class="form-control deposit-input" placeholder="(Seconds To add to voting period of large last min quorum), Ex: 86400">
   <input v-model="governor.votingDelay" class="form-control deposit-input"  placeholder="(Seconds to delay voting after proposal is made), Ex: 0">
   <input v-model="governor.votingPeriod" class="form-control deposit-input"  placeholder="(How much time to allow for voting), Ex: 21600">
+  <input v-model="governor.proposalThreshold" class="form-control deposit-input"  placeholder="(The number of votes required in order for a voter to become a proposer), Ex: 1">
+
+  <span></span>
+  <div v-for="(value, propertyName) in fundMetadata" v-bind:key="option.udlFeedAddr" class="flex flex-col gap-2">
+    <input v-model="value" class="form-control deposit-input"  placeholder={{propertyName}}+"">
+  </div>
 
   <pre>{{ fund }}</pre>
+  <pre> {{ fundMetadata }}</pre>
   <pre>{{ governor }}</pre>
   </div>
 </template>
@@ -25,7 +32,7 @@
 
 export default {
   name: "FundInput",
-  props: ["fund", "governor"],
+  props: ["fund", "governor", "fundMetadata"],
 
   components: { 
   },
