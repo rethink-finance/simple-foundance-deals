@@ -71,6 +71,7 @@ import FundTransfer from '../components/fund/FundTransfer.vue';
 import FundDataItem from '../components/fund/FundDataItem.vue';
 import GnosisSafeL2JSON from '../contracts/safe/GnosisSafeL2_v1_3_0.json';
 import ZodiacRoles from '../contracts/zodiac/RolesFull.json';
+import ERC20Votes from '../contracts/ERC20Votes.json';
 
 export default {
   name: "ViewFund",
@@ -224,33 +225,71 @@ export default {
 
     async delegate() {
       let component = this;
+      let nullAddr = "0x0000000000000000000000000000000000000000";
+
+      component.getFundData.governanceToken
       if (component.fund.fundAddress != null) {
         component.loading = true;
-        //  gov contract
 
-        await component.getFundContract.methods.delegate(
-          component.DelegateTo.addr
-        ).send({
-          from: component.getActiveAccount,
-          maxPriorityFeePerGas: null,
-          maxFeePerGas: null
-        }).on('transactionHash', function(hash){
-          console.log("tx hash: " + hash);
-          component.$toast.info("The transaction has been submitted. Please wait for it to be confirmed.");
-        }).on('receipt', function(receipt){
-          console.log(receipt);
-          if (receipt.status) {
-            component.$toast.success("Delegation of Governance Tokens Succeeded");
-          } else {
-            component.$toast.error("The delegateTo tx has failed. Please contact the Rethink Finance support.");
-          }
-          component.loading = false;
+        //external gov token
+        if ((component.getFundData.governanceToken != component.fund.fundAddress) && (component.getFundData.governanceToken != nullAddr)) {
+          const externalGovToken = new component.getWeb3.eth.Contract(
+            ERC20Votes.abi,
+            component.getFundData.governanceToken
+          );
 
-        }).on('error', function(error){
-          console.log(error);
-          component.loading = false;
-          component.$toast.error("There has been an error. Please contact the Rethink Finance support.");
-        });
+          await externalGovToken.methods.delegate(
+            component.DelegateTo.addr
+          ).send({
+            from: component.getActiveAccount,
+            maxPriorityFeePerGas: null,
+            maxFeePerGas: null
+          }).on('transactionHash', function(hash){
+            console.log("tx hash: " + hash);
+            component.$toast.info("The transaction has been submitted. Please wait for it to be confirmed.");
+          }).on('receipt', function(receipt){
+            console.log(receipt);
+            if (receipt.status) {
+              component.$toast.success("Delegation of Governance Tokens Succeeded");
+            } else {
+              component.$toast.error("The delegateTo tx has failed. Please contact the Rethink Finance support.");
+            }
+            component.loading = false;
+
+          }).on('error', function(error){
+            console.log(error);
+            component.loading = false;
+            component.$toast.error("There has been an error. Please contact the Rethink Finance support.");
+          });
+
+        } else {
+
+          //  gov contract
+
+          await component.getFundContract.methods.delegate(
+            component.DelegateTo.addr
+          ).send({
+            from: component.getActiveAccount,
+            maxPriorityFeePerGas: null,
+            maxFeePerGas: null
+          }).on('transactionHash', function(hash){
+            console.log("tx hash: " + hash);
+            component.$toast.info("The transaction has been submitted. Please wait for it to be confirmed.");
+          }).on('receipt', function(receipt){
+            console.log(receipt);
+            if (receipt.status) {
+              component.$toast.success("Delegation of Governance Tokens Succeeded");
+            } else {
+              component.$toast.error("The delegateTo tx has failed. Please contact the Rethink Finance support.");
+            }
+            component.loading = false;
+
+          }).on('error', function(error){
+            console.log(error);
+            component.loading = false;
+            component.$toast.error("There has been an error. Please contact the Rethink Finance support.");
+          });
+        }
       }
 
     }
