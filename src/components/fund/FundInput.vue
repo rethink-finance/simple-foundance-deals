@@ -18,8 +18,8 @@
   <input v-model="governor.proposalThreshold" class="form-control deposit-input"  placeholder="(The number of votes required in order for a voter to become a proposer), Ex: 1">
 
   <span></span>
-  <div v-for="(value, propertyName) in fundMetadata" v-bind:key="option.udlFeedAddr" class="flex flex-col gap-2">
-    <input v-model="value" class="form-control deposit-input"  placeholder={{propertyName}}+"">
+  <div v-for="(value, key, keyIdx) in fundMetadata" class="flex flex-col gap-2">
+    <input v-model="fundMetadata[key]" class="form-control deposit-input" :placeholder="key">
   </div>
 
   <pre>{{ fund }}</pre>
