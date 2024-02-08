@@ -74,9 +74,9 @@ export default {
     validateFund(obj) {
       if(obj.depositFee == null) return false;
       if(obj.withdrawFee == null) return false;
-      //if(obj.performanceFee == null) return false;//TODO: not imp 
+      if(obj.performanceFee == null) return false;
       if(obj.managementFee == null) return false;
-      //if(obj.performaceHurdleRateBps == null) return false;//TODO: not imp 
+      if(obj.performaceHurdleRateBps == null) return false;
       if(obj.baseToken.length == 0) return false;
       if(obj.allowedManagers.length == 0) return false;
       if(obj.feeCollectors.length == 0) return false;
@@ -242,9 +242,9 @@ export default {
           [
             parseInt(component.fund.depositFee),
             parseInt(component.fund.withdrawFee),
-            0,//performanceFee bps
+            parseInt(component.fund.performanceFee),//performanceFee bps
             parseInt(component.fund.managementFee),
-            0,//performaceHurdleRateBps bps
+            parseInt(component.fund.performaceHurdleRateBps),//performaceHurdleRateBps bps
             component.fund.baseToken,
             "0x0000000000000000000000000000000000000000",
             false,//false
