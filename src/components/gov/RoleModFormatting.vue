@@ -173,10 +173,10 @@ export default {
       )*/
       await rolsModContract.methods.execTransactionWithRole(
         component.transactions[0].target,//to
-        component.transactions[0].gasValue,//value
+        parseInt(component.transactions[0].gasValue),//value
         component.transactions[0].data,//data
-        component.transactions[0].op,//op
-        component.transactions[0].role,//role
+        parseInt(component.transactions[0].op),//op
+        parseInt(component.transactions[0].role),//role
         true
       ).send({
         from: component.getActiveAccount,
