@@ -10,6 +10,7 @@
       <span @click="switchToMumbai" class="network-switch-link">Mumbai testnet</span> or 
       <span @click="switchToFuji" class="network-switch-link">Fuji testnet</span> or
       <span @click="switchToCantoTestnet" class="network-switch-link">Canto testnet</span> or
+      <span @click="switchToArbitrum" class="network-switch-link">Arbitrum One</span>.
       <span @click="switchToArbitrumGoerli" class="network-switch-link">Arbitrum Goerli testnet</span>.
     </div>
 
@@ -79,6 +80,14 @@ export default {
         method: 'wallet_switchEthereumChain', 
         params: [{ 
           chainId: '0x1e15'
+        }] 
+      });
+    },
+    switchToArbitrum() {
+      window.ethereum.request({ 
+        method: 'wallet_switchEthereumChain', 
+        params: [{ 
+          chainId: '0xa4b1'
         }] 
       });
     },

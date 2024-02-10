@@ -114,6 +114,7 @@
               <li><button @click="switchToMumbai" class="dropdown-item">Mumbai Testnet</button></li>
               <li><button @click="switchToFuji" class="dropdown-item">Fuji Testnet</button></li>
               <li><button @click="switchToCantoTestnet" class="dropdown-item">Canto Testnet</button></li>
+              <li><button @click="switchToArbitrum" class="dropdown-item">Arbitrum One</button></li>
               <li><button @click="switchToArbitrumGoerli" class="dropdown-item">Arbitrum Goerli Testnet</button></li>
               <li><button @click="switchToGoerli" class="dropdown-item">Goerli Testnet</button></li>
             </ul>
@@ -232,6 +233,14 @@ export default {
         method: 'wallet_switchEthereumChain', 
         params: [{ 
           chainId: '0x1e15'
+        }] 
+      });
+    },
+    switchToArbitrum() {
+      window.ethereum.request({ 
+        method: 'wallet_switchEthereumChain', 
+        params: [{ 
+          chainId: '0xa4b1'
         }] 
       });
     },
