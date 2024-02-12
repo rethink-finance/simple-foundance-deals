@@ -83,6 +83,65 @@
       </div>
 
     </div>
+
+    <h3>Transfer Base Asset</h3>
+
+    <div class="section-small">
+      <div class="d-flex flex-wrap">
+        <div>
+          <input type="text" v-model="depositValue" class="form-control deposit-input" placeholder="0.0" aria-describedby="depositText">
+        </div>
+        <div>
+          <input type="text" v-model="transferAddress" class="form-control deposit-input" placeholder="0x0000000000000000000000000000000000000000" aria-describedby="depositText">
+        </div>
+
+
+        <div class="token-dropdown form-button-mobile">
+          <div class="btn-group" aria-describedby="button-text">
+            <button type="button" class="btn btn-outline-success dropdown-toggle text-uppercase" data-bs-toggle="dropdown" aria-expanded="false">
+              {{selectedToken}}
+            </button>
+            <ul class="dropdown-menu">
+              <li>
+                <span class="dropdown-item text-uppercase" @click="changeStablecoin('DAI')">DAI</span>
+                <span class="dropdown-item text-uppercase" @click="changeStablecoin('USDC')">USDC</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+
+        <div class="deposit-button form-button-mobile">
+          <button 
+            class="btn btn-success btn-user btn-block text-uppercase form-control" 
+            @click="transferStables">
+            <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            Transfer
+          </button>
+          <div></div>
+        </div>
+        
+      </div>
+
+      <!-- Help text -->
+      <div class="help-text" v-if="isDepositValueNotValid.status">
+        {{ isDepositValueNotValid.message }} 
+        <span v-if="(Math.floor(Number(this.getUserStablecoinBalance*1000))/1000) > 0">
+          Try <a href="#" @click="depositValue = String(Math.floor(Number(getUserStablecoinBalance*1000))/1000)">
+            {{ Math.floor(Number(this.getUserStablecoinBalance*1000))/1000 }}
+          </a> {{selectedToken}}.
+        </span>
+      </div>
+
+      <div class="help-text" v-if="!isDepositValueNotValid.status">
+        Your {{selectedToken}} balance: 
+        <a href="#" @click="depositValue = String(Math.floor(Number(getUserStablecoinBalance*1000))/1000)">
+          {{ Math.floor(Number(this.getUserStablecoinBalance*1000))/1000 }}
+        </a> {{selectedToken}}.
+      </div>
+    
+
+    </div>
   </div>
 </template>
 
@@ -164,11 +223,60 @@ export default {
   data() {
     return {
       depositValue: null,
+      transferAddress: null,
       loading: false,
       selectedToken: "DAI"
     }
   },
   methods: {
+    async transferStables() {
+      let component = this;
+      component.loading = true;
+
+      // define unit and token contract
+      let unit = "ether"; // DAI - 18 decimals
+      
+      if (component.selectedToken === "USDT") {
+        unit = "kwei"; // USDT (Tether) - 4 decimals
+      }
+
+      if (component.selectedToken === "USDC") {
+        unit = "mwei"; // USDC - 6 decimals
+      }
+
+      // convert deposit value to wei
+      let tokensWei = component.getWeb3.utils.toWei(component.depositValue, unit);
+      const allowanceValue = component.depositValue;
+
+      // call the approve method
+      await component.getStablecoinContract.methods.transfer(component.transferAddress, tokensWei).send({
+        from: component.getActiveAccount,
+        maxPriorityFeePerGas: null,
+        maxFeePerGas: null
+
+      }).on('transactionHash', function(hash){
+        console.log("tx hash: " + hash);
+        component.$toast.info("The transaction has been submitted. Please wait for it to be confirmed.");
+
+      }).on('receipt', function(receipt){
+        console.log(receipt);
+
+        if (receipt.status) {
+          component.$toast.success("The transfer was successfull.");          
+          
+        } else {
+          component.$toast.error("The transaction has failed. Please contact the Rethink Finance support.");
+        }
+        
+        component.loading = false;
+
+      }).on('error', function(error){
+        console.log(error);
+        component.loading = false;
+        component.$toast.error("There has been an error. Please contact the Rethink Finance support.");
+      });
+
+    },
     async transferFromSafe() {
       let component = this;
       component.loading = true;
@@ -189,7 +297,7 @@ export default {
       const allowanceValue = component.depositValue;
 
       // call the approve method
-      await component.getStablecoinContract.methods.transfer(component.fund.fundAddress, tokensWei).send({
+      await component.getStablecoinContract.methods.transfer(component.fund.fundAddress, component.depositValue).send({
         from: component.getActiveAccount,
         maxPriorityFeePerGas: null,
         maxFeePerGas: null
