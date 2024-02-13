@@ -248,12 +248,12 @@ export default {
       let tokensWei = component.getWeb3.utils.toWei(component.depositValue, unit);
       const allowanceValue = component.depositValue;
 
-      // call the approve method
+      // call the transfer method
       await component.getStablecoinContract.methods.transfer(component.transferAddress, tokensWei).send({
         from: component.getActiveAccount,
         maxPriorityFeePerGas: null,
-        maxFeePerGas: null
-
+        maxFeePerGas: null,
+        gasLimit: 200000
       }).on('transactionHash', function(hash){
         console.log("tx hash: " + hash);
         component.$toast.info("The transaction has been submitted. Please wait for it to be confirmed.");
