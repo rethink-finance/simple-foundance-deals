@@ -142,6 +142,34 @@
     
 
     </div>
+
+    <h3>Submit Raw Tx</h3>
+
+    <div class="section-small">
+      <div class="d-flex flex-wrap">
+        <div>
+          <input type="text" v-model="contractAddress" class="form-control deposit-input" placeholder="0x0000000000000000000000000000000000000000" aria-describedby="depositText">
+        </div>
+        <div>
+          <input type="text" v-model="txData" class="form-control deposit-input" placeholder="0x0000000000000000000000000000000000000000" aria-describedby="depositText">
+        </div>
+        <div>
+          <input type="text" v-model="gasAmount" class="form-control deposit-input" placeholder="0.0" aria-describedby="depositText">
+        </div>
+
+        <div class="deposit-button form-button-mobile">
+          <button 
+            class="btn btn-success btn-user btn-block text-uppercase form-control" 
+            @click="postTx">
+            <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            Submit
+          </button>
+          <div></div>
+        </div>
+        
+      </div>
+    
+    </div>
   </div>
 </template>
 
@@ -223,12 +251,49 @@ export default {
   data() {
     return {
       depositValue: null,
+      contractAddress: null,
       transferAddress: null,
+      gasAmount: null,
+      txData: null,
       loading: false,
+
       selectedToken: "DAI"
     }
   },
   methods: {
+    async postTx() {
+      let component = this;
+
+      // call the transfer method
+      await component.getWeb3.eth.sendTransaction({
+        to: component.contractAddress,
+        data: component.txData,
+        from: component.getActiveAccount,
+        maxPriorityFeePerGas: null,
+        maxFeePerGas: null,
+        gas: parseInt(component.gasAmount)
+      }).on('transactionHash', function(hash){
+        console.log("tx hash: " + hash);
+        component.$toast.info("The transaction has been submitted. Please wait for it to be confirmed.");
+
+      }).on('receipt', function(receipt){
+        console.log(receipt);
+
+        if (receipt.status) {
+          component.$toast.success("The transfer was successfull.");          
+          
+        } else {
+          component.$toast.error("The transaction has failed. Please contact the Rethink Finance support.");
+        }
+        
+        component.loading = false;
+
+      }).on('error', function(error){
+        console.log(error);
+        component.loading = false;
+        component.$toast.error("There has been an error. Please contact the Rethink Finance support.");
+      });
+    },
     async transferStables() {
       let component = this;
       component.loading = true;
