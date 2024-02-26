@@ -53,7 +53,9 @@ export default {
       },
       fundMetadata : {
         description: null,
-        photoUrl: null
+        photoUrl: null,
+        plannedSettlementPeriod: null,
+        minLiquidAssetShare: null
       },
       governor: {
         quorumFraction: null,
