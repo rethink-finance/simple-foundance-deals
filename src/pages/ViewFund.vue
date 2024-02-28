@@ -36,6 +36,21 @@
     <PrepRoleMod :fund="getFundData" />
 
     <div class="section-big row mt-4 mx-3">
+      <h3> Fund Flows Info </h3>
+      <button @click="getFundFlowsData" class="btn btn-success">
+        <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+        Update Flows Info
+      </button>
+      <div class="col-md-9">
+        <FundDataItem class="data-item" title="Total Base Asset Balance Avalible For Withdrawal" :data="totalWithrawalBalance" :divider="true" :info="module" />
+        <FundDataItem class="data-item" title="Pending Fund Tokens Withdrwals" :data="getCurrentPendingWithdrawalBal" :divider="true" :info="roles" />
+        <FundDataItem class="data-item" title="Pending Base Asset Deposit Request Amount" :data="getCurrentPendingDepositBal" :divider="true" :info="memberOf" />
+      </div>
+    </div>
+
+
+
+    <div class="section-big row mt-4 mx-3">
       <h3> Assign Role Mod Events </h3>
       <button @click="getRoleModEvents" class="btn btn-success">
         <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
@@ -156,6 +171,7 @@ export default {
     }
 
     this.$store.dispatch("fund/fetchContract");
+    getFundFlowsData();
   },
 
   components: {
@@ -171,6 +187,9 @@ export default {
     return {
       loading: false,
       fund: {},
+      totalWithrawalBalance: null,
+      getCurrentPendingWithdrawalBal: null,
+      getCurrentPendingDepositBal: null,
       assignRoleEvents: [],
       DelegateTo: {
         addr: null,
@@ -181,6 +200,21 @@ export default {
 
   methods: {
     ...mapActions("accounts", ["connectWeb3Modal"]),
+
+    async getFundFlowsData(){
+	let component = this;
+	component.loading = true;
+	//totalWithrawalBalance, getCurrentPendingWithdrawalBal and getCurrentPendingDepositBal visible from ui
+    	component.totalWithrawalBalance = await component.getFundContract.methods.totalWithrawalBalance().call();
+        try {
+		component.getCurrentPendingWithdrawalBal = await component.getFundContract.methods.getCurrentPendingWithdrawalBal().call();
+	} catch (e) {}
+        try {
+		component.getCurrentPendingDepositBal = await component.getFundContract.methods.getCurrentPendingDepositBal().call();
+        } catch (e) {}
+	component.loading = false;
+
+    },
 
     async getRoleModEvents() {
       let component = this;
