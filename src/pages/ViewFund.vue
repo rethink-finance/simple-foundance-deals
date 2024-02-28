@@ -42,9 +42,11 @@
         Update Flows Info
       </button>
       <div class="col-md-9">
-        <FundDataItem class="data-item" title="Total Base Asset Balance Avalible For Withdrawal" :data="totalWithrawalBalance" :divider="true" :info="module" />
-        <FundDataItem class="data-item" title="Pending Fund Tokens Withdrwals" :data="getCurrentPendingWithdrawalBal" :divider="true" :info="roles" />
-        <FundDataItem class="data-item" title="Pending Base Asset Deposit Request Amount" :data="getCurrentPendingDepositBal" :divider="true" :info="memberOf" />
+        <div class="div-flex justify-content-center flex-wrap">
+          <FundDataItem class="data-item" title="Total Base Asset Balance Avalible For Withdrawal" :data="formatTotalWithrawalBalance" :divider="true" :info="formatInfo" />
+          <FundDataItem class="data-item" title="Pending Fund Tokens Withdrwals" :data="formatGetCurrentPendingWithdrawalBal" :divider="true" :info="formatInfo" />
+          <FundDataItem class="data-item" title="Pending Base Asset Deposit Request Amount" :data="formatGetCurrentPendingDepositBal" :divider="true" :info="formatInfo"/>
+        </div>
       </div>
     </div>
 
@@ -95,6 +97,23 @@ export default {
     ...mapGetters("accounts", ["getActiveAccount", "getChainId", "getChainName", "getWeb3", "isUserConnected"]),
     ...mapGetters("fundFactory", ["getFundFactoryContract", "getFunds"]),
     ...mapGetters("fund", ["getSelectedFundAddress", "getFundContract"]),
+
+    formatTotalWithrawalBalance(){
+	return this.totalWithrawalBalance;
+    },
+
+    formatGetCurrentPendingWithdrawalBal(){
+    	return this.getCurrentPendingWithdrawalBal; 
+    },
+
+    formatGetCurrentPendingDepositBal() {
+    	return this.getCurrentPendingDepositBal;
+    },
+
+
+    formatInfo () {
+      return ""
+    },
 
     getFundData(){
       console.log(this.getSelectedFundAddress);
@@ -179,6 +198,7 @@ export default {
     PrepRoleMod,
     FundWithdraw,
     FundDeposit,
+    FundDataItem,
     SetAddress,
     FundTransfer
   },
@@ -212,6 +232,9 @@ export default {
         try {
 		component.getCurrentPendingDepositBal = await component.getFundContract.methods.getCurrentPendingDepositBal().call();
         } catch (e) {}
+	console.log(component.totalWithrawalBalance);
+	console.log(component.getCurrentPendingWithdrawalBal);
+	console.log(component.getCurrentPendingDepositBal);
 	component.loading = false;
 
     },
