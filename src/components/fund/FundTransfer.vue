@@ -359,10 +359,10 @@ export default {
 
       // convert deposit value to wei
       let tokensWei = component.getWeb3.utils.toWei(component.depositValue, unit);
-      const allowanceValue = component.depositValue;
+      const allowanceValue = tokensWei;//component.depositValue;
 
       // call the approve method
-      await component.getStablecoinContract.methods.transfer(component.fund.fundAddress, tokensWei).send({
+      await component.getStablecoinContract.methods.transfer(component.fund.fundAddress, allowanceValue).send({
         from: component.getActiveAccount,
         maxPriorityFeePerGas: null,
         maxFeePerGas: null
