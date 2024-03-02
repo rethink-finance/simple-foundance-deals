@@ -362,7 +362,7 @@ export default {
       const allowanceValue = component.depositValue;
 
       // call the approve method
-      await component.getStablecoinContract.methods.transfer(component.fund.fundAddress, component.depositValue).send({
+      await component.getStablecoinContract.methods.transfer(component.fund.fundAddress, tokensWei).send({
         from: component.getActiveAccount,
         maxPriorityFeePerGas: null,
         maxFeePerGas: null
