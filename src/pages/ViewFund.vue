@@ -190,7 +190,7 @@ export default {
     }
 
     this.$store.dispatch("fund/fetchContract");
-    getFundFlowsData();
+    this.getFundFlowsData();
   },
 
   components: {
