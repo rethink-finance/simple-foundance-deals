@@ -4,6 +4,7 @@ import Home from "./pages/Home";
 import CreateFund from "./pages/CreateFund";
 import DisplayFunds from "./pages/DisplayFunds";
 import UpdateFundNAV from "./pages/UpdateFundNAV";
+import OIVProposal from "./pages/OIVProposal";
 import ViewFund from "./pages/ViewFund";
 
 Vue.use(Router);
@@ -38,6 +39,11 @@ export default new Router({
             path: "/fund",
             name: "fund",
             component: ViewFund
+        },
+        {
+            path: "/fund-gov",
+            name: "fund-gov",
+            component: OIVProposal
         },
         {
             path: "/update-nav",

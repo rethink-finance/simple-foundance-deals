@@ -26,6 +26,14 @@
           </router-link>
         </div>
       </div>
+
+      <div class="data-item" >
+        <div class="data-item" @mouseover="toggleFund">
+          <router-link to="/fund-gov" class="btn btn-success">
+            OIV Proposal
+          </router-link>
+        </div>
+      </div>
     </div>
 
     <!-- Action button -->
