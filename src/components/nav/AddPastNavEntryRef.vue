@@ -5,7 +5,9 @@
       <input v-model="entry.isPastNAVUpdate" class="form-control deposit-input" placeholder="(Referencing  Past NAV Update?), Ex: false">
       <input v-model="entry.pastNAVUpdateIndex" class="form-control deposit-input" placeholder="(Index of Past NAV Update), Ex: 0">
       <input v-model="entry.pastNAVUpdateEntryIndex" class="form-control deposit-input" placeholder="(Index of NAV Entry In Past NAV Update), Ex: 0">
-      <input v-model="entry.description" class="form-control deposit-input" placeholder="(Description of NAV Update), Ex: Borrwing ETH on AAVE">
+      <div v-for="(value, key, keyIdx) in entry.description" class="flex flex-col gap-2">
+        <input v-model="entry.description[key]" class="form-control deposit-input" :placeholder="key">
+      </div>
     </div>
 
     <span></span>
@@ -21,6 +23,9 @@
 </template>
 
 <script>
+
+//- position name
+//      - vaulation source
 
 export default {
   name: "AddPastNavEntryRef",

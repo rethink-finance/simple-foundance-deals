@@ -124,7 +124,10 @@ export default {
           isPastNAVUpdate: null,
           pastNAVUpdateIndex: null,
           pastNAVUpdateEntryIndex: null,
-          description: "",
+          description: {
+            positionName: "",
+            valuationSource: ""
+          },
         })
     },
 
@@ -257,7 +260,7 @@ export default {
             component.PastNAVUpdateMap[component.navUpdateEntries[i].isPastNAVUpdate],
             parseInt(component.navUpdateEntries[i].pastNAVUpdateIndex),
             parseInt(component.navUpdateEntries[i].pastNAVUpdateEntryIndex),
-            component.navUpdateEntries[i].description
+            JSON.stringify(component.navUpdateEntries[i].description),//fundMetadata
           ];
 
           dataNavUpdateEntries.push(
