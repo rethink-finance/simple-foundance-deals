@@ -1447,232 +1447,236 @@
     },
     {
       "inputs": [
-        {
-          "components": [
-            {
-              "internalType": "enum IGovernableFundStorage.NavUpdateType",
-              "name": "entryType",
-              "type": "uint8"
-            },
-            {
+          {
+              "internalType": "struct IGovernableFundStorage.NavUpdateEntry[]",
+              "name": "navUpdateData",
+              "type": "tuple[]",
               "components": [
-                {
-                  "internalType": "address",
-                  "name": "tokenPair",
-                  "type": "address"
-                },
-                {
-                  "internalType": "address",
-                  "name": "aggregatorAddress",
-                  "type": "address"
-                },
-                {
-                  "internalType": "bytes",
-                  "name": "functionSignatureWithEncodedInputs",
-                  "type": "bytes"
-                },
-                {
-                  "internalType": "address",
-                  "name": "assetTokenAddress",
-                  "type": "address"
-                },
-                {
-                  "internalType": "address",
-                  "name": "nonAssetTokenAddress",
-                  "type": "address"
-                },
-                {
-                  "internalType": "bool",
-                  "name": "isReturnArray",
-                  "type": "bool"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "returnLength",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "returnIndex",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "pastNAVUpdateIndex",
-                  "type": "uint256"
-                }
-              ],
-              "internalType": "struct IGovernableFundStorage.NAVLiquidUpdate[]",
-              "name": "liquid",
-              "type": "tuple[]"
-            },
-            {
-              "components": [
-                {
-                  "internalType": "uint256",
-                  "name": "baseCurrencySpent",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "amountAquiredTokens",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "address",
-                  "name": "tokenAddress",
-                  "type": "address"
-                },
-                {
-                  "internalType": "bool",
-                  "name": "isNFT",
-                  "type": "bool"
-                },
-                {
-                  "internalType": "string[]",
-                  "name": "otcTxHashes",
-                  "type": "string[]"
-                },
-                {
-                  "internalType": "enum IGovernableFundStorage.NAVNFTType",
-                  "name": "nftType",
-                  "type": "uint8"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "nftIndex",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "pastNAVUpdateIndex",
-                  "type": "uint256"
-                }
-              ],
-              "internalType": "struct IGovernableFundStorage.NAVIlliquidUpdate[]",
-              "name": "illiquid",
-              "type": "tuple[]"
-            },
-            {
-              "components": [
-                {
-                  "internalType": "address",
-                  "name": "oracleAddress",
-                  "type": "address"
-                },
-                {
-                  "internalType": "address",
-                  "name": "nftAddress",
-                  "type": "address"
-                },
-                {
-                  "internalType": "enum IGovernableFundStorage.NAVNFTType",
-                  "name": "nftType",
-                  "type": "uint8"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "nftIndex",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "pastNAVUpdateIndex",
-                  "type": "uint256"
-                }
-              ],
-              "internalType": "struct IGovernableFundStorage.NAVNFTUpdate[]",
-              "name": "nft",
-              "type": "tuple[]"
-            },
-            {
-              "components": [
-                {
-                  "internalType": "address",
-                  "name": "remoteContractAddress",
-                  "type": "address"
-                },
-                {
-                  "internalType": "string",
-                  "name": "functionSignatures",
-                  "type": "string"
-                },
-                {
-                  "internalType": "bytes",
-                  "name": "encodedFunctionSignatureWithInputs",
-                  "type": "bytes"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "normalizationDecimals",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "bool",
-                  "name": "isReturnArray",
-                  "type": "bool"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "returnValIndex",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "returnArraySize",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "enum IGovernableFundStorage.NAVComposableUpdateReturnType",
-                  "name": "returnValType",
-                  "type": "uint8"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "pastNAVUpdateIndex",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "bool",
-                  "name": "isNegative",
-                  "type": "bool"
-                }
-              ],
-              "internalType": "struct IGovernableFundStorage.NAVComposableUpdate[]",
-              "name": "composable",
-              "type": "tuple[]"
-            },
-            {
-              "internalType": "bool",
-              "name": "isPastNAVUpdate",
-              "type": "bool"
-            },
-            {
-              "internalType": "uint256",
-              "name": "pastNAVUpdateIndex",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "pastNAVUpdateEntryIndex",
-              "type": "uint256"
-            },
-            {
-              "internalType": "string",
-              "name": "description",
-              "type": "string"
-            }
-          ],
-          "internalType": "struct IGovernableFundStorage.NavUpdateEntry[]",
-          "name": "navUpdateData",
-          "type": "tuple[]"
-        }
+                  {
+                      "internalType": "enum IGovernableFundStorage.NavUpdateType",
+                      "name": "entryType",
+                      "type": "uint8"
+                  },
+                  {
+                      "internalType": "struct IGovernableFundStorage.NAVLiquidUpdate[]",
+                      "name": "liquid",
+                      "type": "tuple[]",
+                      "components": [
+                          {
+                              "internalType": "address",
+                              "name": "tokenPair",
+                              "type": "address"
+                          },
+                          {
+                              "internalType": "address",
+                              "name": "aggregatorAddress",
+                              "type": "address"
+                          },
+                          {
+                              "internalType": "bytes",
+                              "name": "functionSignatureWithEncodedInputs",
+                              "type": "bytes"
+                          },
+                          {
+                              "internalType": "address",
+                              "name": "assetTokenAddress",
+                              "type": "address"
+                          },
+                          {
+                              "internalType": "address",
+                              "name": "nonAssetTokenAddress",
+                              "type": "address"
+                          },
+                          {
+                              "internalType": "bool",
+                              "name": "isReturnArray",
+                              "type": "bool"
+                          },
+                          {
+                              "internalType": "uint256",
+                              "name": "returnLength",
+                              "type": "uint256"
+                          },
+                          {
+                              "internalType": "uint256",
+                              "name": "returnIndex",
+                              "type": "uint256"
+                          },
+                          {
+                              "internalType": "uint256",
+                              "name": "pastNAVUpdateIndex",
+                              "type": "uint256"
+                          }
+                      ]
+                  },
+                  {
+                      "internalType": "struct IGovernableFundStorage.NAVIlliquidUpdate[]",
+                      "name": "illiquid",
+                      "type": "tuple[]",
+                      "components": [
+                          {
+                              "internalType": "uint256",
+                              "name": "baseCurrencySpent",
+                              "type": "uint256"
+                          },
+                          {
+                              "internalType": "uint256",
+                              "name": "amountAquiredTokens",
+                              "type": "uint256"
+                          },
+                          {
+                              "internalType": "address",
+                              "name": "tokenAddress",
+                              "type": "address"
+                          },
+                          {
+                              "internalType": "bool",
+                              "name": "isNFT",
+                              "type": "bool"
+                          },
+                          {
+                              "internalType": "string[]",
+                              "name": "otcTxHashes",
+                              "type": "string[]"
+                          },
+                          {
+                              "internalType": "enum IGovernableFundStorage.NAVNFTType",
+                              "name": "nftType",
+                              "type": "uint8"
+                          },
+                          {
+                              "internalType": "uint256",
+                              "name": "nftIndex",
+                              "type": "uint256"
+                          },
+                          {
+                              "internalType": "uint256",
+                              "name": "pastNAVUpdateIndex",
+                              "type": "uint256"
+                          }
+                      ]
+                  },
+                  {
+                      "internalType": "struct IGovernableFundStorage.NAVNFTUpdate[]",
+                      "name": "nft",
+                      "type": "tuple[]",
+                      "components": [
+                          {
+                              "internalType": "address",
+                              "name": "oracleAddress",
+                              "type": "address"
+                          },
+                          {
+                              "internalType": "address",
+                              "name": "nftAddress",
+                              "type": "address"
+                          },
+                          {
+                              "internalType": "enum IGovernableFundStorage.NAVNFTType",
+                              "name": "nftType",
+                              "type": "uint8"
+                          },
+                          {
+                              "internalType": "uint256",
+                              "name": "nftIndex",
+                              "type": "uint256"
+                          },
+                          {
+                              "internalType": "uint256",
+                              "name": "pastNAVUpdateIndex",
+                              "type": "uint256"
+                          }
+                      ]
+                  },
+                  {
+                      "internalType": "struct IGovernableFundStorage.NAVComposableUpdate[]",
+                      "name": "composable",
+                      "type": "tuple[]",
+                      "components": [
+                          {
+                              "internalType": "address",
+                              "name": "remoteContractAddress",
+                              "type": "address"
+                          },
+                          {
+                              "internalType": "string",
+                              "name": "functionSignatures",
+                              "type": "string"
+                          },
+                          {
+                              "internalType": "bytes",
+                              "name": "encodedFunctionSignatureWithInputs",
+                              "type": "bytes"
+                          },
+                          {
+                              "internalType": "uint256",
+                              "name": "normalizationDecimals",
+                              "type": "uint256"
+                          },
+                          {
+                              "internalType": "bool",
+                              "name": "isReturnArray",
+                              "type": "bool"
+                          },
+                          {
+                              "internalType": "uint256",
+                              "name": "returnValIndex",
+                              "type": "uint256"
+                          },
+                          {
+                              "internalType": "uint256",
+                              "name": "returnArraySize",
+                              "type": "uint256"
+                          },
+                          {
+                              "internalType": "enum IGovernableFundStorage.NAVComposableUpdateReturnType",
+                              "name": "returnValType",
+                              "type": "uint8"
+                          },
+                          {
+                              "internalType": "uint256",
+                              "name": "pastNAVUpdateIndex",
+                              "type": "uint256"
+                          },
+                          {
+                              "internalType": "bool",
+                              "name": "isNegative",
+                              "type": "bool"
+                          }
+                      ]
+                  },
+                  {
+                      "internalType": "bool",
+                      "name": "isPastNAVUpdate",
+                      "type": "bool"
+                  },
+                  {
+                      "internalType": "uint256",
+                      "name": "pastNAVUpdateIndex",
+                      "type": "uint256"
+                  },
+                  {
+                      "internalType": "uint256",
+                      "name": "pastNAVUpdateEntryIndex",
+                      "type": "uint256"
+                  },
+                  {
+                      "internalType": "string",
+                      "name": "description",
+                      "type": "string"
+                  }
+              ]
+          },
+          {
+              "internalType": "address[]",
+              "name": "pastNAVUpdateEntryFundAddress",
+              "type": "address[]"
+          }
       ],
-      "name": "updateNav",
-      "outputs": [],
       "stateMutability": "nonpayable",
-      "type": "function"
-    },
+      "type": "function",
+      "name": "updateNav"
+  },
     {
       "inputs": [
         {
