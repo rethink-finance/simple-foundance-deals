@@ -128,6 +128,7 @@ export default {
             positionName: "",
             valuationSource: ""
           },
+          pastNAVUpdateEntryFundAddress: this.getSelectedFundAddress
         })
     },
 
@@ -239,6 +240,7 @@ export default {
       let collectFeesAbiJSON = component.getFundAbi[20];
 
       let dataNavUpdateEntries = [];
+      let dataPastNavUpdateEntriesAddrs = [];
 
       //encode all liquid, push back onto NavUpdateEntry
       if (component.validateObj(component.navUpdateEntries)) {
@@ -266,12 +268,16 @@ export default {
           dataNavUpdateEntries.push(
             parameters
           );
+
+          dataPastNavUpdateEntriesAddrs.push(
+            component.navUpdateEntries[i].pastNAVUpdateEntryFundAddress
+          );
         }
       }
 
       console.log(JSON.stringify(dataNavUpdateEntries));
       console.log(addNavUpdateEntryAbiJSON);
-      let encodedDataNavUpdateEntries = component.getWeb3.eth.abi.encodeFunctionCall(addNavUpdateEntryAbiJSON, [dataNavUpdateEntries]);
+      let encodedDataNavUpdateEntries = component.getWeb3.eth.abi.encodeFunctionCall(addNavUpdateEntryAbiJSON, [dataNavUpdateEntries, dataPastNavUpdateEntriesAddrs]);
 
       console.log(component.fund.governor);
       console.log(component.getSelectedFundAddress);

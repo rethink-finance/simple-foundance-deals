@@ -8,6 +8,8 @@
       <div v-for="(value, key, keyIdx) in entry.description" class="flex flex-col gap-2">
         <input v-model="entry.description[key]" class="form-control deposit-input" :placeholder="key">
       </div>
+      <input v-model="entry.pastNAVUpdateEntryFundAddress" class="form-control deposit-input" placeholder="(Address of fund Where NAV Entry Is Used In Past NAV Update), Ex: 0xd81F810fc394e96c5D67af8395607C71B0a42d52">
+
     </div>
 
     <span></span>
@@ -17,7 +19,9 @@
       isPastNAVUpdate: {{ entry.isPastNAVUpdate }}
       pastNAVUpdateIndex: {{ entry.pastNAVUpdateIndex }}
       pastNAVUpdateEntryIndex: {{ entry.pastNAVUpdateEntryIndex }}
+      pastNAVUpdateEntryFundAddress: {{ entry.pastNAVUpdateEntryFundAddress }}
       description: {{ entry.description }}
+
     </pre>
   </div>
 </template>
