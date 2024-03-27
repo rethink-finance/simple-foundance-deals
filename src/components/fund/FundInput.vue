@@ -22,7 +22,7 @@
 
   <span></span>
   <div v-for="(value, key, keyIdx) in fundMetadata" class="flex flex-col gap-2">
-    <input v-model="fundMetadata[key]" class="form-control deposit-input" :placeholder="key">
+    <textarea v-model="fundMetadata[key]" class="form-control deposit-input" placeholder="key"></textarea>
   </div>
 
   <pre>{{ fund }}</pre>

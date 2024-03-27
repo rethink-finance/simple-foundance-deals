@@ -3,6 +3,19 @@
 
     <h1> Current Fund: ({{getSelectedFundAddress.substring(0, 6)}}...{{getSelectedFundAddress.substring(38, 42)}})</h1>
 
+
+    <textarea v-model="navUpdate" class="form-control deposit-input" placeholder="Decode Nav Update"></textarea>
+    <div class="pool-submit-buttons">
+
+    <pre>{{ navUpdateDecoded }}</pre>
+
+
+      <button @click="decodeNavUpdate" class="btn btn-success">
+        Decode Nav Update
+      </button>
+    </div>
+
+
     <NavEntryList :entries="navUpdateEntries"/>
 
     <div class="pool-submit-buttons">
@@ -29,12 +42,16 @@ import NavEntryList from '../components/nav/NavEntryList.vue';
 import addresses from "../contracts/addresses.json";
 import RethinkFundGovernorJSON from "../contracts/RethinkFundGovernor.json";
 
+const abiDecoder = require('abi-decoder'); // NodeJS
+
 export default {
   name: 'UpdateFundNAV',
   data() {
     return {
       loading: false,
       fund: {},
+      navUpdate: null,
+      navUpdateDecoded: {},
       entryIdx: 0,
       BOOL_TYPE: {
         "true": true,
@@ -83,6 +100,8 @@ export default {
     for (var i in this.getFundAbi) {
       console.log(i + " " + JSON.stringify(this.getFundAbi[i]));
     }
+
+    abiDecoder.addABI(this.getFundAbi);
 
   },
 
@@ -189,6 +208,12 @@ export default {
         data.push(parameters);
       }
       return data;
+    },
+
+    decodeNavUpdate() {
+      if (this.navUpdate != null) {
+        this.navUpdateDecoded = abiDecoder.decodeMethod(this.navUpdate);
+      }
     },
 
     prepNAVNFTUpdate(nftUpdates) {
