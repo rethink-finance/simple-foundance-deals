@@ -3,6 +3,17 @@
 
     <h1> Current Fund: ({{getSelectedFundAddress.substring(0, 6)}}...{{getSelectedFundAddress.substring(38, 42)}})</h1>
 
+    <h2>
+      Remember To Set Default Permissions Before Accepting Deposits:
+    </h2>
+
+    <h3>
+        - Emergency Permissions for OIV assets
+    </h3>
+    <h3>
+        - Sending Base Assets Back To OIV contract
+    </h3>
+
     <div class="pool-submit-buttons">
 
       <button @click="createDelegatedPermissionsProposal" class="btn btn-success">
@@ -22,16 +33,13 @@
       <div v-for="tx in proposalEntries" v-bind:key="tx.idx" class="flex flex-col gap-2">
         <h3>Add Delegated Permission</h3>
 
-        <ul class="dropdown-menu">
-          <li v-for="method in proposalMethods" v-bind:key="method" class="flex flex-col gap-2">
-            <span class="dropdown-item text-uppercase" @click="dsds">{{method}}</span>
-          </li>
-        </ul>
+        <ProposalEntry :methods="proposalRoleModMethods"/>
+
       </div>
     </div>
 
     <div v-if="!isDelgatedPermsProposal">
-      <button @click="AddSafeDirectTransaction" class="btn btn-success">
+      <button @click="addSafeDirectTransaction" class="btn btn-success">
         Add Direct Execution Transaction
       </button>
       <div v-for="tx in safeDirectTransactions" v-bind:key="tx.idx" class="flex flex-col gap-2">
@@ -60,6 +68,7 @@ import addresses from "../contracts/addresses.json";
 import RethinkFundGovernorJSON from "../contracts/RethinkFundGovernor.json";
 import GnosisSafeL2JSON from '../contracts/safe/GnosisSafeL2_v1_3_0.json';
 import ZodiacRoles from '../contracts/zodiac/RolesFull.json';
+import ProposalEntry from '../components/gov/ProposalEntry.vue';
 
 export default {
   name: 'OIVProposal',
@@ -69,13 +78,15 @@ export default {
       fund: {},
       description: null,
       proposalEntries: [],
-      proposalMethods: [],
+      proposalRoleModMethods: [],
       safeDirectTransactions: [],
       txIdx: 0,
       isDelgatedPermsProposal: true,
     }
   },
-  components: {},
+  components: {
+    ProposalEntry,
+  },
   computed: {
     ...mapGetters("accounts", ["getActiveAccount", "getChainId", "getChainName", "getWeb3", "isUserConnected"]),
     ...mapGetters("fundFactory", ["getFundFactoryContract", "getFunds"]),
@@ -91,20 +102,23 @@ export default {
     this.$store.dispatch("fund/fetchContract");
     this.getFundData()
     
-    for (var i in this.getFundAbi) {
-      console.log(i + " " + JSON.stringify(this.getFundAbi[i]));
-    }
+
+    this.proposalRoleModMethods = ZodiacRoles.abi.filter((val) => (val["type"] == "function") ? true :  false);
 
   },
 
   methods: {
+    selectProposalMethod: function () {
+
+    },
+
     addProposalEntry: function() {
       this.proposalEntries.push({
         idx: this.txIdx++,
       });
     },
 
-    AddSafeDirectTransaction: function () {
+    addSafeDirectTransaction: function () {
       this.safeDirectTransactions.push({
         idx: this.txIdx++,
         data: null,
@@ -126,6 +140,7 @@ export default {
 
     async createDelegatedPermissionsProposal() {
       let component = this;
+      component.isDelgatedPermsProposal = true;
 
       const safeContract = new component.getWeb3.eth.Contract(
         GnosisSafeL2JSON.abi,
@@ -144,8 +159,8 @@ export default {
         roleModAddr
       );
 
-      console.log(rolesModContract.methods);
-      component.proposalMethods = rolesModContract.methods;
+      //console.log(rolesModContract.methods);
+      //59 {"type":"function","name":"getCurrentPendingWithdrawalBal","inputs":[],"outputs":[{"name":"","type":"uint256","internalType":"uint256"}],"stateMutability":"view","constant":true,"signature":"0x91d3756a"}
     },
 
     async createDirectExecutionProposal() {
