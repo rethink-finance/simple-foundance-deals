@@ -1,14 +1,17 @@
 <template>
   <div>
     <div class="token-dropdown form-button-mobile">
-      <div class="btn-group" aria-describedby="button-text">
+      <div>
         <button type="button" class="btn btn-outline-success dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
           {{ selectedMethodName }}
         </button>
 
         <ul class="dropdown-menu">
           <li v-for="(method, mIdx) in methods" v-bind:key="method.name" class="flex flex-col gap-2">
-            <span class="dropdown-item text-uppercase" @click="selectProposalMethod(mIdx)"> {{ mIdx }} - {{method.name}}</span>
+            <span class="dropdown-item text-uppercase" @click="selectProposalMethod(mIdx)"><button type="button" class="btn btn-outline-success dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+          {{ selectedMethodName }}
+        </button>
+ {{ mIdx }} - {{method.name}}</span>
           </li>
         </ul>
 
@@ -16,12 +19,22 @@
         <div v-for="(input, iIdx) in selectedMethedImputData" class="flex flex-col gap-2">
           <!--------- <textarea v-model="fundMetadata[key]" class="form-control deposit-input" placeholder="key"></textarea> -------->
 
-          <li>
+          <div>
             <h3> {{ input.name }} ({{ input.internalType }}) </h3>
-          </li>
-          <li>
-            <input v-model="input.data" class="form-control deposit-input">
-          </li>
+          </div>
+          <div>
+	     <div v-if="input.isArray == true">
+		<button type="button" class="btn btn-outline-success" @click="addInputField(iIdx)">
+			Add Field
+        	</button>
+		<div v-for="(subinput, siIdx) in input.data">
+                 	<input v-model="input.data[siIdx]" class="form-control deposit-input"> 
+	        </div>
+	     </div>
+	     <div v-if="input.isArray == false">
+	     	<input v-model="input.data" class="form-control deposit-input">
+	     </div>
+          </div>
         </div>
       </div>
     </div>
@@ -70,6 +83,9 @@ export default {
   },
 
   methods: {
+    addInputField(fieldIdx) {
+	this.selectedMethedImputData[fieldIdx]["data"].push([]);
+    },
     selectProposalMethod(methodIdx) {
       this.selectedMethodIdx = methodIdx;
       this.selectedMethodName = this.methods[methodIdx].name;
@@ -79,13 +95,16 @@ export default {
     },
 
     addSelectedMethedImputDataItem() {
+      this.selectedMethedImputData = [];
       for (var iidx in this.methods[this.selectedMethodIdx].inputs) {
         let inputEntry = {
-          idx: this.inputIdx++
+          idx: this.inputIdx++,
+	  isArray: false
         };
         //is array
         if (this.methods[this.selectedMethodIdx].inputs[iidx].name.endsWith("[]")) {
           inputEntry["data"] = [];
+	  inputEntry["isArray"] = true;
         } else {
           //is not array
           inputEntry["data"] = "";
