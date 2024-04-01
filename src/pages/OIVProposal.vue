@@ -25,6 +25,12 @@
       </button>
     </div>
 
+    <h2>Proposal Title & Desc</h2>
+
+    <div v-for="(value, key, keyIdx) in descriptionMetadata" class="flex flex-col gap-2">
+      <textarea v-model="descriptionMetadata[key]" class="form-control deposit-input" placeholder="key"></textarea>
+    </div>
+
 
     <div v-if="isDelgatedPermsProposal">
       <button @click="addProposalEntry" class="btn btn-success">
@@ -33,7 +39,7 @@
       <div v-for="tx in proposalEntries" v-bind:key="tx.idx" class="flex flex-col gap-2">
         <h3>Add Delegated Permission</h3>
 
-        <ProposalEntry :methods="proposalRoleModMethods"/>
+        <ProposalEntry :methods="proposalRoleModMethods" :entry="tx"/>
 
       </div>
     </div>
@@ -50,6 +56,11 @@
         <input v-model="tx.op" class="form-control deposit-input" placeholder="(operation), Ex: 1">
       </div>
     </div>
+
+    <pre>
+      description: {{ descriptionMetadata }} 
+      proposalEntries: {{ proposalEntries  }}
+    </pre>
 
     <div class="pool-submit-buttons">
       <button @click="createProposal" class="btn btn-success">
@@ -77,6 +88,10 @@ export default {
       loading: false,
       fund: {},
       description: null,
+      descriptionMetadata : {
+        description: null,
+        title: null
+      },
       proposalEntries: [],
       proposalRoleModMethods: [],
       safeDirectTransactions: [],
@@ -115,6 +130,7 @@ export default {
     addProposalEntry: function() {
       this.proposalEntries.push({
         idx: this.txIdx++,
+        value:  [],
       });
     },
 
@@ -211,7 +227,7 @@ export default {
         [component.getSelectedFundAddress, component.getSelectedFundAddress, component.getSelectedFundAddress, component.getSelectedFundAddress],
         [0,0,0,0],
         [encodedDataNavUpdateEntries, encodedCollectFlowFeesAbiJSON, encodedCollectManagerFeesAbiJSON, encodedCollectPerformanceFeesAbiJSON],
-        "NAV UPDATE: #" + String(navUpdateIndex)
+        JSON.stringify(component.descriptionMetadata)
       ).send({
         from: component.getActiveAccount,
         maxPriorityFeePerGas: null,

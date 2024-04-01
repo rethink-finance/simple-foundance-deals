@@ -8,34 +8,35 @@
 
         <ul class="dropdown-menu">
           <li v-for="(method, mIdx) in methods" v-bind:key="method.name" class="flex flex-col gap-2">
-            <span class="dropdown-item text-uppercase" @click="selectProposalMethod(mIdx)"><button type="button" class="btn btn-outline-success dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-          {{ selectedMethodName }}
-        </button>
- {{ mIdx }} - {{method.name}}</span>
+            <span class="dropdown-item text-uppercase" @click="selectProposalMethod(mIdx)">
+              <button type="button" class="btn btn-outline-success dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                {{ mIdx }} - {{method.name}}
+              </button>
+            </span>
           </li>
         </ul>
 
 
-        <div v-for="(input, iIdx) in selectedMethedImputData" class="flex flex-col gap-2">
-          <!--------- <textarea v-model="fundMetadata[key]" class="form-control deposit-input" placeholder="key"></textarea> -------->
+        
+      </div>
+    </div>
 
-          <div>
-            <h3> {{ input.name }} ({{ input.internalType }}) </h3>
-          </div>
-          <div>
-	     <div v-if="input.isArray == true">
-		<button type="button" class="btn btn-outline-success" @click="addInputField(iIdx)">
-			Add Field
-        	</button>
-		<div v-for="(subinput, siIdx) in input.data">
-                 	<input v-model="input.data[siIdx]" class="form-control deposit-input"> 
-	        </div>
-	     </div>
-	     <div v-if="input.isArray == false">
-	     	<input v-model="input.data" class="form-control deposit-input">
-	     </div>
-          </div>
+    <div v-for="(input, iIdx) in entry.value" class="flex flex-col gap-2">
+      <!--------- <textarea v-model="fundMetadata[key]" class="form-control deposit-input" placeholder="key"></textarea> -------->
+
+      <div>
+        <h3> {{ input.name }} ({{ input.internalType }}) </h3>
+      </div>
+      <div v-if="entry.value[iIdx].isArray">
+        <button type="button" class="btn btn-outline-success" @click="addInputField(iIdx)">
+          Add Field
+        </button>
+        <div v-for="(subinput, siIdx) in input.data">
+          <input v-model="input.data[siIdx]" class="form-control deposit-input"> 
         </div>
+      </div>
+      <div v-else>
+        <input v-model="input.data" class="form-control deposit-input">
       </div>
     </div>
   </div>
@@ -67,7 +68,7 @@
 
 export default {
   name: "ProposalEntry",
-  props: ["methods"],
+  props: ["methods", "entry"],
 
   data() {
     return {
@@ -84,7 +85,7 @@ export default {
 
   methods: {
     addInputField(fieldIdx) {
-	this.selectedMethedImputData[fieldIdx]["data"].push([]);
+      this.entry.value[fieldIdx]["data"].push(null);
     },
     selectProposalMethod(methodIdx) {
       this.selectedMethodIdx = methodIdx;
@@ -95,25 +96,25 @@ export default {
     },
 
     addSelectedMethedImputDataItem() {
-      this.selectedMethedImputData = [];
+      this.entry.value = [];
       for (var iidx in this.methods[this.selectedMethodIdx].inputs) {
         let inputEntry = {
           idx: this.inputIdx++,
-	  isArray: false
+          isArray: false
         };
         //is array
-        if (this.methods[this.selectedMethodIdx].inputs[iidx].name.endsWith("[]")) {
-          inputEntry["data"] = [];
-	  inputEntry["isArray"] = true;
+        if (this.methods[this.selectedMethodIdx].inputs[iidx].internalType.endsWith("[]")) {
+          inputEntry["data"] = [null];
+          inputEntry["isArray"] = true;
         } else {
           //is not array
-          inputEntry["data"] = "";
+          inputEntry["data"] = null;
         }
 
         inputEntry["internalType"] = this.methods[this.selectedMethodIdx].inputs[iidx].internalType;   
         inputEntry["name"] = this.methods[this.selectedMethodIdx].inputs[iidx].name;   
 
-        this.selectedMethedImputData.push(inputEntry);
+        this.entry.value.push(inputEntry);
       }
     },  
   },
