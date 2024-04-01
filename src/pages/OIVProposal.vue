@@ -131,6 +131,7 @@ export default {
       this.proposalEntries.push({
         idx: this.txIdx++,
         value:  [],
+        valueMethodIdx: null,
       });
     },
 

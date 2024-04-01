@@ -97,6 +97,8 @@ export default {
 
     addSelectedMethedImputDataItem() {
       this.entry.value = [];
+      this.inputIdx = 0;
+      this.entry.valueMethodIdx = this.selectedMethodIdx;
       for (var iidx in this.methods[this.selectedMethodIdx].inputs) {
         let inputEntry = {
           idx: this.inputIdx++,
