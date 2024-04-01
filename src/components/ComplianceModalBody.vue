@@ -4,7 +4,7 @@
 
     <ul>
       <li>
-        I am aware that Rethink Finance hasn't been audited or battle tested in a live environment yet, so I will use it at my own risk.
+        I am aware that even though Rethink Finance has been audited, it has not been battle tested in a live environment yet, so I will use it at my own risk.
       </li>
     </ul>
 

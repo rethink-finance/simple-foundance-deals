@@ -121,7 +121,7 @@
           <p class="text-white peckshield-description">
             Rethink Finance
             <a class="audit-link" target="_blank" href="/">
-              has not been audited yet, for degens by degens (at least until we get an audit, then we will be for profeshunals by profeshunals).
+              has been audited by AuditOne.
             </a>
           </p>
         </div>
