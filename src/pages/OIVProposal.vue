@@ -27,8 +27,8 @@
 
     <h2>Proposal Title & Desc</h2>
 
-    <div v-for="(value, key, keyIdx) in descriptionMetadata" class="flex flex-col gap-2">
-      <textarea v-model="descriptionMetadata[key]" class="form-control deposit-input" placeholder="key"></textarea>
+    <div v-for="(value, key1, keyIdx) in descriptionMetadata" class="flex flex-col gap-2">
+      <textarea v-model="descriptionMetadata[key1]" class="form-control deposit-input" placeholder="key1"></textarea>
     </div>
 
 
@@ -85,6 +85,10 @@ export default {
   name: 'OIVProposal',
   data() {
     return {
+      BOOL_TYPE: {
+        "true": true,
+        "false": false
+      },
       loading: false,
       fund: {},
       description: null,
@@ -158,26 +162,6 @@ export default {
     async createDelegatedPermissionsProposal() {
       let component = this;
       component.isDelgatedPermsProposal = true;
-
-      const safeContract = new component.getWeb3.eth.Contract(
-        GnosisSafeL2JSON.abi,
-        component.fund.safe
-      );
-      console.log(component.fund.safe);
-      let addr1 = "0x0000000000000000000000000000000000000001";
-      let safeModules = await safeContract.methods.getModulesPaginated(addr1, 10).call();
-      let roleModAddr = safeModules[0][1];
-
-
-      console.log(roleModAddr);
-
-      const rolesModContract = new component.getWeb3.eth.Contract(
-        ZodiacRoles.abi,
-        roleModAddr
-      );
-
-      //console.log(rolesModContract.methods);
-      //59 {"type":"function","name":"getCurrentPendingWithdrawalBal","inputs":[],"outputs":[{"name":"","type":"uint256","internalType":"uint256"}],"stateMutability":"view","constant":true,"signature":"0x91d3756a"}
     },
 
     async createDirectExecutionProposal() {
@@ -191,16 +175,99 @@ export default {
       console.log(component.fund.safe);
     },
 
+    prepRoleModEntryInput(value) {
+      /*
+        - address validation
+        - bytes validation
+        - int validation
+        - enum valudation (int)
+      */
+      
+      let dtype = value.internalType;
+
+      if (value.isArray) {
+        let retDat = []
+        for (let i=0; i<value.data.length;i++) {
+          if (dtype.startswith("address")) {
+            retDat.push(value.data[i]);
+          } else if (dtype.startswith("bytes")) {
+            retDat.push(value.data[i]);
+          } else if (dtype.startswith("int")) {
+            retDat.push(value.data[i]);
+          } else if (dtype.startswith("uint")) {
+            retDat.push(value.data[i]);
+          } else if (dtype.startswith("enum")) {
+            retDat.push(value.data[i]);
+          } else if (dtype.startswith("bool")) {
+            retDat.push(this.BOOL_TYPE[value.data[i]]);
+          }
+        }
+
+        return retDat;
+        
+      } else {
+        if (dtype.startswith("address")) {
+          return value.data;
+        } else if (dtype.startswith("bytes")) {
+          return value.data;
+        } else if (dtype.startswith("int")) {
+          return value.data;
+        } else if (dtype.startswith("uint")) {
+          return value.data;
+        } else if (dtype.startswith("enum")) {
+          return value.data;
+        } else if (dtype.startswith("bool")) {
+          return this.BOOL_TYPE[value.data];
+        }
+      }
+    },
+
     async createProposal () {
       let component = this;
       component.loading = true;
 
-      let dataNavUpdateEntries = [];
+      const safeContract = new component.getWeb3.eth.Contract(
+        GnosisSafeL2JSON.abi,
+        component.fund.safe
+      );
+      console.log(component.fund.safe);
+      let addr1 = "0x0000000000000000000000000000000000000001";
+      let safeModules = await safeContract.methods.getModulesPaginated(addr1, 10).call();
+      let roleModAddr = safeModules[0][1];
 
 
-      console.log(JSON.stringify(dataNavUpdateEntries));
-      console.log(addNavUpdateEntryAbiJSON);
-      let encodedDataNavUpdateEntries = component.getWeb3.eth.abi.encodeFunctionCall(addNavUpdateEntryAbiJSON, [dataNavUpdateEntries]);
+      console.log(roleModAddr);
+
+      let encodedRoleModEntries = [];
+
+      let targets = [];
+      let gasValues = [];
+
+      //TODO: assumes validation already happens when inputing data
+      for(let i=0; i<component.proposalEntries.length; i++) {
+        let roleModFunctionABI = component.proposalRoleModMethods[component.proposalEntries[i].valueMethodIdx];
+        let roleModFunctionData = [];
+        for (let j=0; j<component.proposalEntries[i].value.length; j++) {
+          /*
+            {
+              "idx": 0,
+              "isArray": false,
+              "data": "0xe977757dA5fd73Ca3D2bA6b7B544bdF42bb2CBf6",
+              "internalType": "address",
+              "name": "module"
+            },
+
+          */
+          roleModFunctionData.push(component.proposalEntries[i].value[j].data);
+        }
+        let encodedRoleModFunction = component.getWeb3.eth.abi.encodeFunctionCall(
+          roleModFunctionABI, roleModFunctionData
+        );
+        encodedRoleModEntries.push(encodedRoleModFunction);
+        targets.push(roleModAddr);
+        gasValues.push(0)
+      }
+
 
       console.log(component.fund.governor);
       console.log(component.getSelectedFundAddress);
@@ -210,9 +277,6 @@ export default {
         RethinkFundGovernorJSON.abi,
         component.fund.governor
       );
-
-      let navUpdateIndex = await component.getFundContract.methods._navUpdateLatestIndex().call();
-
       /*
 
         function propose(
@@ -225,9 +289,9 @@ export default {
 
       //proposae nav update for fund (target: fund addr, payloadL bytes)
       await rethinkFundGovernorContract.methods.propose(
-        [component.getSelectedFundAddress, component.getSelectedFundAddress, component.getSelectedFundAddress, component.getSelectedFundAddress],
-        [0,0,0,0],
-        [encodedDataNavUpdateEntries, encodedCollectFlowFeesAbiJSON, encodedCollectManagerFeesAbiJSON, encodedCollectPerformanceFeesAbiJSON],
+        targets,
+        gasValues,
+        encodedRoleModEntries,
         JSON.stringify(component.descriptionMetadata)
       ).send({
         from: component.getActiveAccount,
@@ -239,10 +303,10 @@ export default {
       }).on('receipt', function(receipt){
         console.log(receipt);
         if (receipt.status) {
-          component.$toast.success("Register the proposal transactions was successfull. You can now vote on the proposal in the pool governance page.");
+          component.$toast.success("Delegated permissions proposal transactions was successfull. You can now vote on the proposal in the pool governance page.");
           
         } else {
-          component.$toast.error("The register proposal tx has failed. Please contact the Rethink Finance support.");
+          component.$toast.error("Delegated permissions proposal tx has failed. Please contact the Rethink Finance support.");
         }
         component.loading = false;
 
