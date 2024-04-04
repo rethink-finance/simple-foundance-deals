@@ -37,6 +37,14 @@
 
     <div class="section-big row mt-4 mx-3">
       <h3> Fund Flows Info </h3>
+      <div class="section-small">
+        <h3>Enter Estimate Of Future Fund NAV</h3>
+        <div class="d-flex flex-wrap">
+          <div>
+            <input type="text" v-model="estimatedFutureNAV" class="form-control deposit-input" placeholder="100.0" aria-describedby="depositText">
+          </div>
+        </div>    
+      </div>
       <button @click="getFundFlowsData" class="btn btn-success">
         <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
         Update Flows Info
@@ -45,6 +53,7 @@
         <div class="div-flex justify-content-center flex-wrap">
           <FundDataItem class="data-item" title="Total Base Asset Balance Avalible For Withdrawal" :data="formatTotalWithrawalBalance" :divider="true" :info="formatInfo" />
           <FundDataItem class="data-item" title="Pending Fund Tokens Withdrwals" :data="formatGetCurrentPendingWithdrawalBal" :divider="true" :info="formatInfo" />
+          <FundDataItem class="data-item" title="Pending Fund Tokens Withdrwals Value In Base Asset" :data="getProspectiveRedemptionValueInBaseAsset" :divider="true" :info="formatInfo" />
           <FundDataItem class="data-item" title="Pending Base Asset Deposit Request Amount" :data="formatGetCurrentPendingDepositBal" :divider="true" :info="formatInfo"/>
         </div>
       </div>
@@ -98,8 +107,18 @@ export default {
     ...mapGetters("fundFactory", ["getFundFactoryContract", "getFunds"]),
     ...mapGetters("fund", ["getSelectedFundAddress", "getFundContract"]),
 
+    getProspectiveRedemptionValueInBaseAsset() {
+      /*
+      function valueOf(address ownr) public view returns (uint256) {
+          return (totalNAV() * balanceOf(ownr)) / totalSupply();
+      }
+      */
+
+      return (this.estimatedFutureNAV * this.getCurrentPendingWithdrawalBal) / this.totalSupply;
+    },
+
     formatTotalWithrawalBalance(){
-	return this.totalWithrawalBalance;
+	   return this.totalWithrawalBalance;
     },
 
     formatGetCurrentPendingWithdrawalBal(){
@@ -109,7 +128,6 @@ export default {
     formatGetCurrentPendingDepositBal() {
     	return this.getCurrentPendingDepositBal;
     },
-
 
     formatInfo () {
       return ""
@@ -207,6 +225,8 @@ export default {
     return {
       loading: false,
       fund: {},
+      totalSupply: null,
+      estimatedFutureNAV: 0,
       totalWithrawalBalance: null,
       getCurrentPendingWithdrawalBal: null,
       getCurrentPendingDepositBal: null,
@@ -222,20 +242,24 @@ export default {
     ...mapActions("accounts", ["connectWeb3Modal"]),
 
     async getFundFlowsData(){
-	let component = this;
-	component.loading = true;
-	//totalWithrawalBalance, getCurrentPendingWithdrawalBal and getCurrentPendingDepositBal visible from ui
-    	component.totalWithrawalBalance = await component.getFundContract.methods.totalWithrawalBalance().call();
-        try {
-		component.getCurrentPendingWithdrawalBal = await component.getFundContract.methods.getCurrentPendingWithdrawalBal().call();
-	} catch (e) {}
-        try {
-		component.getCurrentPendingDepositBal = await component.getFundContract.methods.getCurrentPendingDepositBal().call();
-        } catch (e) {}
-	console.log(component.totalWithrawalBalance);
-	console.log(component.getCurrentPendingWithdrawalBal);
-	console.log(component.getCurrentPendingDepositBal);
-	component.loading = false;
+    	let component = this;
+    	component.loading = true;
+    	//totalWithrawalBalance, getCurrentPendingWithdrawalBal and getCurrentPendingDepositBal visible from ui
+      component.totalWithrawalBalance = await component.getFundContract.methods.totalWithrawalBalance().call();
+      try {
+    		component.getCurrentPendingWithdrawalBal = await component.getFundContract.methods.getCurrentPendingWithdrawalBal().call();
+    	} catch (e) {}
+      try {
+        component.getCurrentPendingDepositBal = await component.getFundContract.methods.getCurrentPendingDepositBal().call();
+      } catch (e) {}
+      try {
+        component.totalSupply = await component.getFundContract.methods.totalSupply().call();
+      } catch (e) {}
+    	console.log(component.totalWithrawalBalance);
+    	console.log(component.getCurrentPendingWithdrawalBal);
+      console.log(component.getCurrentPendingDepositBal);
+      console.log(component.totalSupply);
+    	component.loading = false;
 
     },
 
