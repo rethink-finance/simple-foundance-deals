@@ -1783,6 +1783,20 @@
       "type": "function"
     },
     {
+      "inputs": [],
+      "name": "getFundStartTime",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function",
+      "constant": true
+    },
+    {
       "inputs": [
         {
           "internalType": "address",
