@@ -5,27 +5,29 @@
 
 
     <textarea v-model="navUpdate" class="form-control deposit-input" placeholder="Decode Nav Update"></textarea>
-    <div class="pool-submit-buttons">
-
-    <pre>{{ navUpdateDecoded }}</pre>
-
-
+    <pre>{{ navUpdateDecoded }}</pre>    
+    <div class="data-item">
       <button @click="decodeNavUpdate" class="btn btn-success">
         Decode Nav Update
       </button>
     </div>
 
+    <h3> Process Redemptions: {{ processWithdraw }} </h3>
+    <div class="data-item">
+      <button @click="togglePprocessWithdraw" class="btn btn-success">
+        Toggle Process Redemptions
+      </button>
+    </div>
+
 
     <NavEntryList :entries="navUpdateEntries"/>
-
-    <div class="pool-submit-buttons">
-
+    <div class="data-item">
       <button @click="addNavUpdateEntry" class="btn btn-success">
         Add NAV Update Entry
       </button>
     </div>
 
-    <div class="pool-submit-buttons">
+    <div class="data-item">
       <button @click="createProposal" class="btn btn-success">
         <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
         Create and Register Proposal
@@ -53,6 +55,7 @@ export default {
       navUpdate: null,
       navUpdateDecoded: {},
       entryIdx: 0,
+      processWithdraw: false,
       BOOL_TYPE: {
         "true": true,
         "false": false
@@ -106,6 +109,14 @@ export default {
   },
 
   methods: {
+    togglePprocessWithdraw() {
+      if (this.processWithdraw == false) {
+        this.processWithdraw = true;
+      } else {
+        this.processWithdraw = false;
+      }
+    },
+
     getFundData(){
       console.log(this.getSelectedFundAddress);
       for (var fidx in this.getFunds){
@@ -302,7 +313,7 @@ export default {
 
       console.log(JSON.stringify(dataNavUpdateEntries));
       console.log(addNavUpdateEntryAbiJSON);
-      let encodedDataNavUpdateEntries = component.getWeb3.eth.abi.encodeFunctionCall(addNavUpdateEntryAbiJSON, [dataNavUpdateEntries, dataPastNavUpdateEntriesAddrs]);
+      let encodedDataNavUpdateEntries = component.getWeb3.eth.abi.encodeFunctionCall(addNavUpdateEntryAbiJSON, [dataNavUpdateEntries, dataPastNavUpdateEntriesAddrs, component.processWithdraw]);
 
       console.log(component.fund.governor);
       console.log(component.getSelectedFundAddress);

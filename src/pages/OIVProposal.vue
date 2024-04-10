@@ -28,7 +28,7 @@
     <h2>Proposal Title & Desc</h2>
 
     <div v-for="(value, key1, keyIdx) in descriptionMetadata" class="flex flex-col gap-2">
-      <textarea v-model="descriptionMetadata[key1]" class="form-control deposit-input" placeholder="key1"></textarea>
+      <textarea v-model="descriptionMetadata[key1]" class="form-control deposit-input" :placeholder="key1"></textarea>
     </div>
 
 

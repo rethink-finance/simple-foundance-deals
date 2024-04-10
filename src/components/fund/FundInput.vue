@@ -5,7 +5,9 @@
   <input v-model="fund.depositFee" class="form-control deposit-input" placeholder="(Deposit Fee in BPS), Ex: 10">
   <input v-model="fund.withdrawFee" class="form-control deposit-input" placeholder="(Withdrawal Fee in BPS), Ex: 10">
   <input v-model="fund.performanceFee" class="form-control deposit-input"  placeholder="(Performance Fee in BPS), Ex: 10">
+  <input v-model="fee._feePerformancePeriod" class="form-control deposit-input"  placeholder="(Performance Fee Period in Seconds), Ex: 31536000">
   <input v-model="fund.managementFee" class="form-control deposit-input"  placeholder="(Management Fee in BPS), Ex: 10">
+  <input v-model="fee._feeManagePeriod" class="form-control deposit-input"  placeholder="(Management Fee Period in Seconds), Ex: 31536000">
   <input v-model="fund.performaceHurdleRateBps" class="form-control deposit-input"  placeholder="(Performace Hurdle Rate in BPS), Ex: 10">
   <input v-model="fund.baseToken" class="form-control deposit-input" placeholder="(Token Address Used For Deposits/Withdrawals), Ex: 0x1000000000000000000000000000000000000000">
   <input v-model="fund.allowedDepositAddrs" class="form-control deposit-input" placeholder="(Whitelisted Deposit Addresses, Ex: [0x1000000000000000000000000000000000000000, 0x2000000000000000000000000000000000000000, 0x3000000000000000000000000000000000000000]">
@@ -22,10 +24,11 @@
 
   <span></span>
   <div v-for="(value, key, keyIdx) in fundMetadata" class="flex flex-col gap-2">
-    <textarea v-model="fundMetadata[key]" class="form-control deposit-input" placeholder="key"></textarea>
+    <textarea v-model="fundMetadata[key]" class="form-control deposit-input" :placeholder="key"></textarea>
   </div>
 
   <pre>{{ fund }}</pre>
+  <pre>{{ fee }}</pre>
   <pre> {{ fundMetadata }}</pre>
   <pre>{{ governor }}</pre>
   </div>
@@ -35,7 +38,7 @@
 
 export default {
   name: "FundInput",
-  props: ["fund", "governor", "fundMetadata"],
+  props: ["fund", "governor", "fundMetadata", "fee"],
 
   components: { 
   },

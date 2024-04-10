@@ -4,7 +4,7 @@
 
   <div class="section-big row mt-4 mx-3">
     <div class="col-md-12">
-      <FundInput :fund="fund" :governor="governor" :fundMetadata="fundMetadata"/>
+      <FundInput :fund="fund" :governor="governor" :fundMetadata="fundMetadata" :fee="fee"/>
       <span></span>
     </div>
     <div class="fund-submit-buttons">
@@ -63,6 +63,10 @@ export default {
         votingDelay: null,
         votingPeriod: null,
         proposalThreshold: null
+      },
+      fee: {
+        _feePerformancePeriod: null,
+        _feeManagePeriod: null
       }
     }
   },
@@ -97,6 +101,11 @@ export default {
     validateFundMetadata(obj) {
       if(obj.description == null) return false;
       if(obj.photoUrl == null) return false;
+      return true;
+    },
+    validateFeePeriod(obj) {
+      if(obj._feePerformancePeriod == null) return false;
+      if(obj._feeManagePeriod == null) return false;
       return true;
     },
     getCreateFundMutation(){
@@ -239,7 +248,7 @@ export default {
             address[4] feeCollectors;
           }
       */
-      if (component.validateFund(component.fund) && component.validateGovernor(component.governor) && (component.validateFundMetadata(component.fundMetadata))) {
+      if (component.validateFund(component.fund) && component.validateGovernor(component.governor) && component.validateFundMetadata(component.fundMetadata) && component.validateFeePeriod(component.fee)) {
         await component.getFundFactoryContract.methods.createFund(
           [
             parseInt(component.fund.depositFee),
@@ -268,6 +277,8 @@ export default {
             parseInt(component.governor.proposalThreshold),
           ],
           JSON.stringify(component.fundMetadata),//fundMetadata
+          parseInt(component.fee._feePerformancePeriod),
+          parseInt(component.fee._feeManagePeriod)
         ).send({
           from: component.getActiveAccount,
           maxPriorityFeePerGas: null,
