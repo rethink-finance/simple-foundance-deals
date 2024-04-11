@@ -594,6 +594,32 @@
     },
     {
       "inputs": [],
+      "name": "feeManagePeriod",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "feePerformancePeriod",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
       "name": "fundMetadata",
       "outputs": [
         {
@@ -1671,12 +1697,17 @@
               "internalType": "address[]",
               "name": "pastNAVUpdateEntryFundAddress",
               "type": "address[]"
+          },
+          {
+            "internalType": "bool",
+            "name": "processWithdraw",
+            "type": "bool"
           }
       ],
       "stateMutability": "nonpayable",
       "type": "function",
       "name": "updateNav"
-  },
+    },
     {
       "inputs": [
         {

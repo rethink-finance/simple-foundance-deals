@@ -148,6 +148,16 @@
           "internalType": "string",
           "name": "_fundMetadata",
           "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_feePerformancePeriod",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_feeManagePeriod",
+          "type": "uint256"
         }
       ],
       "name": "createFund",
