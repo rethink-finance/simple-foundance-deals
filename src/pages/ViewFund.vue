@@ -22,6 +22,32 @@
             </button>
           </div>
         </div>
+
+        <div class="section-big row mt-4 mx-3">
+          <div class="col-md-12">
+            <SetAddressWithUint :data="DepositFor" />
+            <span></span>
+            <button @click="approveWrappedAllowance" class="btn btn-success">
+              <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+              Max Approve Wrapping {{formattedFundSymbol}}
+            </button>
+            <button @click="wrap" class="btn btn-success">
+              <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+              Wrap {{formattedFundSymbol}}
+            </button>
+          </div>
+        </div>
+
+        <div class="section-big row mt-4 mx-3">
+          <div class="col-md-12">
+            <SetAddressWithUint :data="WithdrawTo" />
+            <span></span>
+            <button @click="unwrap" class="btn btn-success">
+              <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+              Unrap {{formattedFundSymbol}}
+            </button>
+          </div>
+        </div>
         <span></span>
         <span></span>
 
@@ -89,6 +115,7 @@
 
 import { mapGetters, mapActions } from "vuex";
 import SetAddress from '../components/gov/SetAddress.vue';
+import SetAddressWithUint from '../components/gov/SetAddressWithUint.vue';
 import MintFakeTokens from '../components/tokens/MintFakeTokens.vue';
 import PrepRoleMod from '../components/gov/PrepRoleMod.vue';
 import FundDeposit from '../components/fund/FundDeposit.vue';
@@ -98,6 +125,7 @@ import FundDataItem from '../components/fund/FundDataItem.vue';
 import GnosisSafeL2JSON from '../contracts/safe/GnosisSafeL2_v1_3_0.json';
 import ZodiacRoles from '../contracts/zodiac/RolesFull.json';
 import ERC20Votes from '../contracts/ERC20Votes.json';
+import ERC20WrappedToken from '../contracts/ERC20WrappedToken.json';
 
 export default {
   name: "ViewFund",
@@ -218,6 +246,7 @@ export default {
     FundDeposit,
     FundDataItem,
     SetAddress,
+    SetAddressWithUint,
     FundTransfer
   },
 
@@ -234,6 +263,18 @@ export default {
       DelegateTo: {
         addr: null,
         desc: "Delegate Governance Token To Address"
+      },
+      DepositFor: {
+        to: null,
+        amount: null,
+        desc1: "Reciving Address",
+        desc2: "Amount (ex: 50000000000000000000000, for 50000 if token has 18 decimals)"
+      },
+      WithdrawTo: {
+        to: null,
+        amount: null,
+        desc1: "Reciving Address",
+        desc2: "Amount (ex: 50000000000000000000000, for 50000 if token has 18 decimals)"
       },
     }
   },
@@ -302,6 +343,153 @@ export default {
         });
       }
       component.loading = false;
+    },
+
+    async approveWrappedAllowance() {
+      let component = this;
+      component.loading = true;
+
+      // define unit and token contract
+      let unit = "ether"; // DAI - 18 decimals
+
+      const externalWrappedGovToken = new component.getWeb3.eth.Contract(
+        ERC20WrappedToken.abi,
+        component.getFundData.governanceToken
+      );
+
+      let udlAddr = await externalWrappedGovToken.methods.underlying().call();
+
+      const externalGovToken = new component.getWeb3.eth.Contract(
+        ERC20WrappedToken.abi,
+        udlAddr
+      );
+
+      // call the approve method
+      await externalGovToken.methods.approve(component.getFundData.governanceToken, "115792089237316195423570985008687907853269984665640564039457584007913129639935").send({
+        from: component.getActiveAccount,
+        maxPriorityFeePerGas: null,
+        maxFeePerGas: null
+
+      }).on('transactionHash', function(hash){
+        console.log("tx hash: " + hash);
+        component.$toast.info("The transaction has been submitted. Please wait for it to be confirmed.");
+
+      }).on('receipt', function(receipt){
+        console.log(receipt);
+
+        if (receipt.status) {
+          component.$toast.success("The approval was successfull. You can make the deposit now.");
+
+          // refresh values
+          if (component.selectedToken === "DAI") {
+            // needs to be updated this way because Polygon RPC nodes are slow with updating state
+            component.$store.state.dai.fundAllowance = allowanceValue;
+          } else if (component.selectedToken === "USDC") {
+            // needs to be updated this way because Polygon RPC nodes are slow with updating state
+            component.$store.state.usdc.fundAllowance = allowanceValue;
+          }
+          
+          
+        } else {
+          component.$toast.error("The transaction has failed. Please contact the Rethink Finance support.");
+        }
+        
+        component.loading = false;
+
+      }).on('error', function(error){
+        console.log(error);
+        component.loading = false;
+        component.$toast.error("There has been an error. Please contact the Rethink Finance support.");
+      });
+
+    },
+
+    async wrap() {
+      let component = this;
+      let nullAddr = "0x0000000000000000000000000000000000000000";
+
+      component.getFundData.governanceToken
+      if (component.fund.fundAddress != null) {
+        component.loading = true;
+
+        //external gov token
+        if ((component.getFundData.governanceToken != component.fund.fundAddress) && (component.getFundData.governanceToken != nullAddr)) {
+          const externalGovToken = new component.getWeb3.eth.Contract(
+            ERC20WrappedToken.abi,
+            component.getFundData.governanceToken
+          );
+
+          await externalGovToken.methods.depositFor(
+            component.DepositFor.to,
+            component.DepositFor.amount
+          ).send({
+            from: component.getActiveAccount,
+            maxPriorityFeePerGas: null,
+            maxFeePerGas: null
+          }).on('transactionHash', function(hash){
+            console.log("tx hash: " + hash);
+            component.$toast.info("The transaction has been submitted. Please wait for it to be confirmed.");
+          }).on('receipt', function(receipt){
+            console.log(receipt);
+            if (receipt.status) {
+              component.$toast.success("Wrapping of Governance Tokens Succeeded");
+            } else {
+              component.$toast.error("The depositFor tx has failed. Please contact the Rethink Finance support.");
+            }
+            component.loading = false;
+
+          }).on('error', function(error){
+            console.log(error);
+            component.loading = false;
+            component.$toast.error("There has been an error. Please contact the Rethink Finance support.");
+          });
+
+        }
+      }
+    },
+
+    async unwrap() {
+      let component = this;
+      let nullAddr = "0x0000000000000000000000000000000000000000";
+
+      component.getFundData.governanceToken
+      if (component.fund.fundAddress != null) {
+        component.loading = true;
+
+        //external gov token
+        if ((component.getFundData.governanceToken != component.fund.fundAddress) && (component.getFundData.governanceToken != nullAddr)) {
+          const externalGovToken = new component.getWeb3.eth.Contract(
+            ERC20WrappedToken.abi,
+            component.getFundData.governanceToken
+          );
+
+          await externalGovToken.methods.withdrawTo(
+            component.WithdrawTo.to,
+            component.WithdrawTo.amount
+          ).send({
+            from: component.getActiveAccount,
+            maxPriorityFeePerGas: null,
+            maxFeePerGas: null
+          }).on('transactionHash', function(hash){
+            console.log("tx hash: " + hash);
+            component.$toast.info("The transaction has been submitted. Please wait for it to be confirmed.");
+          }).on('receipt', function(receipt){
+            console.log(receipt);
+            if (receipt.status) {
+              component.$toast.success("Unwrapping of Governance Tokens Succeeded");
+            } else {
+              component.$toast.error("The withdrawTo tx has failed. Please contact the Rethink Finance support.");
+            }
+            component.loading = false;
+
+          }).on('error', function(error){
+            console.log(error);
+            component.loading = false;
+            component.$toast.error("There has been an error. Please contact the Rethink Finance support.");
+          });
+
+        }
+      }
     },
 
     async delegate() {
