@@ -264,17 +264,17 @@ export default {
       if (value.isArray) {
         let retDat = []
         for (let i=0; i<value.data.length;i++) {
-          if (dtype.startswith("address")) {
+          if (dtype.startsWith("address")) {
             retDat.push(value.data[i]);
-          } else if (dtype.startswith("bytes")) {
+          } else if (dtype.startsWith("bytes")) {
             retDat.push(value.data[i]);
-          } else if (dtype.startswith("int")) {
+          } else if (dtype.startsWith("int")) {
             retDat.push(value.data[i]);
-          } else if (dtype.startswith("uint")) {
+          } else if (dtype.startsWith("uint")) {
             retDat.push(value.data[i]);
-          } else if (dtype.startswith("enum")) {
+          } else if (dtype.startsWith("enum")) {
             retDat.push(value.data[i]);
-          } else if (dtype.startswith("bool")) {
+          } else if (dtype.startsWith("bool")) {
             retDat.push(this.BOOL_TYPE[value.data[i]]);
           }
         }
@@ -282,17 +282,17 @@ export default {
         return retDat;
         
       } else {
-        if (dtype.startswith("address")) {
+        if (dtype.startsWith("address")) {
           return value.data;
-        } else if (dtype.startswith("bytes")) {
+        } else if (dtype.startsWith("bytes")) {
           return value.data;
-        } else if (dtype.startswith("int")) {
+        } else if (dtype.startsWith("int")) {
           return value.data;
-        } else if (dtype.startswith("uint")) {
+        } else if (dtype.startsWith("uint")) {
           return value.data;
-        } else if (dtype.startswith("enum")) {
+        } else if (dtype.startsWith("enum")) {
           return value.data;
-        } else if (dtype.startswith("bool")) {
+        } else if (dtype.startsWith("bool")) {
           return this.BOOL_TYPE[value.data];
         }
       }
@@ -334,7 +334,7 @@ export default {
             },
 
           */
-          roleModFunctionData.push(component.proposalEntries[i].value[j].data);
+          roleModFunctionData.push(component.prepRoleModEntryInput(component.proposalEntries[i].value[j]));
         }
         let encodedRoleModFunction = component.getWeb3.eth.abi.encodeFunctionCall(
           roleModFunctionABI, roleModFunctionData
