@@ -25,6 +25,13 @@
     <h3>
         - Sending Base Assets Back To OIV contract
     </h3>
+    <h3>
+        - Byte Encoded OIV Address: {{ byteEncodedFundAddr }}
+    </h3>
+    <h3>
+        - Byte Encoded OIV's Safe Address: {{ byteEncodedSafeAddr }}
+    </h3>
+
 
     <div class="pool-submit-buttons">
 
@@ -142,6 +149,14 @@ export default {
     ...mapGetters("accounts", ["getActiveAccount", "getChainId", "getChainName", "getWeb3", "isUserConnected"]),
     ...mapGetters("fundFactory", ["getFundFactoryContract", "getFunds"]),
     ...mapGetters("fund", ["getSelectedFundAddress", "getFundAbi", "getFundContract"]),
+
+    byteEncodedSafeAddr() {
+      return '0x000000000000000000000000' + this.fund.safe.slice(2) 
+    },
+
+    byteEncodedFundAddr() {
+      return '0x000000000000000000000000' + this.getSelectedFundAddress.slice(2) 
+    },
 
     detectedProposalEntries() {
       let p = localStorage.getItem("proposalEntries");
