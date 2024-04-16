@@ -3,6 +3,18 @@
 
     <h1> Current Fund: ({{getSelectedFundAddress.substring(0, 6)}}...{{getSelectedFundAddress.substring(38, 42)}})</h1>
 
+
+    <h2>
+      Make Sure Before Submitting Proposal:
+    </h2>
+    <h3>
+        - Wrap governance token (if needed)
+    </h3>
+
+    <h3>
+        - Delegate to yourself first (even if you want to delegate to another) if using external governance token
+    </h3>
+
     <h2>
       Remember To Set Default Permissions Before Accepting Deposits:
     </h2>
@@ -22,6 +34,10 @@
 
       <button @click="createDirectExecutionProposal" class="btn btn-success">
         Direct Execution Proposal
+      </button>
+
+      <button v-if="detectedProposalEntries" @click="loadProposalEntries" class="btn btn-success">
+        Load Saved Proposal Draft
       </button>
     </div>
 
@@ -63,6 +79,9 @@
     </pre>
 
     <div class="pool-submit-buttons">
+      <button @click="cacheProposalEntries" class="btn btn-success">
+        Save Draft (To Browser Storage)
+      </button>
       <button @click="createProposal" class="btn btn-success">
         <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
         Submit Proposal
@@ -91,7 +110,6 @@ export default {
       },
       loading: false,
       fund: {},
-      description: null,
       descriptionMetadata : {
         description: null,
         title: null
@@ -111,7 +129,28 @@ export default {
     ...mapGetters("fundFactory", ["getFundFactoryContract", "getFunds"]),
     ...mapGetters("fund", ["getSelectedFundAddress", "getFundAbi", "getFundContract"]),
 
-    
+    detectedProposalEntries() {
+      let p = localStorage.getItem("proposalEntries");
+      let d = localStorage.getItem("descriptionMetadata");
+
+      if ((d === null) && (p === null)) {
+        return false;
+      }
+
+      if (d !== null) {
+        if (d.description !== null && d.title !== null) {
+          return true;
+        }
+      }
+
+      if (p !== null) {
+        if (p.length > 0) {
+          return true;
+        } 
+      }
+
+      return false;
+    }
 
   },
   created() {
@@ -127,6 +166,17 @@ export default {
   },
 
   methods: {
+    cacheProposalEntries: function() {
+      localStorage.setItem("proposalEntries", JSON.stringify(this.proposalEntries));
+      localStorage.setItem("descriptionMetadata", JSON.stringify(this.descriptionMetadata));
+
+    },
+
+    loadProposalEntries: function() {
+      this.proposalEntries = JSON.parse(localStorage.getItem("proposalEntries"));
+      this.descriptionMetadata = JSON.parse(localStorage.getItem("descriptionMetadata"));
+    },
+
     selectProposalMethod: function () {
 
     },
