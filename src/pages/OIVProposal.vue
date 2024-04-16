@@ -78,8 +78,14 @@
       proposalEntries: {{ proposalEntries  }}
     </pre>
 
-    <textarea v-model="descriptionMetadataRaw" class="form-control deposit-input" placeholder="descriptionMetadata"></textarea>
-    <textarea v-model="proposalEntriesRaw" class="form-control deposit-input" placeholder="proposalEntries"></textarea>
+
+    <div class="mt-3">
+      <h2>Load External Proposal Below </h2>
+
+      <textarea v-model="descriptionMetadataRaw" class="form-control deposit-input" placeholder="descriptionMetadata"></textarea>
+      <textarea v-model="proposalEntriesRaw" class="form-control deposit-input" placeholder="proposalEntries"></textarea>
+    </div>
+
 
     <div class="pool-submit-buttons">
       <button @click="cacheProposalEntries" class="btn btn-success">
