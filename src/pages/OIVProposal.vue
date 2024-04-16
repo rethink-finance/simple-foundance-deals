@@ -78,10 +78,16 @@
       proposalEntries: {{ proposalEntries  }}
     </pre>
 
+    <textarea v-model="descriptionMetadataRaw" class="form-control deposit-input" placeholder="descriptionMetadata"></textarea>
+    <textarea v-model="proposalEntriesRaw" class="form-control deposit-input" placeholder="proposalEntries"></textarea>
+
     <div class="pool-submit-buttons">
       <button @click="cacheProposalEntries" class="btn btn-success">
         Save Draft (To Browser Storage)
       </button>
+      <button @click="forceLoadProposalEntries" class="btn btn-success">
+        Force Load Draft
+      </button>  
       <button @click="createProposal" class="btn btn-success">
         <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
         Submit Proposal
@@ -110,6 +116,8 @@ export default {
       },
       loading: false,
       fund: {},
+      descriptionMetadataRaw: null,
+      proposalEntriesRaw: null,
       descriptionMetadata : {
         description: null,
         title: null
@@ -150,7 +158,7 @@ export default {
       }
 
       return false;
-    }
+    },
 
   },
   created() {
@@ -175,6 +183,18 @@ export default {
     loadProposalEntries: function() {
       this.proposalEntries = JSON.parse(localStorage.getItem("proposalEntries"));
       this.descriptionMetadata = JSON.parse(localStorage.getItem("descriptionMetadata"));
+    },
+
+    forceLoadProposalEntries: function() {
+      if (this.proposalEntriesRaw !== null) {
+        this.proposalEntries = JSON.parse(this.proposalEntriesRaw);
+
+      }
+
+      if (this.descriptionMetadataRaw !== null) {
+        this.descriptionMetadata = JSON.parse(this.descriptionMetadataRaw);
+
+      }      
     },
 
     selectProposalMethod: function () {
