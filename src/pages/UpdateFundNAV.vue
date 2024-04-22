@@ -21,8 +21,17 @@
 
     <NavEntryList :entries="navUpdateEntries"/>
 
+    <h2>NAV Update Entries</h2>
+
     <pre>
       navUpdateEntries: {{ navUpdateEntries }}
+    </pre>
+
+
+    <h2>Suggested NAV Permission</h2>
+
+    <pre>
+      defaultNavEntryPermission: {{ defaultNavEntryPermission }}
     </pre>
 
 
@@ -40,7 +49,11 @@
     </div>
 
     <div class="pool-submit-buttons">
-    <button @click="cacheNavUpdateEntries" class="btn btn-success">
+      
+      <button @click="generateNAVPermission" class="btn btn-success">
+        Generate NAV Permission
+      </button>
+      <button @click="cacheNavUpdateEntries" class="btn btn-success">
         Save Draft (To Browser Storage)
       </button>
       <button @click="forceLoadNavUpdateEntries" class="btn btn-success">
@@ -96,6 +109,68 @@ export default {
         "NAVNFTUpdateType": 2,
         "NAVComposableUpdateType": 3
       },
+      defaultNavEntryPermission: {
+        "idx": 0,
+        "value": [
+          {
+            "idx": 0,
+            "isArray": false,
+            "data": "1",
+            "internalType": "uint16",
+            "name": "role"
+          },
+          {
+            "idx": 1,
+            "isArray": false,
+            "data": null,
+            "internalType": "address",
+            "name": "targetAddress"
+          },
+          {
+            "idx": 2,
+            "isArray": false,
+            "data": null,
+            "internalType": "bytes4",
+            "name": "functionSig"
+          },
+          {
+            "idx": 3,
+            "isArray": true,
+            "data": [],
+            "internalType": "bool[]",
+            "name": "isParamScoped"
+          },
+          {
+            "idx": 4,
+            "isArray": true,
+            "data": [],
+            "internalType": "enum ParameterType[]",
+            "name": "paramType"
+          },
+          {
+            "idx": 5,
+            "isArray": true,
+            "data": [],
+            "internalType": "enum Comparison[]",
+            "name": "paramComp"
+          },
+          {
+            "idx": 6,
+            "isArray": true,
+            "data": [],
+            "internalType": "bytes[]",
+            "name": "compValue"
+          },
+          {
+            "idx": 7,
+            "isArray": false,
+            "data": "1",
+            "internalType": "enum ExecutionOptions",
+            "name": "options"
+          }
+        ],
+        "valueMethodIdx": 19
+        },
       navUpdateEntries: [],
       navUpdateEntriesRaw: null,
     }
@@ -297,6 +372,86 @@ export default {
       return data;
     },
 
+    generateNAVPermission() {
+      let component = this;
+      /*
+      let addLiquidUpdateAbiJSON = component.getFundAbi[8];
+      let addIlliquidUpdateAbiJSON = component.getFundAbi[33];
+      let addNftUpdateAbiJSON = component.getFundAbi[32];
+      let addComposableUpdateAbiJSON = component.getFundAbi[32];
+      */
+      let addNavUpdateEntryAbiJSON = component.getFundAbi[54];
+      let collectFeesAbiJSON = component.getFundAbi[21];
+
+      let dataNavUpdateEntries = [];
+      let dataPastNavUpdateEntriesAddrs = [];
+
+      //encode all liquid, push back onto NavUpdateEntry
+      if (component.validateObj(component.navUpdateEntries)) {
+        for(let i=0; i<component.navUpdateEntries.length; i++) {
+          let parameters = [
+            component.NavUpdateType[component.navUpdateEntries[i].entryType],
+            component.prepNAVLiquidUpdate(
+              component.navUpdateEntries[i].liquidUpdates
+            ),//NAVLiquidUpdate[] liquid;
+            component.prepNAVIlliquidUpdate(
+              component.navUpdateEntries[i].illiquidUpdates
+            ),//NAVIlliquidUpdate[] illiquid;
+            component.prepNAVNFTUpdate(
+              component.navUpdateEntries[i].nftUpdates
+            ),//NAVNFTUpdate[] nft;
+            component.prepNAVComposableUpdate(
+              component.navUpdateEntries[i].composableUpdates
+            ),//NAVComposableUpdate[] composable;
+            component.PastNAVUpdateMap[component.navUpdateEntries[i].isPastNAVUpdate],
+            parseInt(component.navUpdateEntries[i].pastNAVUpdateIndex),
+            parseInt(component.navUpdateEntries[i].pastNAVUpdateEntryIndex),
+            JSON.stringify(component.navUpdateEntries[i].description),//fundMetadata
+          ];
+
+          dataNavUpdateEntries.push(
+            parameters
+          );
+
+          dataPastNavUpdateEntriesAddrs.push(
+            component.navUpdateEntries[i].pastNAVUpdateEntryFundAddress
+          );
+        }
+      }
+
+      console.log(JSON.stringify(dataNavUpdateEntries));
+      console.log(addNavUpdateEntryAbiJSON);
+      let encodedDataNavUpdateEntries = component.getWeb3.eth.abi.encodeFunctionCall(addNavUpdateEntryAbiJSON, [dataNavUpdateEntries, dataPastNavUpdateEntriesAddrs]);
+
+
+      //target address is fund contract
+      component.defaultNavEntryPermission.value[1].data = component.getSelectedFundAddress;
+      //functionSig
+      component.defaultNavEntryPermission.value[2].data = encodedDataNavUpdateEntries.substring(0,10);
+      //raw data to permission
+      let subNAVEntriesEncoded = encodedDataNavUpdateEntries.substring(10);
+      let n = 64;
+      let navWords = [];
+      let navIsScoped = [];
+      let navTypeNComp = [];
+      for(var sidx=0; sidx < subNAVEntriesEncoded.length; sidx+=n) {
+        navWords.push(
+          subNAVEntriesEncoded.substring(sidx,sidx+n)
+        );
+        navIsScoped.push("true");
+        navTypeNComp.push("0");
+      }
+
+      //isParamScoped
+      component.defaultNavEntryPermission.value[3].data = navIsScoped;
+      //paramType
+      component.defaultNavEntryPermission.value[4].data = navTypeNComp;
+      //paramComp
+      component.defaultNavEntryPermission.value[5].data = navTypeNComp;
+      //compValue
+      component.defaultNavEntryPermission.value[6].data = navWords;
+    },
+
     async createProposal () {
       let component = this;
       component.loading = true;
@@ -307,8 +462,8 @@ export default {
       let addNftUpdateAbiJSON = component.getFundAbi[32];
       let addComposableUpdateAbiJSON = component.getFundAbi[32];
       */
-      let addNavUpdateEntryAbiJSON = component.getFundAbi[52];
-      let collectFeesAbiJSON = component.getFundAbi[20];
+      let addNavUpdateEntryAbiJSON = component.getFundAbi[54];
+      let collectFeesAbiJSON = component.getFundAbi[21];
 
       let dataNavUpdateEntries = [];
       let dataPastNavUpdateEntriesAddrs = [];
