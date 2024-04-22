@@ -4,7 +4,7 @@
       <h3>Add/Reference Existing NAV Liquid Update</h3>
       <input v-model="pos.tokenPair" class="form-control deposit-input" placeholder="(Token Pair), Ex: 0xd81F810fc394e96c5D67af8395607C71B0a42d52">
       <input v-model="pos.aggregatorAddress" class="form-control deposit-input" placeholder="(Aggregator), Ex: 0xd81F810fc394e96c5D67af8395607C71B0a42d52">
-      <input v-model="pos.encodedFunctionSignatureWithInputs" class="form-control deposit-input" placeholder="(Encoded Function Input Data)">
+      <input v-model="pos.functionSignatureWithEncodedInputs" class="form-control deposit-input" placeholder="(Encoded Function Input Data)">
       <input v-model="pos.assetTokenAddress" class="form-control deposit-input" placeholder="(Token Held In Safe), Ex: 0xd81F810fc394e96c5D67af8395607C71B0a42d52">
       <input v-model="pos.nonAssetTokenAddress" class="form-control deposit-input" placeholder="(Token2 Liquidity Agaisnt Token), Ex: 0xd81F810fc394e96c5D67af8395607C71B0a42d52">
       <input v-model="pos.isReturnArray" class="form-control deposit-input" placeholder="(Returns and Array?), Ex:false">
