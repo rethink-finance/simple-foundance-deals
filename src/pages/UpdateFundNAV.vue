@@ -451,7 +451,7 @@ export default {
       let navTypeNComp = [];
       for(var sidx=0; sidx < subNAVEntriesEncoded.length; sidx+=n) {
         navWords.push(
-          subNAVEntriesEncoded.substring(sidx,sidx+n)
+          "0x" + subNAVEntriesEncoded.substring(sidx,sidx+n)
         );
         navIsScoped.push("true");
         navTypeNComp.push("0");
