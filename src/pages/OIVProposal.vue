@@ -3,6 +3,18 @@
 
     <h1> Current Fund: ({{getSelectedFundAddress.substring(0, 6)}}...{{getSelectedFundAddress.substring(38, 42)}})</h1>
 
+
+    <h2>
+      Make Sure Before Submitting Proposal:
+    </h2>
+    <h3>
+        - Wrap governance token (if needed)
+    </h3>
+
+    <h3>
+        - Delegate to yourself first (even if you want to delegate to another) if using external governance token
+    </h3>
+
     <h2>
       Remember To Set Default Permissions Before Accepting Deposits:
     </h2>
@@ -13,6 +25,13 @@
     <h3>
         - Sending Base Assets Back To OIV contract
     </h3>
+    <h3>
+        - Byte Encoded OIV Address: {{ byteEncodedFundAddr }}
+    </h3>
+    <h3>
+        - Byte Encoded OIV's Safe Address: {{ byteEncodedSafeAddr }}
+    </h3>
+
 
     <div class="pool-submit-buttons">
 
@@ -22,6 +41,10 @@
 
       <button @click="createDirectExecutionProposal" class="btn btn-success">
         Direct Execution Proposal
+      </button>
+
+      <button v-if="detectedProposalEntries" @click="loadProposalEntries" class="btn btn-success">
+        Load Saved Proposal Draft
       </button>
     </div>
 
@@ -62,7 +85,22 @@
       proposalEntries: {{ proposalEntries  }}
     </pre>
 
+
+    <div class="mt-3">
+      <h2>Load External Proposal Below </h2>
+
+      <textarea v-model="descriptionMetadataRaw" class="form-control deposit-input" placeholder="descriptionMetadata"></textarea>
+      <textarea v-model="proposalEntriesRaw" class="form-control deposit-input" placeholder="proposalEntries"></textarea>
+    </div>
+
+
     <div class="pool-submit-buttons">
+      <button @click="cacheProposalEntries" class="btn btn-success">
+        Save Draft (To Browser Storage)
+      </button>
+      <button @click="forceLoadProposalEntries" class="btn btn-success">
+        Force Load Draft
+      </button>  
       <button @click="createProposal" class="btn btn-success">
         <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
         Submit Proposal
@@ -91,7 +129,8 @@ export default {
       },
       loading: false,
       fund: {},
-      description: null,
+      descriptionMetadataRaw: null,
+      proposalEntriesRaw: null,
       descriptionMetadata : {
         description: null,
         title: null
@@ -111,7 +150,36 @@ export default {
     ...mapGetters("fundFactory", ["getFundFactoryContract", "getFunds"]),
     ...mapGetters("fund", ["getSelectedFundAddress", "getFundAbi", "getFundContract"]),
 
-    
+    byteEncodedSafeAddr() {
+      return '0x000000000000000000000000' + this.fund.safe.slice(2) 
+    },
+
+    byteEncodedFundAddr() {
+      return '0x000000000000000000000000' + this.getSelectedFundAddress.slice(2) 
+    },
+
+    detectedProposalEntries() {
+      let p = localStorage.getItem("proposalEntries");
+      let d = localStorage.getItem("descriptionMetadata");
+
+      if ((d === null) && (p === null)) {
+        return false;
+      }
+
+      if (d !== null) {
+        if (d.description !== null && d.title !== null) {
+          return true;
+        }
+      }
+
+      if (p !== null) {
+        if (p.length > 0) {
+          return true;
+        } 
+      }
+
+      return false;
+    },
 
   },
   created() {
@@ -127,6 +195,29 @@ export default {
   },
 
   methods: {
+    cacheProposalEntries: function() {
+      localStorage.setItem("proposalEntries", JSON.stringify(this.proposalEntries));
+      localStorage.setItem("descriptionMetadata", JSON.stringify(this.descriptionMetadata));
+
+    },
+
+    loadProposalEntries: function() {
+      this.proposalEntries = JSON.parse(localStorage.getItem("proposalEntries"));
+      this.descriptionMetadata = JSON.parse(localStorage.getItem("descriptionMetadata"));
+    },
+
+    forceLoadProposalEntries: function() {
+      if (this.proposalEntriesRaw !== null) {
+        this.proposalEntries = JSON.parse(this.proposalEntriesRaw);
+
+      }
+
+      if (this.descriptionMetadataRaw !== null) {
+        this.descriptionMetadata = JSON.parse(this.descriptionMetadataRaw);
+
+      }      
+    },
+
     selectProposalMethod: function () {
 
     },
@@ -188,17 +279,17 @@ export default {
       if (value.isArray) {
         let retDat = []
         for (let i=0; i<value.data.length;i++) {
-          if (dtype.startswith("address")) {
+          if (dtype.startsWith("address")) {
             retDat.push(value.data[i]);
-          } else if (dtype.startswith("bytes")) {
+          } else if (dtype.startsWith("bytes")) {
             retDat.push(value.data[i]);
-          } else if (dtype.startswith("int")) {
+          } else if (dtype.startsWith("int")) {
             retDat.push(value.data[i]);
-          } else if (dtype.startswith("uint")) {
+          } else if (dtype.startsWith("uint")) {
             retDat.push(value.data[i]);
-          } else if (dtype.startswith("enum")) {
+          } else if (dtype.startsWith("enum")) {
             retDat.push(value.data[i]);
-          } else if (dtype.startswith("bool")) {
+          } else if (dtype.startsWith("bool")) {
             retDat.push(this.BOOL_TYPE[value.data[i]]);
           }
         }
@@ -206,17 +297,17 @@ export default {
         return retDat;
         
       } else {
-        if (dtype.startswith("address")) {
+        if (dtype.startsWith("address")) {
           return value.data;
-        } else if (dtype.startswith("bytes")) {
+        } else if (dtype.startsWith("bytes")) {
           return value.data;
-        } else if (dtype.startswith("int")) {
+        } else if (dtype.startsWith("int")) {
           return value.data;
-        } else if (dtype.startswith("uint")) {
+        } else if (dtype.startsWith("uint")) {
           return value.data;
-        } else if (dtype.startswith("enum")) {
+        } else if (dtype.startsWith("enum")) {
           return value.data;
-        } else if (dtype.startswith("bool")) {
+        } else if (dtype.startsWith("bool")) {
           return this.BOOL_TYPE[value.data];
         }
       }
@@ -258,7 +349,7 @@ export default {
             },
 
           */
-          roleModFunctionData.push(component.proposalEntries[i].value[j].data);
+          roleModFunctionData.push(component.prepRoleModEntryInput(component.proposalEntries[i].value[j]));
         }
         let encodedRoleModFunction = component.getWeb3.eth.abi.encodeFunctionCall(
           roleModFunctionABI, roleModFunctionData

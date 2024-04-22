@@ -5,8 +5,11 @@
 
 
     <textarea v-model="navUpdate" class="form-control deposit-input" placeholder="Decode Nav Update"></textarea>
-    <pre>{{ navUpdateDecoded }}</pre>    
-    <div class="data-item">
+    <div class="pool-submit-buttons">
+
+      <pre>{{ navUpdateDecoded }}</pre>
+
+
       <button @click="decodeNavUpdate" class="btn btn-success">
         Decode Nav Update
       </button>
@@ -14,20 +17,41 @@
 
     <h3> Process Redemptions: {{ processWithdraw }} </h3>
     <div class="data-item">
-      <button @click="togglePprocessWithdraw" class="btn btn-success">
+      <button @click="toggleProcessWithdraw" class="btn btn-success">
         Toggle Process Redemptions
       </button>
     </div>
 
+    <button v-if="detectedNavUpdateEntries" @click="loadNavUpdateEntries" class="btn btn-success">
+      Load Saved NAV Update Draft
+    </button>
 
     <NavEntryList :entries="navUpdateEntries"/>
-    <div class="data-item">
+
+    <pre>
+      navUpdateEntries: {{ navUpdateEntries }}
+    </pre>
+
+
+    <div class="mt-3">
+      <h2>Load External NAV Updates Entries Below </h2>
+
+      <textarea v-model="navUpdateEntriesRaw" class="form-control deposit-input" placeholder="navUpdateEntries"></textarea>
+    </div>
+
+    <div class="pool-submit-buttons">
       <button @click="addNavUpdateEntry" class="btn btn-success">
         Add NAV Update Entry
       </button>
     </div>
 
-    <div class="data-item">
+    <div class="pool-submit-buttons">
+    <button @click="cacheNavUpdateEntries" class="btn btn-success">
+        Save Draft (To Browser Storage)
+      </button>
+      <button @click="forceLoadNavUpdateEntries" class="btn btn-success">
+        Force Load Draft
+      </button>
       <button @click="createProposal" class="btn btn-success">
         <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
         Create and Register Proposal
@@ -79,7 +103,8 @@ export default {
         "NAVNFTUpdateType": 2,
         "NAVComposableUpdateType": 3
       },
-      navUpdateEntries: []
+      navUpdateEntries: [],
+      navUpdateEntriesRaw: null,
     }
   },
   components: {
@@ -90,7 +115,17 @@ export default {
     ...mapGetters("fundFactory", ["getFundFactoryContract", "getFunds"]),
     ...mapGetters("fund", ["getSelectedFundAddress", "getFundAbi", "getFundContract"]),
 
-    
+    detectedNavUpdateEntries() {
+      let n = localStorage.getItem("navUpdateEntries");
+
+      if (n !== null) {
+        if (n.length > 0) {
+          return true;
+        } 
+      }
+
+      return false;
+    },
 
   },
   created() {
@@ -109,12 +144,27 @@ export default {
   },
 
   methods: {
-    togglePprocessWithdraw() {
+    toggleProcessWithdraw() {
       if (this.processWithdraw == false) {
         this.processWithdraw = true;
       } else {
         this.processWithdraw = false;
       }
+    },
+
+    cacheNavUpdateEntries: function() {
+      localStorage.setItem("navUpdateEntries", JSON.stringify(this.navUpdateEntries));
+    },
+
+    loadNavUpdateEntries: function() {
+      this.navUpdateEntries = JSON.parse(localStorage.getItem("navUpdateEntries"));
+    },
+
+    forceLoadNavUpdateEntries: function() {
+      if (this.navUpdateEntriesRaw !== null) {
+        this.navUpdateEntries = JSON.parse(this.navUpdateEntriesRaw);
+
+      }    
     },
 
     getFundData(){

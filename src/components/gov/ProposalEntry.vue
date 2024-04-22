@@ -3,7 +3,7 @@
     <div class="token-dropdown form-button-mobile">
       <div>
         <button type="button" class="btn btn-outline-success dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-          {{ selectedMethodName }}
+          {{ getSelectedMethodName }}
         </button>
 
         <ul class="dropdown-menu">
@@ -81,6 +81,16 @@ export default {
   },
 
   components: { 
+  },
+
+  computed: {
+    getSelectedMethodName() {
+      if (this.entry.valueMethodIdx !== null) {
+        return this.methods[this.entry.valueMethodIdx].name;
+      } else {
+        return this.selectedMethodName;
+      }
+    },
   },
 
   methods: {
