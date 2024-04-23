@@ -395,7 +395,7 @@ export default {
       let addNftUpdateAbiJSON = component.getFundAbi[32];
       let addComposableUpdateAbiJSON = component.getFundAbi[32];
       */
-      let addNavUpdateEntryAbiJSON = component.getFundAbi[54];
+      let addNavUpdateEntryAbiJSON = component.getFundAbi[56];
       let collectFeesAbiJSON = component.getFundAbi[21];
 
       let dataNavUpdateEntries = [];
@@ -436,7 +436,7 @@ export default {
 
       console.log(JSON.stringify(dataNavUpdateEntries));
       console.log(addNavUpdateEntryAbiJSON);
-      let encodedDataNavUpdateEntries = component.getWeb3.eth.abi.encodeFunctionCall(addNavUpdateEntryAbiJSON, [dataNavUpdateEntries, dataPastNavUpdateEntriesAddrs]);
+      let encodedDataNavUpdateEntries = component.getWeb3.eth.abi.encodeFunctionCall(addNavUpdateEntryAbiJSON, [dataNavUpdateEntries, dataPastNavUpdateEntriesAddrs, component.processWithdraw]);
 
 
       //target address is fund contract
@@ -477,7 +477,7 @@ export default {
       let addNftUpdateAbiJSON = component.getFundAbi[32];
       let addComposableUpdateAbiJSON = component.getFundAbi[32];
       */
-      let addNavUpdateEntryAbiJSON = component.getFundAbi[54];
+      let addNavUpdateEntryAbiJSON = component.getFundAbi[56];
       let collectFeesAbiJSON = component.getFundAbi[21];
 
       let dataNavUpdateEntries = [];
