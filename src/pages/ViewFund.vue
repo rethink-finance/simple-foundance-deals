@@ -146,15 +146,15 @@ export default {
     },
 
     formatTotalWithrawalBalance(){
-	   return this.totalWithrawalBalance;
+	   return this.totalWithrawalBalance / (10**this.baseTokenDecimals);
     },
 
     formatGetCurrentPendingWithdrawalBal(){
-    	return this.getCurrentPendingWithdrawalBal; 
+    	return this.getCurrentPendingWithdrawalBal / (10**18); 
     },
 
     formatGetCurrentPendingDepositBal() {
-    	return this.getCurrentPendingDepositBal;
+    	return this.getCurrentPendingDepositBal / (10**this.baseTokenDecimals);
     },
 
     formatInfo () {
@@ -236,6 +236,7 @@ export default {
     }
 
     this.$store.dispatch("fund/fetchContract");
+    this.getDecimalsForBaseAssetToken();
     this.getFundFlowsData();
   },
 
@@ -254,6 +255,7 @@ export default {
     return {
       loading: false,
       fund: {},
+      baseTokenDecimals: null,
       totalSupply: null,
       estimatedFutureNAV: 0,
       totalWithrawalBalance: null,
@@ -282,9 +284,25 @@ export default {
   methods: {
     ...mapActions("accounts", ["connectWeb3Modal"]),
 
+    async getDecimalsForBaseAssetToken(){
+      let component = this;
+
+      const baseTokenContract = new component.getWeb3.eth.Contract(
+        ERC20WrappedToken.abi,
+        component.fund.baseToken
+      );
+
+      let decimals = await baseTokenContract.methods.decimals().call();
+      component.baseTokenDecimals = decimals;
+      console.log(decimals);
+    },
+
     async getFundFlowsData(){
     	let component = this;
     	component.loading = true;
+      if (component.baseTokenDecimals === null) {
+        component.getDecimalsForBaseAssetToken();
+      }
     	//totalWithrawalBalance, getCurrentPendingWithdrawalBal and getCurrentPendingDepositBal visible from ui
       component.totalWithrawalBalance = await component.getFundContract.methods.totalWithrawalBalance().call();
       try {
