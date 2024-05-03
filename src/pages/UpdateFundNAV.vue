@@ -38,7 +38,7 @@
     <h2>Suggested NAV Permission</h2>
 
     <pre>
-      defaultNavEntryPermission: {{ defaultNavEntryPermission }}
+      defaultNavEntryPermission: [{{ defaultNavEntryPermission }}]
     </pre>
 
 
