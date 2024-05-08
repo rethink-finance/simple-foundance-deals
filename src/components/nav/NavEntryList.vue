@@ -1,7 +1,7 @@
 <template>
   <div>
     <div v-for="entry in entries" v-bind:key="entry.index">
-      <NavEntry :entry="entry" />
+      <NavEntry :entry="entry" :fund="fund" />
     </div>
   </div>
 </template>
@@ -11,7 +11,7 @@ import NavEntry from './NavEntry.vue';
 
 export default {
   name: "UpdateList",
-  props: ["entries"],
+  props: ["entries", "fund"],
 
   components: { 
     NavEntry 

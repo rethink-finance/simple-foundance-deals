@@ -22,11 +22,17 @@
       </button>
     </div>
 
+    <div class="pool-submit-buttons">
+      <button @click="addNavUpdateEntry" class="btn btn-success">
+        Add NAV Update Entry
+      </button>
+    </div>
+
     <button v-if="detectedNavUpdateEntries" @click="loadNavUpdateEntries" class="btn btn-success">
       Load Saved NAV Update Draft
     </button>
 
-    <NavEntryList :entries="navUpdateEntries"/>
+    <NavEntryList :entries="navUpdateEntries" :fund="fund" />
 
     <h2>NAV Update Entries</h2>
 
@@ -46,12 +52,6 @@
       <h2>Load External NAV Updates Entries Below </h2>
 
       <textarea v-model="navUpdateEntriesRaw" class="form-control deposit-input" placeholder="navUpdateEntries"></textarea>
-    </div>
-
-    <div class="pool-submit-buttons">
-      <button @click="addNavUpdateEntry" class="btn btn-success">
-        Add NAV Update Entry
-      </button>
     </div>
 
     <div class="pool-submit-buttons">
