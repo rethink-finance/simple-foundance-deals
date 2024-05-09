@@ -29,23 +29,31 @@
         <span></span>
         <div class="section-big row mt-4 mx-3" v-if="showLiq">
           <button @click="simulateLiq" class="btn btn-success">
+            <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
             Simulate Liquid NAV Entry
           </button>
+          <pre> >> {{ simulatedLiqVal }}</pre>
         </div>
         <div class="section-big row mt-4 mx-3" v-if="showIliq">
           <button @click="simulateIliq" class="btn btn-success">
+            <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
             Simulate Illiquid NAV Entry
           </button>
+          <pre> >> {{ simulatedIliqVal }}</pre>
         </div>
         <div class="section-big row mt-4 mx-3" v-if="showNft">
           <button @click="simulateNft" class="btn btn-success">
+            <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
             Simulate NFT NAV Entry
           </button>
+          <pre> >> {{ simulatedNftVal }}</pre>
         </div>
         <div class="section-big row mt-4 mx-3" v-if="showComp">
           <button @click="simulateComp" class="btn btn-success">
+            <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
             Simulate Composable NAV Entry
           </button>
+          <pre> >> {{ simulatedCompVal }}</pre>
         </div>
       </div>
     </div>
@@ -139,6 +147,7 @@ export default {
   props: ["entry", "fund"],
   data() {
     return {
+      loading: false,
       showForm: false,
       showLiq: true,
       showIliq: true,
@@ -167,6 +176,10 @@ export default {
         "NAVNFTUpdateType": 2,
         "NAVComposableUpdateType": 3
       },
+      simulatedLiqVal: null,
+      simulatedIliqVal: null,
+      simulatedCompVal: null,
+      simulatedNftVal: null,
     }
   },
 
@@ -436,6 +449,7 @@ export default {
 
     async simulateLiq(){
       let component = this;
+      component.loading = true;
       let NAVaddress = addresses["NAVCalculatorBeaconProxy"][parseInt(component.getChainId)];
       const NAVCalculatorContract = new component.getWeb3.eth.Contract(
         NAVCalculatorJSON.abi,
@@ -444,25 +458,23 @@ export default {
 
       //function liquidCalculationReadOnly(IGovernableFundStorage.NAVLiquidUpdate[] calldata liquid, address safe, address fund, uint256 navEntryIndex, bool isPastNAVUpdate, uint256 pastNAVUpdateIndex, uint256 pastNAVUpdateEntryIndex, address pastNAVUpdateEntryFundAddress)
 
-      //component.PastNAVUpdateMap[component.navUpdateEntries[i].isPastNAVUpdate],
-            parseInt(component.navUpdateEntries[i].pastNAVUpdateIndex),
-            parseInt(component.navUpdateEntries[i].pastNAVUpdateEntryIndex),
-
-      await NAVCalculatorContract.methods.liquidCalculationReadOnly(
+      component.simulatedLiqVal = await NAVCalculatorContract.methods.liquidCalculationReadOnly(
         component.prepNAVLiquidUpdate(
-          entry.liquidUpdates
+          component.entry.liquidUpdates
         ),//NAVLiquidUpdate[] liquid;
         component.fund.safe,//safe
         component.getSelectedFundAddress,//fund
         0,//navEntryIndex
-        component.PastNAVUpdateMap[entry.isPastNAVUpdate],//isPastNAVUpdate
-        parseInt(entry.pastNAVUpdateIndex),//pastNAVUpdateIndex
-        parseInt(entry.pastNAVUpdateEntryIndex),//pastNAVUpdateEntryIndex
-        entry.pastNAVUpdateEntryFundAddress//pastNAVUpdateEntryFundAddress
+        component.PastNAVUpdateMap[component.entry.isPastNAVUpdate],//isPastNAVUpdate
+        parseInt(component.entry.pastNAVUpdateIndex),//pastNAVUpdateIndex
+        parseInt(component.entry.pastNAVUpdateEntryIndex),//pastNAVUpdateEntryIndex
+        component.entry.pastNAVUpdateEntryFundAddress//pastNAVUpdateEntryFundAddress
       ).call();
+      component.loading = false;
     },
     async simulateIliq() {
       let component = this;
+      component.loading = true;
       let NAVaddress = addresses["NAVCalculatorBeaconProxy"][parseInt(component.getChainId)];
       const NAVCalculatorContract = new component.getWeb3.eth.Contract(
         NAVCalculatorJSON.abi,
@@ -471,28 +483,26 @@ export default {
 
       //function illiquidCalculationReadOnly(IGovernableFundStorage.NAVIlliquidUpdate[] calldata illiquid, address safe, address fund, uint256 navEntryIndex, bool isPastNAVUpdate, uint256 pastNAVUpdateIndex, uint256 pastNAVUpdateEntryIndex, address pastNAVUpdateEntryFundAddress)
 
-      //component.PastNAVUpdateMap[component.navUpdateEntries[i].isPastNAVUpdate],
-            parseInt(component.navUpdateEntries[i].pastNAVUpdateIndex),
-            parseInt(component.navUpdateEntries[i].pastNAVUpdateEntryIndex),
-
-      await NAVCalculatorContract.methods.illiquidCalculationReadOnly(
+      component.simulatedIliqVal = await NAVCalculatorContract.methods.illiquidCalculationReadOnly(
         component.prepNAVIlliquidUpdate(
-          entry.illiquidUpdates
+          component.entry.illiquidUpdates
         ),//NAVLiquidUpdate[] liquid;
         component.fund.safe,//safe
         component.getSelectedFundAddress,//fund
         0,//navEntryIndex
-        component.PastNAVUpdateMap[entry.isPastNAVUpdate],//isPastNAVUpdate
-        parseInt(entry.pastNAVUpdateIndex),//pastNAVUpdateIndex
-        parseInt(entry.pastNAVUpdateEntryIndex),//pastNAVUpdateEntryIndex
-        entry.pastNAVUpdateEntryFundAddress//pastNAVUpdateEntryFundAddress
+        component.PastNAVUpdateMap[component.entry.isPastNAVUpdate],//isPastNAVUpdate
+        parseInt(component.entry.pastNAVUpdateIndex),//pastNAVUpdateIndex
+        parseInt(component.entry.pastNAVUpdateEntryIndex),//pastNAVUpdateEntryIndex
+        component.entry.pastNAVUpdateEntryFundAddress//pastNAVUpdateEntryFundAddress
       ).call();
+      component.loading = false;
     },
     async simulateNft() {
       //TODO
     },
     async simulateComp() {
       let component = this;
+      component.loading = true;
       let NAVaddress = addresses["NAVCalculatorBeaconProxy"][parseInt(component.getChainId)];
       const NAVCalculatorContract = new component.getWeb3.eth.Contract(
         NAVCalculatorJSON.abi,
@@ -501,24 +511,19 @@ export default {
 
       //  function composableCalculationReadOnly(IGovernableFundStorage.NAVComposableUpdate[] calldata composable, address fund, uint256 navEntryIndex, bool isPastNAVUpdate, uint256 pastNAVUpdateIndex, uint256 pastNAVUpdateEntryIndex, address pastNAVUpdateEntryFundAddress) external view returns (int256) {
 
-
-      //component.PastNAVUpdateMap[component.navUpdateEntries[i].isPastNAVUpdate],
-            parseInt(component.navUpdateEntries[i].pastNAVUpdateIndex),
-            parseInt(component.navUpdateEntries[i].pastNAVUpdateEntryIndex),
-
-      await NAVCalculatorContract.methods.composableCalculationReadOnly(
+      component.simulatedCompVal = await NAVCalculatorContract.methods.composableCalculationReadOnly(
         component.prepNAVComposableUpdate(
-          entry.composableUpdates
+          component.entry.composableUpdates
         ),//NAVLiquidUpdate[] liquid;
         component.fund.safe,//safe
         component.getSelectedFundAddress,//fund
         0,//navEntryIndex
-        component.PastNAVUpdateMap[entry.isPastNAVUpdate],//isPastNAVUpdate
-        parseInt(entry.pastNAVUpdateIndex),//pastNAVUpdateIndex
-        parseInt(entry.pastNAVUpdateEntryIndex),//pastNAVUpdateEntryIndex
-        entry.pastNAVUpdateEntryFundAddress//pastNAVUpdateEntryFundAddress
+        component.PastNAVUpdateMap[component.entry.isPastNAVUpdate],//isPastNAVUpdate
+        parseInt(component.entry.pastNAVUpdateIndex),//pastNAVUpdateIndex
+        parseInt(component.entry.pastNAVUpdateEntryIndex),//pastNAVUpdateEntryIndex
+        component.entry.pastNAVUpdateEntryFundAddress//pastNAVUpdateEntryFundAddress
       ).call();
-
+      component.loading = false;
     },
 
   }
