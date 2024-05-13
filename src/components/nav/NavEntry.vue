@@ -462,7 +462,6 @@ export default {
         component.prepNAVLiquidUpdate(
           component.entry.liquidUpdates
         ),//NAVLiquidUpdate[] liquid;
-        component.fund.safe,//safe
         component.getSelectedFundAddress,//fund
         0,//navEntryIndex
         component.PastNAVUpdateMap[component.entry.isPastNAVUpdate],//isPastNAVUpdate
@@ -487,7 +486,6 @@ export default {
         component.prepNAVIlliquidUpdate(
           component.entry.illiquidUpdates
         ),//NAVLiquidUpdate[] liquid;
-        component.fund.safe,//safe
         component.getSelectedFundAddress,//fund
         0,//navEntryIndex
         component.PastNAVUpdateMap[component.entry.isPastNAVUpdate],//isPastNAVUpdate
@@ -515,7 +513,6 @@ export default {
         component.prepNAVComposableUpdate(
           component.entry.composableUpdates
         ),//NAVLiquidUpdate[] liquid;
-        component.fund.safe,//safe
         component.getSelectedFundAddress,//fund
         0,//navEntryIndex
         component.PastNAVUpdateMap[component.entry.isPastNAVUpdate],//isPastNAVUpdate
