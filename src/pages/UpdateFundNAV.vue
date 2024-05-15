@@ -80,6 +80,7 @@ import NavEntryList from '../components/nav/NavEntryList.vue';
 
 import addresses from "../contracts/addresses.json";
 import RethinkFundGovernorJSON from "../contracts/RethinkFundGovernor.json";
+import NAVCalculatorJSON from "../contracts/NAVCalculator.json";
 
 const abiDecoder = require('abi-decoder'); // NodeJS
 
@@ -212,6 +213,10 @@ export default {
     
     for (var i in this.getFundAbi) {
       console.log(i + " " + JSON.stringify(this.getFundAbi[i]));
+    }
+
+    for (var i in NAVCalculatorJSON.abi) {
+    	console.log(i + " " + JSON.stringify(NAVCalculatorJSON.abi[i]));
     }
 
     abiDecoder.addABI(this.getFundAbi);

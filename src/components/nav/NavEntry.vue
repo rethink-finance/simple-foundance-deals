@@ -462,6 +462,7 @@ export default {
         component.prepNAVLiquidUpdate(
           component.entry.liquidUpdates
         ),//NAVLiquidUpdate[] liquid;
+	component.fund.safe,
         component.getSelectedFundAddress,//fund
         0,//navEntryIndex
         component.PastNAVUpdateMap[component.entry.isPastNAVUpdate],//isPastNAVUpdate
@@ -470,6 +471,20 @@ export default {
         component.entry.pastNAVUpdateEntryFundAddress//pastNAVUpdateEntryFundAddress
       ).call();
       component.loading = false;
+      let encodedDataliquidCalculationReadOnly = component.getWeb3.eth.abi.encodeFunctionCall(NAVCalculatorJSON.abi[9],
+      [
+        component.prepNAVLiquidUpdate(
+          component.entry.liquidUpdates
+        ),
+	component.fund.safe,
+        component.getSelectedFundAddress,
+        0,
+        component.PastNAVUpdateMap[component.entry.isPastNAVUpdate],
+        parseInt(component.entry.pastNAVUpdateIndex),
+        parseInt(component.entry.pastNAVUpdateEntryIndex),
+        component.entry.pastNAVUpdateEntryFundAddress
+      ]);
+      console.log("encodedDataliquidCalculationReadOnly:" + encodedDataliquidCalculationReadOnly)
     },
     async simulateIliq() {
       let component = this;
@@ -486,6 +501,7 @@ export default {
         component.prepNAVIlliquidUpdate(
           component.entry.illiquidUpdates
         ),//NAVLiquidUpdate[] liquid;
+	component.fund.safe,
         component.getSelectedFundAddress,//fund
         0,//navEntryIndex
         component.PastNAVUpdateMap[component.entry.isPastNAVUpdate],//isPastNAVUpdate
@@ -494,9 +510,23 @@ export default {
         component.entry.pastNAVUpdateEntryFundAddress//pastNAVUpdateEntryFundAddress
       ).call();
       component.loading = false;
+      let encodedDataIlliquidCalculationReadOnly = component.getWeb3.eth.abi.encodeFunctionCall(NAVCalculatorJSON.abi[7], 
+      [
+        component.prepNAVIlliquidUpdate(
+          component.entry.illiquidUpdates
+        ),
+	component.fund.safe,
+        component.getSelectedFundAddress,
+        0,
+        component.PastNAVUpdateMap[component.entry.isPastNAVUpdate],
+        parseInt(component.entry.pastNAVUpdateIndex),
+        parseInt(component.entry.pastNAVUpdateEntryIndex),
+        component.entry.pastNAVUpdateEntryFundAddress
+      ]);
     },
     async simulateNft() {
       //TODO
+      //let encodedDataNftCalculationReadOnly = component.getWeb3.eth.abi.encodeFunctionCall(NAVCalculatorJSON.abi[11], []);
     },
     async simulateComp() {
       let component = this;
@@ -521,6 +551,18 @@ export default {
         component.entry.pastNAVUpdateEntryFundAddress//pastNAVUpdateEntryFundAddress
       ).call();
       component.loading = false;
+      let encodedDataComposableCalculationReadOnly = component.getWeb3.eth.abi.encodeFunctionCall(NAVCalculatorJSON.abi[1], 
+      [
+        component.prepNAVComposableUpdate(
+          component.entry.composableUpdates
+        ),
+        component.getSelectedFundAddress,
+        0,
+        component.PastNAVUpdateMap[component.entry.isPastNAVUpdate],
+        parseInt(component.entry.pastNAVUpdateIndex),
+        parseInt(component.entry.pastNAVUpdateEntryIndex),
+        component.entry.pastNAVUpdateEntryFundAddress
+      ]);
     },
 
   }
