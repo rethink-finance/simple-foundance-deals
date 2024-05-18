@@ -17,7 +17,7 @@ const state = {
   isConnected: false,
   providerW3m: null, // this is "provider" from Web3Modal
   web3Modal: null,
-  supportedChains: ["Kovan Testnet", "Polygon PoS Chain", "Local Testnet", "Avalanche Fuji Testnet", "Polygon Mumbai Testnet", "Canto Testnet", "Arbitrum One", "Arbitrum Goerli", "Goerli"],
+  supportedChains: ["Kovan Testnet", "Polygon PoS Chain", "Local Testnet", "Avalanche Fuji Testnet", "Polygon Mumbai Testnet", "Canto Testnet", "Arbitrum One", "Arbitrum Goerli", "Goerli", "Fraxtal"],
   lastSelectedTradePair: null,
   lastSelectedTradeMaturity: null,
   lastSelectedTradeType: null,
@@ -254,6 +254,9 @@ const mutations = {
         break
       case "0x5":
         state.chainName = "Goerli";
+        break
+      case "0xfc":
+        state.chainName = "Fraxtal";
         break
       default:
         state.chainName = null;

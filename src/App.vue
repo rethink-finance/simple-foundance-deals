@@ -4,6 +4,7 @@
 
     <div v-if="isUserConnected && !getChainName" class="alert alert-danger" role="alert">
       You are on an unsupported network. Click here to connect to either 
+      <span @click="switchToFraxtal" class="network-switch-link">Fraxtal</span>.
       <span @click="switchToGoerli" class="network-switch-link">Goerli testnet</span>.
       <span @click="switchToPolygon" class="network-switch-link">Polygon</span> or 
       <span @click="switchToKovan" class="network-switch-link">Kovan testnet</span> or 
@@ -104,6 +105,14 @@ export default {
         method: 'wallet_switchEthereumChain', 
         params: [{ 
           chainId: '0x5'
+        }] 
+      });
+    },
+    switchToFraxtal() {
+      window.ethereum.request({ 
+        method: 'wallet_switchEthereumChain', 
+        params: [{ 
+          chainId: '0xfc'
         }] 
       });
     }

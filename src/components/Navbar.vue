@@ -117,6 +117,7 @@
               <li><button @click="switchToArbitrum" class="dropdown-item">Arbitrum One</button></li>
               <li><button @click="switchToArbitrumGoerli" class="dropdown-item">Arbitrum Goerli Testnet</button></li>
               <li><button @click="switchToGoerli" class="dropdown-item">Goerli Testnet</button></li>
+              <li><button @click="switchToFraxtal" class="dropdown-item">Fraxtal</button></li>
             </ul>
           </div>
 
@@ -257,6 +258,14 @@ export default {
         method: 'wallet_switchEthereumChain', 
         params: [{ 
           chainId: '0x5'
+        }] 
+      });
+    },
+    switchToFraxtal() {
+      window.ethereum.request({ 
+        method: 'wallet_switchEthereumChain', 
+        params: [{ 
+          chainId: '0xfc'
         }] 
       });
     }
