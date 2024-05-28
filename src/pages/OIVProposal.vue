@@ -430,7 +430,7 @@ export default {
           component.transactions[tx].target,//MultiSendCallOnly
           0,//value
           filteredTxData,//data
-          1,//operation
+          0,//operation (0 for call, 1 for delegatecall)
           0,//safeTxGas
           0,//baseGas
           0,//gasPrice
