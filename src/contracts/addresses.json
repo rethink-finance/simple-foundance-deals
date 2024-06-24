@@ -38,6 +38,19 @@
       "43113": "",
       "421613":""
     },
+    "NAVExecutorBeaconProxy": {
+      "5":"",
+      "42":"",
+      "137":"0xeeCcC1F3d0886f3B0a222FE4Fcc6FDa5B5b5dd2f",
+      "252": "",
+      "740":"",
+      "7701":"",
+      "80001":"",
+      "42161": "0xf5251F36f66dC60106DBa0517B19cc984624CaB3",
+      "43112": "",
+      "43113": "",
+      "421613":""
+    },
     "RethinkFundGovernerUpgradeableBeacon": {
       "5":"0x30DB0Ca15AfB8a9D6ec6e3e377207B9E995E1901",
       "42":"",
