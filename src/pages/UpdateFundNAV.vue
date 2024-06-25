@@ -451,16 +451,37 @@ export default {
       //raw data to permission
       let subNAVEntriesEncoded = encodedDataNavUpdateEntries.substring(10);
       let n = 64;
+      let nullComp = "0x0000000000000000000000000000000000000000000000000000000000000000";
+      let nullCount = 0;
       let navWords = [];
       let navIsScoped = [];
       let navTypeNComp = [];
       for(var sidx=0; sidx < subNAVEntriesEncoded.length; sidx+=n) {
+      //for(var sidx=0; sidx < (n*10); sidx+=n) {//TEST: limit to amount of fields to permission?
+        let tempComp = "0x" + subNAVEntriesEncoded.substring(sidx,sidx+n);
         navWords.push(
-          "0x" + subNAVEntriesEncoded.substring(sidx,sidx+n)
+          tempComp
         );
+
+        if (tempComp == nullComp) {
+          nullCount++;
+        }
         navIsScoped.push("true");
+        
         navTypeNComp.push("0");
       }
+
+      console.log("navWords.length");
+      console.log(navWords.length);
+
+      console.log("navIsScoped.length");
+      console.log(navIsScoped.length);
+
+      console.log("navTypeNComp.length");
+      console.log(navTypeNComp.length);
+
+      console.log(nullCount);
+      console.log(nullCount);
 
       //isParamScoped
       component.defaultNavEntryPermission.value[3].data = navIsScoped;

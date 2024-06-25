@@ -140,8 +140,9 @@ export default {
       let component = this;
       component.loading = true;
 
+      let signature = component.getWeb3.eth.abi.encodeFunctionSignature('withdraw()');
       // make a withdrawal
-      await component.getFundContract.methods.withdraw().send({
+      await component.getFundContract.methods.fundFlowsCall(signature).send({
         from: component.getActiveAccount,
         maxPriorityFeePerGas: null,
         maxFeePerGas: null
@@ -183,8 +184,10 @@ export default {
 
       const amountWei = component.getWeb3.utils.toWei(component.withdrawAmount, "ether");
 
+      let signature = component.getWeb3.eth.abi.encodeFunctionSignature('requestWithdraw(uint256)');
+      let encodedFunctionCall = signature + component.getWeb3.eth.abi.encodeParameter("uint256", amountWei);
       // make a withdrawal request
-      await component.getFundContract.methods.requestWithdraw(amountWei).send({
+      await component.getFundContract.methods.fundFlowsCall(encodedFunctionCall).send({
         from: component.getActiveAccount,
         maxPriorityFeePerGas: null,
         maxFeePerGas: null
@@ -216,8 +219,12 @@ export default {
       let component = this;
       component.loading = true;
       // cancel a deposit request
-      await component.getFundContract.methods.revokeDepositWithrawal(
-        0
+
+      let signature = component.getWeb3.eth.abi.encodeFunctionSignature('revokeDepositWithrawal(bool)');
+      let encodedFunctionCall = signature + component.getWeb3.eth.abi.encodeParameter("bool", false);
+      // make a withdrawal
+      await component.getFundContract.methods.fundFlowsCall(
+        encodedFunctionCall
       ).send({
         from: component.getActiveAccount,
         maxPriorityFeePerGas: null,

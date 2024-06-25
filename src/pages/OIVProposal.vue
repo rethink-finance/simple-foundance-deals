@@ -378,6 +378,11 @@ export default {
       ) 
         */
 
+      console.log("targets");
+      console.log(targets);
+      console.log("encodedRoleModEntries");
+      console.log(encodedRoleModEntries);
+
       //proposae nav update for fund (target: fund addr, payloadL bytes)
       await rethinkFundGovernorContract.methods.propose(
         targets,
