@@ -81,6 +81,9 @@ import NavEntryList from '../components/nav/NavEntryList.vue';
 import addresses from "../contracts/addresses.json";
 import RethinkFundGovernorJSON from "../contracts/RethinkFundGovernor.json";
 import NAVCalculatorJSON from "../contracts/NAVCalculator.json";
+import NAVExecutorJSON from "../contracts/NAVExecutor.json";
+import GnosisSafeL2JSON from '../contracts/safe/GnosisSafeL2_v1_3_0.json';
+import ZodiacRoles from '../contracts/zodiac/RolesFull.json';
 
 const abiDecoder = require('abi-decoder'); // NodeJS
 
@@ -94,6 +97,7 @@ export default {
       navUpdateDecoded: {},
       entryIdx: 0,
       processWithdraw: false,
+      proposalRoleModMethods: [],
       BOOL_TYPE: {
         "true": true,
         "false": false
@@ -117,7 +121,7 @@ export default {
         "NAVNFTUpdateType": 2,
         "NAVComposableUpdateType": 3
       },
-      defaultNavEntryPermission: {
+      defaultNavEntryPermission: [{
         "idx": 0,
         "value": [
           {
@@ -178,7 +182,33 @@ export default {
           }
         ],
         "valueMethodIdx": 19
-        },
+        }, {
+        "idx": 1,
+        "value": [
+          {
+            "idx": 0,
+            "isArray": false,
+            "data": "1", //TODO: ASSUMES ROLE ID OF 1, BUT COULD BE ANY OTHER ID, NEED A WAY TO POPULATE IT SMARTLY
+            "internalType": "uint16",
+            "name": "role"
+          },
+          {
+            "idx": 1,
+            "isArray": false,
+            "data": null,
+            "internalType": "address",
+            "name": "targetAddress"
+          },
+          {
+            "idx": 2,
+            "isArray": false,
+            "data": "1",
+            "internalType": "enum ExecutionOptions",
+            "name": "options"
+          }
+        ],
+        "valueMethodIdx": 0
+      }],
       navUpdateEntries: [],
       navUpdateEntriesRaw: null,
     }
@@ -219,7 +249,13 @@ export default {
     	console.log(i + " " + JSON.stringify(NAVCalculatorJSON.abi[i]));
     }
 
+    for (var i in NAVExecutorJSON.abi) {
+      console.log(i + " " + JSON.stringify(NAVExecutorJSON.abi[i]));
+    }
+
     abiDecoder.addABI(this.getFundAbi);
+
+    this.proposalRoleModMethods = ZodiacRoles.abi.filter((val) => (val["type"] == "function") ? true :  false);
 
   },
 
@@ -394,14 +430,9 @@ export default {
 
     generateNAVPermission() {
       let component = this;
-      /*
-      let addLiquidUpdateAbiJSON = component.getFundAbi[8];
-      let addIlliquidUpdateAbiJSON = component.getFundAbi[33];
-      let addNftUpdateAbiJSON = component.getFundAbi[32];
-      let addComposableUpdateAbiJSON = component.getFundAbi[32];
-      */
-      let addNavUpdateEntryAbiJSON = component.getFundAbi[56];
-      let collectFeesAbiJSON = component.getFundAbi[21];
+
+      let addNavUpdateEntryAbiJSON = component.getFundAbi[49];
+      let collectFeesAbiJSON = component.getFundAbi[54];
 
       let dataNavUpdateEntries = [];
       let dataPastNavUpdateEntriesAddrs = [];
@@ -445,66 +476,34 @@ export default {
 
 
       //target address is fund contract
-      component.defaultNavEntryPermission.value[1].data = component.getSelectedFundAddress;
+      component.defaultNavEntryPermission[0].value[1].data = component.getSelectedFundAddress;
+      //again, need to set target addr for scope target
+      component.defaultNavEntryPermission[1].value[1].data = component.getSelectedFundAddress;
       //functionSig
-      component.defaultNavEntryPermission.value[2].data = encodedDataNavUpdateEntries.substring(0,10);
+      component.defaultNavEntryPermission[0].value[2].data = "0xa61f5814";
+      
       //raw data to permission
-      let subNAVEntriesEncoded = encodedDataNavUpdateEntries.substring(10);
-      let n = 64;
-      let nullComp = "0x0000000000000000000000000000000000000000000000000000000000000000";
-      let nullCount = 0;
-      let navWords = [];
-      let navIsScoped = [];
-      let navTypeNComp = [];
-      for(var sidx=0; sidx < subNAVEntriesEncoded.length; sidx+=n) {
-      //for(var sidx=0; sidx < (n*10); sidx+=n) {//TEST: limit to amount of fields to permission?
-        let tempComp = "0x" + subNAVEntriesEncoded.substring(sidx,sidx+n);
-        navWords.push(
-          tempComp
-        );
-
-        if (tempComp == nullComp) {
-          nullCount++;
-        }
-        navIsScoped.push("true");
-        
-        navTypeNComp.push("0");
-      }
-
-      console.log("navWords.length");
-      console.log(navWords.length);
-
-      console.log("navIsScoped.length");
-      console.log(navIsScoped.length);
-
-      console.log("navTypeNComp.length");
-      console.log(navTypeNComp.length);
-
-      console.log(nullCount);
-      console.log(nullCount);
+      let navExecutorAddr = addresses["NAVExecutorBeaconProxy"][component.getChainId];
+      let navWords = ["0x000000000000000000000000" + navExecutorAddr.slice(2)];
+      let navIsScoped = [true];
+      let navTypeNComp = ["0"];
 
       //isParamScoped
-      component.defaultNavEntryPermission.value[3].data = navIsScoped;
+      component.defaultNavEntryPermission[0].value[3].data = navIsScoped;
       //paramType
-      component.defaultNavEntryPermission.value[4].data = navTypeNComp;
+      component.defaultNavEntryPermission[0].value[4].data = navTypeNComp;
       //paramComp
-      component.defaultNavEntryPermission.value[5].data = navTypeNComp;
+      component.defaultNavEntryPermission[0].value[5].data = navTypeNComp;
       //compValue
-      component.defaultNavEntryPermission.value[6].data = navWords;
+      component.defaultNavEntryPermission[0].value[6].data = navWords;
     },
 
     async createProposal () {
       let component = this;
       component.loading = true;
 
-      /*
-      let addLiquidUpdateAbiJSON = component.getFundAbi[8];
-      let addIlliquidUpdateAbiJSON = component.getFundAbi[33];
-      let addNftUpdateAbiJSON = component.getFundAbi[32];
-      let addComposableUpdateAbiJSON = component.getFundAbi[32];
-      */
-      let addNavUpdateEntryAbiJSON = component.getFundAbi[56];
-      let collectFeesAbiJSON = component.getFundAbi[21];
+      let addNavUpdateEntryAbiJSON = component.getFundAbi[49];
+      let collectFeesAbiJSON = component.getFundAbi[54];
 
       let dataNavUpdateEntries = [];
       let dataPastNavUpdateEntriesAddrs = [];
@@ -571,11 +570,51 @@ export default {
       let encodedCollectManagerFeesAbiJSON = component.getWeb3.eth.abi.encodeFunctionCall(collectFeesAbiJSON, [2]);
       let encodedCollectPerformanceFeesAbiJSON = component.getWeb3.eth.abi.encodeFunctionCall(collectFeesAbiJSON, [3]);
 
+      // store nav update in nav executor to giv permission to manager to call it: target -> navexuctor
+      let storeNAVDataABI = NAVExecutorJSON.abi[0];
+      let encodedDataStoreNAVDataNavUpdateEntries = component.getWeb3.eth.abi.encodeFunctionCall(storeNAVDataABI, [encodedDataNavUpdateEntries]);
+
+      let navExecutorAddr = addresses["NAVExecutorBeaconProxy"][component.getChainId];
+
+
+      //get role mod contract addr
+      const safeContract = new component.getWeb3.eth.Contract(
+        GnosisSafeL2JSON.abi,
+        component.fund.safe
+      );
+      console.log(component.fund.safe);
+      let addr1 = "0x0000000000000000000000000000000000000001";
+      let safeModules = await safeContract.methods.getModulesPaginated(addr1, 10).call();
+      let roleModAddr = safeModules[0][1];
+
+
+      //encode permisions for nav update
+
+      let encodedRoleModEntries = [];
+      let roleModTargets = [];
+      let roleModGas = [];
+
+      //TODO: assumes validation already happens when inputing data
+      for(let i=0; i<component.defaultNavEntryPermission.length; i++) {
+        let roleModFunctionABI = component.proposalRoleModMethods[component.defaultNavEntryPermission[i].valueMethodIdx];
+        let roleModFunctionData = [];
+        for (let j=0; j<component.defaultNavEntryPermission[i].value.length; j++) {
+          roleModFunctionData.push(component.prepRoleModEntryInput(component.defaultNavEntryPermission[i].value[j]));
+        }
+        let encodedRoleModFunction = component.getWeb3.eth.abi.encodeFunctionCall(
+          roleModFunctionABI, roleModFunctionData
+        );
+        encodedRoleModEntries.push(encodedRoleModFunction);
+        roleModTargets.push(roleModAddr);
+        roleModGas.push(0);
+      }
+
+
       //proposae nav update for fund (target: fund addr, payloadL bytes)
       await rethinkFundGovernorContract.methods.propose(
-        [component.getSelectedFundAddress, component.getSelectedFundAddress, component.getSelectedFundAddress, component.getSelectedFundAddress],
-        [0,0,0,0],
-        [encodedDataNavUpdateEntries, encodedCollectFlowFeesAbiJSON, encodedCollectManagerFeesAbiJSON, encodedCollectPerformanceFeesAbiJSON],
+        [component.getSelectedFundAddress, component.getSelectedFundAddress, component.getSelectedFundAddress, component.getSelectedFundAddress, navExecutorAddr].concat(roleModTargets),
+        [0,0,0,0,0].concat(roleModGas),
+        [encodedDataNavUpdateEntries, encodedCollectFlowFeesAbiJSON, encodedCollectManagerFeesAbiJSON, encodedCollectPerformanceFeesAbiJSON, encodedDataStoreNAVDataNavUpdateEntries].concat(encodedRoleModEntries),
         "NAV UPDATE: #" + String(navUpdateIndex)
       ).send({
         from: component.getActiveAccount,
