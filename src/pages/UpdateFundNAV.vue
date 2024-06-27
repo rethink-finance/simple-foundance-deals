@@ -428,6 +428,53 @@ export default {
       return data;
     },
 
+    prepRoleModEntryInput(value) {
+      /*
+        - address validation
+        - bytes validation
+        - int validation
+        - enum valudation (int)
+      */
+      
+      let dtype = value.internalType;
+
+      if (value.isArray) {
+        let retDat = []
+        for (let i=0; i<value.data.length;i++) {
+          if (dtype.startsWith("address")) {
+            retDat.push(value.data[i]);
+          } else if (dtype.startsWith("bytes")) {
+            retDat.push(value.data[i]);
+          } else if (dtype.startsWith("int")) {
+            retDat.push(value.data[i]);
+          } else if (dtype.startsWith("uint")) {
+            retDat.push(value.data[i]);
+          } else if (dtype.startsWith("enum")) {
+            retDat.push(value.data[i]);
+          } else if (dtype.startsWith("bool")) {
+            retDat.push(this.BOOL_TYPE[value.data[i]]);
+          }
+        }
+
+        return retDat;
+        
+      } else {
+        if (dtype.startsWith("address")) {
+          return value.data;
+        } else if (dtype.startsWith("bytes")) {
+          return value.data;
+        } else if (dtype.startsWith("int")) {
+          return value.data;
+        } else if (dtype.startsWith("uint")) {
+          return value.data;
+        } else if (dtype.startsWith("enum")) {
+          return value.data;
+        } else if (dtype.startsWith("bool")) {
+          return this.BOOL_TYPE[value.data];
+        }
+      }
+    },
+
     generateNAVPermission() {
       let component = this;
 
@@ -483,7 +530,8 @@ export default {
       component.defaultNavEntryPermission[0].value[2].data = "0xa61f5814";
       
       //raw data to permission
-      let navExecutorAddr = addresses["NAVExecutorBeaconProxy"][component.getChainId];
+      let navExecutorAddr = addresses["NAVExecutorBeaconProxy"][parseInt(component.getChainId)];
+      console.log(navExecutorAddr);
       let navWords = ["0x000000000000000000000000" + navExecutorAddr.slice(2)];
       let navIsScoped = [true];
       let navTypeNComp = ["0"];
@@ -572,9 +620,9 @@ export default {
 
       // store nav update in nav executor to giv permission to manager to call it: target -> navexuctor
       let storeNAVDataABI = NAVExecutorJSON.abi[0];
-      let encodedDataStoreNAVDataNavUpdateEntries = component.getWeb3.eth.abi.encodeFunctionCall(storeNAVDataABI, [encodedDataNavUpdateEntries]);
+      let encodedDataStoreNAVDataNavUpdateEntries = component.getWeb3.eth.abi.encodeFunctionCall(storeNAVDataABI, [component.getSelectedFundAddress, encodedDataNavUpdateEntries]);
 
-      let navExecutorAddr = addresses["NAVExecutorBeaconProxy"][component.getChainId];
+      let navExecutorAddr = addresses["NAVExecutorBeaconProxy"][parseInt(component.getChainId)];
 
 
       //get role mod contract addr
@@ -608,6 +656,18 @@ export default {
         roleModTargets.push(roleModAddr);
         roleModGas.push(0);
       }
+
+      console.log("roleModAddr");
+      console.log(roleModAddr);
+
+      console.log("encodedRoleModEntries");
+      console.log(encodedRoleModEntries);
+
+      console.log("navExecutorAddr");
+      console.log(navExecutorAddr);
+
+      console.log("encodedDataStoreNAVDataNavUpdateEntries");
+      console.log(encodedDataStoreNAVDataNavUpdateEntries);
 
 
       //proposae nav update for fund (target: fund addr, payloadL bytes)
