@@ -85,6 +85,14 @@
       </div>
     </div>
 
+    <div class="section-big row mt-4 mx-3">
+      <h3> Execute Latest Permissioned NAV update </h3>
+      <button @click="recalcNAV" class="btn btn-success">
+        <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+        Recalculate OIV NAV
+      </button>
+    </div>
+
 
 
     <div class="section-big row mt-4 mx-3">
@@ -126,6 +134,7 @@ import GnosisSafeL2JSON from '../contracts/safe/GnosisSafeL2_v1_3_0.json';
 import ZodiacRoles from '../contracts/zodiac/RolesFull.json';
 import ERC20Votes from '../contracts/ERC20Votes.json';
 import ERC20WrappedToken from '../contracts/ERC20WrappedToken.json';
+import addresses from "../contracts/addresses.json";
 
 export default {
   name: "ViewFund",
@@ -283,6 +292,38 @@ export default {
 
   methods: {
     ...mapActions("accounts", ["connectWeb3Modal"]),
+
+    async recalcNAV(){
+      let component = this;
+      component.loading = true;
+      
+      let navExecutorAddr = addresses["NAVExecutorBeaconProxy"][parseInt(component.getChainId)];
+
+      await component.getFundContract.methods.executeNAVUpdate(
+        navExecutorAddr
+      ).send({
+        from: component.getActiveAccount,
+        maxPriorityFeePerGas: null,
+        maxFeePerGas: null
+      }).on('transactionHash', function(hash){
+        console.log("tx hash: " + hash);
+        component.$toast.info("The transaction has been submitted. Please wait for it to be confirmed.");
+      }).on('receipt', function(receipt){
+        console.log(receipt);
+        if (receipt.status) {
+          component.$toast.success("The recalculation of OIV NAV has Succeeded");
+        } else {
+          component.$toast.error("The recalculation of OIV NAV has failed. Please contact the Rethink Finance support.");
+        }
+        component.loading = false;
+
+      }).on('error', function(error){
+        console.log(error);
+        component.loading = false;
+        component.$toast.error("There has been an error. Please contact the Rethink Finance support.");
+      });
+
+    },
 
     async getDecimalsForBaseAssetToken(){
       let component = this;
