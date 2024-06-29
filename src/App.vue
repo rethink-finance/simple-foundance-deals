@@ -13,6 +13,7 @@
       <span @click="switchToCantoTestnet" class="network-switch-link">Canto testnet</span> or
       <span @click="switchToArbitrum" class="network-switch-link">Arbitrum One</span>.
       <span @click="switchToArbitrumGoerli" class="network-switch-link">Arbitrum Goerli testnet</span>.
+      <span @click="switchToEthereum" class="network-switch-link">Ethereum</span>.
     </div>
 
     <router-view />
@@ -40,6 +41,18 @@ export default {
   },
 
   methods: {
+    switchToEthereum() {
+      window.ethereum.request({ 
+        method: 'wallet_addEthereumChain', 
+        params: [{ 
+          chainId: '0x1', 
+          chainName: 'Ethereum', 
+          nativeCurrency: { name: 'ETH', symbol: 'ETH', decimals: 18 }, 
+          rpcUrls: ['https://eth.drpc.com/'], 
+          blockExplorerUrls: ['https://etherscan.com/']
+        }] 
+      });
+    },
     switchToPolygon() {
       window.ethereum.request({ 
         method: 'wallet_addEthereumChain', 

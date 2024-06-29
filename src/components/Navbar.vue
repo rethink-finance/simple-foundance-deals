@@ -118,6 +118,7 @@
               <li><button @click="switchToArbitrumGoerli" class="dropdown-item">Arbitrum Goerli Testnet</button></li>
               <li><button @click="switchToGoerli" class="dropdown-item">Goerli Testnet</button></li>
               <li><button @click="switchToFraxtal" class="dropdown-item">Fraxtal</button></li>
+              <li><button @click="switchToEthereum" class="dropdown-item">Ethereum</button></li>
             </ul>
           </div>
 
@@ -266,6 +267,14 @@ export default {
         method: 'wallet_switchEthereumChain', 
         params: [{ 
           chainId: '0xfc'
+        }] 
+      });
+    },
+    switchToEthereum() {
+      window.ethereum.request({ 
+        method: 'wallet_switchEthereumChain', 
+        params: [{ 
+          chainId: '0x1'
         }] 
       });
     }
