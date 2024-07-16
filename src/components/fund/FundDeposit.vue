@@ -317,7 +317,7 @@ export default {
 
 
       let signature = component.getWeb3.eth.abi.encodeFunctionSignature('requestDeposit(uint256)');
-      let encodedFunctionCall = signature + component.getWeb3.eth.abi.encodeParameter("uint256", tokensWei);
+      let encodedFunctionCall = signature + component.getWeb3.eth.abi.encodeParameter("uint256", tokensWei).replace("0x", "");
       // make a deposit request
       await component.getFundContract.methods.fundFlowsCall(
         encodedFunctionCall
@@ -354,7 +354,7 @@ export default {
       component.loading = true;
 
       let signature = component.getWeb3.eth.abi.encodeFunctionSignature('revokeDepositWithrawal(bool)');
-      let encodedFunctionCall = signature + component.getWeb3.eth.abi.encodeParameter("bool", true);
+      let encodedFunctionCall = signature + component.getWeb3.eth.abi.encodeParameter("bool", true).replace("0x", "");
       // cancel a deposit request
       await component.getFundContract.methods.fundFlowsCall(
         encodedFunctionCall

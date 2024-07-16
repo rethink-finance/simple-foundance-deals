@@ -185,7 +185,7 @@ export default {
       const amountWei = component.getWeb3.utils.toWei(component.withdrawAmount, "ether");
 
       let signature = component.getWeb3.eth.abi.encodeFunctionSignature('requestWithdraw(uint256)');
-      let encodedFunctionCall = signature + component.getWeb3.eth.abi.encodeParameter("uint256", amountWei);
+      let encodedFunctionCall = signature + component.getWeb3.eth.abi.encodeParameter("uint256", amountWei).replace("0x", "");
       // make a withdrawal request
       await component.getFundContract.methods.fundFlowsCall(encodedFunctionCall).send({
         from: component.getActiveAccount,
@@ -221,7 +221,7 @@ export default {
       // cancel a deposit request
 
       let signature = component.getWeb3.eth.abi.encodeFunctionSignature('revokeDepositWithrawal(bool)');
-      let encodedFunctionCall = signature + component.getWeb3.eth.abi.encodeParameter("bool", false);
+      let encodedFunctionCall = signature + component.getWeb3.eth.abi.encodeParameter("bool", false).replace("0x", "");
       // make a withdrawal
       await component.getFundContract.methods.fundFlowsCall(
         encodedFunctionCall
