@@ -93,6 +93,14 @@
       </button>
     </div>
 
+    <div class="section-big row mt-4 mx-3">
+      <h3> Sweep Tokens from OIV -> Custody Address </h3>
+      <button @click="sweepTokens" class="btn btn-success">
+        <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+        Sweep Tokens
+      </button>
+    </div>
+
 
 
     <div class="section-big row mt-4 mx-3">
@@ -292,6 +300,38 @@ export default {
 
   methods: {
     ...mapActions("accounts", ["connectWeb3Modal"]),
+
+    asynct sweepTokens() {
+      let component = this;
+      component.loading = true;
+      
+      let signature = component.getWeb3.eth.abi.encodeFunctionSignature('sweepTokens()');
+     
+      await component.getFundContract.methods.fundFlowsCall(signature).send({
+        from: component.getActiveAccount,
+        maxPriorityFeePerGas: null,
+        maxFeePerGas: null
+      }).on('transactionHash', function(hash){
+        console.log("tx hash: " + hash);
+        component.$toast.info("The transaction has been submitted. Please wait for it to be confirmed.");
+
+      }).on('receipt', function(receipt){
+        console.log(receipt);
+
+        if (receipt.status) {
+          component.$toast.success("Sweeping tokens back into custody address was successfull.");          
+        } else {
+          component.$toast.error("The transaction has failed. Please contact the Rethink Finance support.");
+        }
+        
+        component.loading = false;
+
+      }).on('error', function(error){
+        console.log(error);
+        component.loading = false;
+        component.$toast.error("There has been an error. Please contact the Rethink Finance support.");
+      });
+    },
 
     async recalcNAV(){
       let component = this;
