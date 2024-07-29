@@ -1,4 +1,4 @@
-# Frontend Implementation For Rethink Core
+#Frontend Implementation For Foundance Crowdfunding Contracts
 
 ## Project setup
 ```
