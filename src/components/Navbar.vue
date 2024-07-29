@@ -5,7 +5,7 @@
       <router-link to="/" style="text-decoration: none">
         <a class="navbar-brand primary-color" href="/">
           <img src="@/assets/logo.svg" alt="" width="30" height="24">
-          Rethink Finance
+          Foundance Deals
         </a>
       </router-link>
 

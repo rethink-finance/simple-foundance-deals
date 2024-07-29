@@ -1,6 +1,15 @@
 /* eslint-disable */
 <template>
-  <!------ Create Fund ------>
+
+  <!------ List DAOS ------>
+
+
+  <!------ List DAO DEALS------>
+
+
+  <!------ Approve Foundace CrowdFundingAdapter Contract------>
+
+  <!------ Create Deal ------>
 
   <div class="section-big row mt-4 mx-3">
     <div class="col-md-12">
@@ -21,7 +30,7 @@ import { mapGetters, mapActions } from "vuex";
 import FundInput from '../components/fund/FundInput.vue';
 
 export default {
-  name: "CreateFund",
+  name: "CreateDeal",
 
   computed: {
     ...mapGetters("accounts", ["getActiveAccount", "getChainName", "getWeb3", "isUserConnected"]),

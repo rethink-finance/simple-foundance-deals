@@ -1,4 +1,4 @@
-import GovernableFund from "../../contracts/GovernableFund.json";
+//import GovernableFund from "../../contracts/GovernableFund.json";
 
 import addresses from "../../contracts/addresses.json";
 

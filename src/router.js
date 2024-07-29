@@ -1,11 +1,7 @@
 import Vue from "vue";
 import Router from "vue-router";
 import Home from "./pages/Home";
-import CreateFund from "./pages/CreateFund";
-import DisplayFunds from "./pages/DisplayFunds";
-import UpdateFundNAV from "./pages/UpdateFundNAV";
-import OIVProposal from "./pages/OIVProposal";
-import ViewFund from "./pages/ViewFund";
+import CreateDeal from "./pages/CreateDeal";
 
 Vue.use(Router);
 
@@ -28,27 +24,7 @@ export default new Router({
         {
             path: "/create",
             name: "create",
-            component: CreateFund
-        },
-        {
-            path: "/display",
-            name: "display",
-            component: DisplayFunds
-        },
-        {
-            path: "/fund",
-            name: "fund",
-            component: ViewFund
-        },
-        {
-            path: "/fund-gov",
-            name: "fund-gov",
-            component: OIVProposal
-        },
-        {
-            path: "/update-nav",
-            name: "update-nav",
-            component: UpdateFundNAV
+            component: CreateDeal
         },
     ],
     linkActiveClass: "active"

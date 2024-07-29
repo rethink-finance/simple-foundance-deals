@@ -1,4 +1,4 @@
-import ContractJson from "../../contracts/GovernableFundFactory.json";
+//import ContractJson from "../../contracts/GovernableFundFactory.json";
 import addresses from "../../contracts/addresses.json";
 
 const ContractName = "GovernableFundFactoryBeaconProxy";

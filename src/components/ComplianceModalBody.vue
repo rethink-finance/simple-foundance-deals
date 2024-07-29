@@ -1,10 +1,10 @@
 <template>
   <div class="modal-body">
-    Before I start using Rethink Finance, I confirm that:
+    Before I start using Foundance Deals, I confirm that:
 
     <ul>
       <li>
-        I am aware that even though Rethink Finance has been audited, it has not been battle tested in a live environment yet, so I will use it at my own risk.
+        I am aware that even though Foundance Crowd Funding Contratcs has not been audit, so I will use it at my own risk.
       </li>
     </ul>
 
