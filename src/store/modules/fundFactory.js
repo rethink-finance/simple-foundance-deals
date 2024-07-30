@@ -1,28 +1,40 @@
-//import ContractJson from "../../contracts/GovernableFundFactory.json";
+import ContractJson from "../../contracts/Foundance.json";
+import ContractJson1 from "../../contracts/CrowdFundingAdapter.json";
 import addresses from "../../contracts/addresses.json";
 
-const ContractName = "GovernableFundFactoryBeaconProxy";
+const ContractName = "Foundance";
+const ContractName1 = "CrowdFundingAdapter";
 
 const state = {
-  abi: null,
-  address: null,
-  contract: null,
-  funds:[],
+  ffAbi: null,
+  cfaAbi: null,
+  cfaAddress: null,
+  ffContract: null,
+  cfaContract: null,
 };
 
 const getters = {
-  getFundFactoryAbi(state) {
-    return state.abi;
+
+  getFoundanceFactoryAbi(state) {
+    return state.ffAbi;
   },
-  getFundFactoryAddress(state) {
-    return state.address;
+
+  getCrowdFundingAdapterAbit(state) {
+    return state.cfaAbi;
   },
-  getFunds(state) {
-    return state.funds;
+
+  getFoundanceFactoryContract(state) {
+    return state.ffContract;
   },
-  getFundFactoryContract(state) {
-    return state.contract;
-  }
+
+  getCrowdFundingAdapterContract(state) {
+    return state.cfaContract;
+  },
+
+  getCrowdFundingAdapterAddress(state) {
+    return state.cfaAddress;
+  },
+
 };
 
 const actions = {
@@ -30,60 +42,42 @@ const actions = {
     let web3 = rootState.accounts.web3;
     let chainIdDec = parseInt(rootState.accounts.chainId);
     let address = addresses[ContractName][chainIdDec];
-    let contract = new web3.eth.Contract(ContractJson.abi, address);
-    console.log("fund factory contract fetch");
-    commit("setContract", contract);
-  },
-  async fetchFunds({ commit, dispatch, rootState, state }) {
-    if (!state.contract) {
-      dispatch("fetchContract");
+    console.log(address);
+
+    if(address){
+      let contract = new web3.eth.Contract(ContractJson.abi, address);
+      console.log("foundance factory contract fetch");
+
+      commit("setContract", contract);
     }
-    let fundAmount = await state.contract.methods.registeredFundsLength().call();
-    let fundsInfo = await state.contract.methods.registeredFundsData(0, fundAmount).call();
-    let fundData = [];
 
-    //TODO: NEEDS TO STORE THIS IN fund.js state
-
-
-    let settingsNames = [
-      "depositFee",
-      "withdrawFee",
-      "performanceFee",
-      "managementFee",
-      "performaceHurdleRateBps",
-      "baseToken",
-      "safe", //TODO: needs to be set after safe creation
-      "isExternalGovTokenInUse",
-      "isWhitelistedDeposits",
-      "allowedDepositAddrs",
-      "allowedManagers",
-      "governanceToken",
-      "fundAddress", //TODO: this may not be needed if delegatecall has balance refs to callee addr
-      "governor",
-      "fundName",
-      "fundSymbol",
-    ];
-
-    for(var i=0;i<fundsInfo[0].length;i++){
-      fundData.push({
-          "address": fundsInfo[0][i]
-          //"data": fundsInfo[1][i]
-      });
-
-      for (var j=0; j < fundsInfo[1][i].length;j++){
-        //console.log(fundsInfo[1][i][j]);
-        fundData[i][settingsNames[j]] = fundsInfo[1][i][j];
-      }
-
-    }
-    commit("setFunds", fundData);
   },
+
+  async fetchContract1({ commit, rootState }) {
+    let web3 = rootState.accounts.web3;
+    let chainIdDec = parseInt(rootState.accounts.chainId);
+
+    let address1 = addresses[ContractName1][chainIdDec];
+    console.log(address1);
+
+    if(address1){
+
+      let contract1 = new web3.eth.Contract(ContractJson1.abi, address1);
+
+      console.log("CrowdFundingAdapter contract fetch");
+
+      commit("setContract1", contract1);
+      commit("setAddress", address1);
+    }
+
+  },
+
   storeAbi({commit}) {
     commit("setAbi", ContractJson.abi);
   },
   storeAddress({ commit, rootState }) {
     let chainIdDec = parseInt(rootState.accounts.chainId);
-    commit("setAddress", addresses[ContractName][chainIdDec]);
+    commit("setAddress", addresses[ContractName1][chainIdDec]);
   }
 };
 
@@ -92,13 +86,16 @@ const mutations = {
     state.abi = abi;
   },
   setAddress(state, address) {
-    state.address = address;
+    state.cfaAddress = address;
   },
   setFunds(state, funds) {
     state.funds = funds;
   },
   setContract(state, _contract) {
-    state.contract = _contract;
+    state.ffContract = _contract;
+  },
+  setContract1(state, _contract) {
+    state.cfaContract = _contract;
   }
 };
 

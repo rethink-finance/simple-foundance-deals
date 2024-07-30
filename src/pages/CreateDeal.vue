@@ -1,316 +1,258 @@
 /* eslint-disable */
 <template>
 
-  <!------ List DAOS ------>
+  <div>
 
+    <!------ List DAOS ------>
 
-  <!------ List DAO DEALS------>
-
-
-  <!------ Approve Foundace CrowdFundingAdapter Contract------>
-
-  <!------ Create Deal ------>
-
-  <div class="section-big row mt-4 mx-3">
-    <div class="col-md-12">
-      <FundInput :fund="fund" :governor="governor" :fundMetadata="fundMetadata" :fee="fee"/>
-      <span></span>
-    </div>
-    <div class="fund-submit-buttons">
-      <button @click="createFund" class="btn btn-success">
+    <!------ <div class="deposit-button form-button-mobile">
+      <button 
+        class="btn btn-success btn-user btn-block text-uppercase form-control" @click="getDaos">
         <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-        Create Fund
+        Get Daos
       </button>
+      <div></div>
+    </div>  ------>
+
+
+    <div class="token-dropdown form-button-mobile">
+      <div class="btn-group" aria-describedby="button-text">
+        <h3>Select DAO Addr: </h3>
+        <button type="button" class="btn btn-outline-success dropdown-toggle text-uppercase" data-bs-toggle="dropdown" aria-expanded="false">
+          {{selectedDAO}}
+        </button>
+        <ul class="dropdown-menu">
+          <li v-for="dao in daos" v-bind:key="dao">
+            <span class="dropdown-item text-uppercase" @click="getCrowdfundingIDs">{{ dao }}</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+
+    <!------ List DAO DEALS------>
+
+    <div class="token-dropdown form-button-mobile">
+      <div class="btn-group" aria-describedby="button-text">
+        <h3>Select DAO CrowdFunding ID: </h3>
+        <button type="button" class="btn btn-outline-success dropdown-toggle text-uppercase" data-bs-toggle="dropdown" aria-expanded="false">
+          {{selectedDeal}}
+        </button>
+        <ul class="dropdown-menu">
+          <li v-for="daoCid in daoCids" v-bind:key="daoCid">
+            <span class="dropdown-item text-uppercase" @click="changeDaoCid">{{ daoCid }}</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+
+    <!------ Approve Foundace CrowdFundingAdapter Contract------>
+
+    <div class="deposit-button form-button-mobile">
+      <button 
+        class="btn btn-success btn-user btn-block text-uppercase form-control" @click="approveAllowance">
+        <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+        Approve CrowdFundingAdapter Contract
+      </button>
+      <div></div>
+    </div>
+
+    <!------ Create Deal ------>
+
+    <div class="section-big row mt-4 mx-3">
+      <h3> Selected DAO: </h3> {{ selectedDAO }}
+      <h3> Selected CrowdFunding ID: </h3>  {{ selectedDeal }}
+      <h3> Crowd Funding Amount:</h3>
+      <div class="col-md-12">
+        <input type="text" v-model="quoteAssetContributionAmount" class="form-control deposit-input" placeholder="1000.0" aria-describedby="depositText">
+      </div>
+      <div class="fund-submit-buttons">
+        <button @click="actContributeCrowdFunding" class="btn btn-success">
+          <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+          Create Deal
+        </button>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
 import { mapGetters, mapActions } from "vuex";
-import FundInput from '../components/fund/FundInput.vue';
+import { ethers } from "ethers";
+import DaoRegistryJSON from "../contracts/DaoRegistry.json";
+import ICrowdFundingExtensionJSON from "../contracts/ICrowdFundingExtension.json";
 
 export default {
   name: "CreateDeal",
 
   computed: {
     ...mapGetters("accounts", ["getActiveAccount", "getChainName", "getWeb3", "isUserConnected"]),
-    ...mapGetters("fundFactory", ["getFundFactoryContract"]),
+    ...mapGetters("usdc", ["getUserUsdcBalance", "getUsdcContract", "getFundUsdcAllowance"]),
+    ...mapGetters("fundFactory", ["getFoundanceFactoryContract", "getCrowdFundingAdapterContract", "getCrowdFundingAdapterAddress"]),
   },
 
   created() {
     if (!this.getWeb3 || !this.isUserConnected) {
       this.$router.push({ name: 'home'});
     }
+    this.getDaos();
   },
 
   data() {
     return {
       loading: false,
-      fund: {
-        depositFee: null,
-        withdrawFee: null,
-        //performanceFee: null,//TODO: not imp 
-        managementFee: null,
-        //performaceHurdleRateBps: null,//TODO: not imp 
-        baseToken: "",
-        allowedDepositAddrs: "",
-        allowedManagers: "",
-        feeCollectors: "",
-        governanceToken: "0x0000000000000000000000000000000000000000",
-        fundName: "",
-        fundSymbol: ""
-      },
-      fundMetadata : {
-        description: null,
-        photoUrl: null,
-        plannedSettlementPeriod: null,
-        minLiquidAssetShare: null
-      },
-      governor: {
-        quorumFraction: null,
-        lateQuorum: null,
-        votingDelay: null,
-        votingPeriod: null,
-        proposalThreshold: null
-      },
-      fee: {
-        _feePerformancePeriod: null,
-        _feeManagePeriod: null
-      }
+      selectedDAO: null,
+      selectedDeal: null,
+      quoteAssetContributionAmount: null,
+      daos: [],
+      daoCids: []
     }
   },
 
-  components: {
-    FundInput
-  },
+  components: {},
 
   methods: {
     ...mapActions("accounts", ["connectWeb3Modal"]),
-    validateFund(obj) {
-      if(obj.depositFee == null) return false;
-      if(obj.withdrawFee == null) return false;
-      if(obj.performanceFee == null) return false;
-      if(obj.managementFee == null) return false;
-      if(obj.performaceHurdleRateBps == null) return false;
-      if(obj.baseToken.length == 0) return false;
-      if(obj.allowedManagers.length == 0) return false;
-      if(obj.feeCollectors.length == 0) return false;
-      if(obj.fundName.length == 0) return false;
-      if(obj.fundSymbol.length == 0) return false;
-      return true;
+
+    changeDaoCid(event) {
+      this.selectedDeal = event.srcElement.textContent;
     },
-    validateGovernor(obj) {
-      if(obj.quorumFraction == null) return false;
-      if(obj.lateQuorum == null) return false;
-      if(obj.votingDelay == null) return false;
-      if(obj.votingPeriod == null) return false;
-      if(obj.proposalThreshold == null) return false;
-      return true;
+
+    async getDaos() {
+      if (this.daos.length === 0) {
+        let daos = await this.getFoundanceFactoryContract.methods.getDaoAddresses().call();
+        this.daos = daos;
+      }
     },
-    validateFundMetadata(obj) {
-      if(obj.description == null) return false;
-      if(obj.photoUrl == null) return false;
-      return true;
-    },
-    validateFeePeriod(obj) {
-      if(obj._feePerformancePeriod == null) return false;
-      if(obj._feeManagePeriod == null) return false;
-      return true;
-    },
-    getCreateFundMutation(){
-      //https://apidocs.tally.xyz/#group-Operations-Mutations
+
+    async getCrowdfundingIDs(event) {
+
+      const dao = event.srcElement.textContent;
+      console.log(dao);
+      this.selectedDAO = dao;
+
       /*
-        let OrganizationArgs = {
-          "name": "abc123", //TODO [symbol]-[gov token addr]
-          "description": "abc123"//TODO: [symbol]-[gov token addr], could be other stuff fund manager may want
-        }
 
-        let TokenArgs = {
-          "id": "eip155:1/erc20:0x6b175474e89094c44da98b954eedeac495271d0f", //TODO: need to get from gov factory contract after creation
-          "start": 987 //TODO: need input field for block hight if external gov token and erc20votes compatavle, need to get block of create fund tx from tx hash data returned
-        }
+        dao_cfe_addr = dao.functions.getExtensions(ethers.utils.keccak256(ethers.utils.toUtf8Bytes("crowd-funding-ext"))).call()
+        print("dao cfe addr", dao_cfe_addr)
 
-        let GovernanceArgs = {
-          "id": "eip155:1:0x7e90e03654732abedf89Faf87f05BcD03ACEeFdc", //TODO: need to get from gov factory contract after creation
-          "type": "OPENZEPPELINGOVERNOR",
-          "start": 987 //need to get block of create fund tx from tx hash data returned
-        }
+        ethers.utils.keccak256(ethers.utils.toUtf8Bytes("crowd-funding-ext"))
+
+        cfe = w3.eth.contract(abi=ICrowdFundingExtensionContract["abi"], address=Web3.to_checksum_address(dao_cfe_addr))
+
+
+        print("cfe ids", [w3.to_hex(x) for x in cfe.functions.getCrowdFundingIds().call()])
+
+
       */
-      var fundMutation = `mutation CreateGovernorOrganization(
-                            $orgArgs: OrganizationArgs!,
-                            $tokenArgs: TokenArgs!,
-                            $governanceArgs: GovernanceArgs!
-                          ) {
-                            createGovernorOrganization(
-                              orgArgs: $orgArgs,
-                              tokenArgs: $tokenArgs,
-                              governanceArgs: $governanceArgs
-                            ) {
-                              id
-                              slug
-                              name
-                              website
-                              description
-                              visual {
-                                icon
-                                color
-                              }
-                              socialProfiles {
-                                Discord
-                                Telegram
-                                Twitter
-                                Others {
-                                  ...OtherLinkFragment
-                                }
-                              }
-                              creator {
-                                id
-                                address
-                                ens
-                                twitter
-                                name
-                                bio
-                                participations {
-                                  ...ParticipationFragment
-                                }
-                                picture
-                                activity {
-                                  ... on Proposal {
-                                    ...ProposalFragment
-                                  }
-                                  ... on Vote {
-                                    ...VoteFragment
-                                  }
-                                }
-                                safes
-                                type
-                                meta {
-                                  ...AccountMetaFragment
-                                }
-                                votes
-                              }
-                              members {
-                                id
-                                account {
-                                  ...AccountFragment
-                                }
-                                organization {
-                                  ...OrganizationFragment
-                                }
-                              }
-                              issues {
-                                id
-                                organizationId
-                                name
-                                description
-                              }
-                            }
-                          }`;
 
-      fetch(process.env.TALLY_API_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Api-Key": process.env.TALLY_API_KEY,
-        },
-        body: JSON.stringify({
-          query,
-          variables,
-        }),
-      }).then(
-        (response) => response.json()
-      ).then((json) => {
-        if (json?.errors) {
-          console.error("error when fetching");
 
-          return null;
-        }
 
-        return json.data;
-      }).catch((error) => {
-        console.log("Error when fetching =>", error);
+      if (dao !== null) {
 
-        return null;
-      });
+        const daoRegisitryContract = await new this.getWeb3.eth.Contract(DaoRegistryJSON.abi, dao);
+
+        let dao_cfe_addr = await daoRegisitryContract.methods.getExtensions(ethers.utils.keccak256(ethers.utils.toUtf8Bytes("crowd-funding-ext"))).call();
+
+        const crowdFundingExtensionContract = await new this.getWeb3.eth.Contract(ICrowdFundingExtensionJSON.abi, dao_cfe_addr);
+
+        const daos = await crowdFundingExtensionContract.methods.getCrowdFundingIds().call();
+        this.daoCids = daos;
+      }
     },
-    async createFund () {
+
+    async approveAllowance() {
       let component = this;
       component.loading = true;
-      /*
-        struct Settings {
-            uint256 depositFee;
-            uint256 withdrawFee;
-            uint256 performanceFee;//TODO: not imp 
-            uint256 managementFee;
-            uint256 performaceHurdleRateBps;//TODO: not imp 
-            address baseToken;
-            address safe; 
-            bool isExternalGovTokenInUse;
-            bool isWhitelistedDeposits;
-            address[] allowedDepositAddrs;
-            address[] allowedManagers;
-            address governanceToken;
-            address governor;
-            address fundAddress;//TODO: this may not be needed if delegatecall has balance refs to callee addr
-            string fundName;
-            string fundSymbol;
-            address[4] feeCollectors;
-          }
-      */
-      if (component.validateFund(component.fund) && component.validateGovernor(component.governor) && component.validateFundMetadata(component.fundMetadata) && component.validateFeePeriod(component.fee)) {
-        await component.getFundFactoryContract.methods.createFund(
-          [
-            parseInt(component.fund.depositFee),
-            parseInt(component.fund.withdrawFee),
-            parseInt(component.fund.performanceFee),//performanceFee bps
-            parseInt(component.fund.managementFee),
-            parseInt(component.fund.performaceHurdleRateBps),//performaceHurdleRateBps bps
-            component.fund.baseToken,
-            "0x0000000000000000000000000000000000000000",
-            false,//false
-            false,//false
-            component.fund.allowedDepositAddrs.split(",").filter((val) => (val != "") ? true :  false),
-            component.fund.allowedManagers.split(",").filter((val) => (val != "") ? true :  false),
-            component.fund.governanceToken,
-            "0x0000000000000000000000000000000000000000",
-            "0x0000000000000000000000000000000000000000",
-            component.fund.fundName,
-            component.fund.fundSymbol,
-            component.fund.feeCollectors.split(",").filter((val) => (val != "") ? true :  false),
-          ],
-          [
-            parseInt(component.governor.quorumFraction),
-            parseInt(component.governor.lateQuorum),
-            parseInt(component.governor.votingDelay),
-            parseInt(component.governor.votingPeriod),
-            parseInt(component.governor.proposalThreshold),
-          ],
-          JSON.stringify(component.fundMetadata),//fundMetadata
-          parseInt(component.fee._feePerformancePeriod),
-          parseInt(component.fee._feeManagePeriod)
+
+      // define unit and token contract
+      let unit = "mwei"; // USDC - 6 decimals
+
+      // convert deposit value to wei
+      //let tokensWei = component.getWeb3.utils.toWei(component.depositValue, unit);
+
+      // call the approve method
+      await component.getUsdcContract.methods.approve(component.getCrowdFundingAdapterAddress, "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff").send({
+        from: component.getActiveAccount,
+        maxPriorityFeePerGas: null,
+        maxFeePerGas: null
+
+      }).on('transactionHash', function(hash){
+        console.log("tx hash: " + hash);
+        component.$toast.info("The transaction has been submitted. Please wait for it to be confirmed.");
+
+      }).on('receipt', function(receipt){
+        console.log(receipt);
+
+        if (receipt.status) {
+          component.$toast.success("The approval was successfull. You can execute the deal now.");
+          
+        } else {
+          component.$toast.error("The transaction has failed. Please contact the Rethink Finance support.");
+        }
+        
+        component.loading = false;
+
+      }).on('error', function(error){
+        console.log(error);
+        component.loading = false;
+        component.$toast.error("There has been an error. Please contact the Rethink Finance support.");
+      });
+
+    },
+
+    async actContributeCrowdFunding() {
+      let component = this;
+      component.loading = true;
+
+      // define unit and token contract
+      let unit = "mwei"; // USDC - 6 decimals
+
+      // convert deposit value to wei
+      let tokensWei = component.getWeb3.utils.toWei(component.quoteAssetContributionAmount, unit);
+
+      console.log(component.getCrowdFundingAdapterContract);
+
+      if(component.getCrowdFundingAdapterContract) {
+        // call the actContributeCrowdFunding method
+        await component.getCrowdFundingAdapterContract.methods.actContributeCrowdFunding(
+          component.selectedDAO,
+          component.selectedDeal,
+          tokensWei,
+          component.getActiveAccount,
+          component.getActiveAccount,
         ).send({
           from: component.getActiveAccount,
           maxPriorityFeePerGas: null,
           maxFeePerGas: null
+
         }).on('transactionHash', function(hash){
           console.log("tx hash: " + hash);
-          component.$toast.info("The transaction has been submitted. Please wait for it to be confirmed.");
+          component.$toast.info("The actContributeCrowdFunding transaction has been submitted. Please wait for it to be confirmed.");
+
         }).on('receipt', function(receipt){
           console.log(receipt);
+
           if (receipt.status) {
-            component.$toast.success("Create Fund transaction was successfull.");
+            component.$toast.success("The actContributeCrowdFunding transaction was successfull.");
             
           } else {
-            component.$toast.error("The Create Fund tx has failed. Please contact the Rethink Finance community for support.");
+            component.$toast.error("The transaction has failed. Please contact the Rethink Finance support.");
           }
+          
           component.loading = false;
 
         }).on('error', function(error){
           console.log(error);
           component.loading = false;
-          component.$toast.error("There has been an error. Please contact the Rethink Finance community for support.");
+          component.$toast.error("There has been an error. Please contact the Rethink Finance support.");
         });
+      } else {
+            this.$store.dispatch("fundFactory/fetchContract1");
+          component.loading = false;
       }
+
     },
   }
 }

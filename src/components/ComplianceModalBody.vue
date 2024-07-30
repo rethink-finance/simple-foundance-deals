@@ -4,7 +4,7 @@
 
     <ul>
       <li>
-        I am aware that even though Foundance Crowd Funding Contratcs has not been audit, so I will use it at my own risk.
+        I am aware that even though Foundance Crowd Funding Contracts has not been audited, so I will use it at my own risk.
       </li>
     </ul>
 

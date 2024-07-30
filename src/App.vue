@@ -15,6 +15,7 @@
       <span @click="switchToArbitrumGoerli" class="network-switch-link">Arbitrum Goerli testnet</span>.
       <span @click="switchToEthereum" class="network-switch-link">Ethereum</span>.
       <span @click="switchToArbitrumSepolia" class="network-switch-link">Arbitrum Sepolia testnet</span>.
+      <span @click="switchToAmoy" class="network-switch-link">Amoy testnet</span>.
     </div>
 
     <router-view />
@@ -137,7 +138,16 @@ export default {
           chainId: '0x66eee'
         }] 
       });
+    },
+    switchToAmoy() {
+      window.ethereum.request({ 
+        method: 'wallet_switchEthereumChain', 
+        params: [{ 
+          chainId: '0x13882'
+        }] 
+      });
     }
+
   },
   watch: {
     getChainName: function () {

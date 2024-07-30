@@ -30,6 +30,13 @@
         <img src="@/assets/img/polygon-logo-inverted.svg" class="polygon-logo" />
         <div class="polygon-hero-line-right"></div>
       </div>
+
+      <div class="d-flex flex-row justify-content-center text-white" v-if="isAmoy">
+        <div class="polygon-hero-line-left"></div>
+        <div>on</div>
+        <img src="@/assets/img/polygon-logo-inverted.svg" class="polygon-logo" />
+        <div class="polygon-hero-line-right"></div>
+      </div>
       
       <div class="d-flex flex-wrap flex-row justify-content-center text-uppercase hero-buttons" v-if="isUserConnected">
         <router-link to="/create" style="text-decoration: none">
@@ -74,6 +81,10 @@ export default {
 
     isPolygon() {
       return this.getChainName == "Polygon";
+    },
+
+    isAmoy() {
+      return this.getChainName == "Amoy";
     }
   },
 
@@ -83,7 +94,7 @@ export default {
     // check if user has already confirmed the compliance modal (this modal is in Navbar)
     this.isCompliant = localStorage.getItem('isCompliant');
     this.$store.dispatch("fundFactory/fetchContract");
-    this.$store.dispatch("fundFactory/fetchFunds");
+    this.$store.dispatch("fundFactory/fetchContract1");
   },
 
   data() {

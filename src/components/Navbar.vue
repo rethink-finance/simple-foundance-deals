@@ -16,18 +16,10 @@
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
 
         <ul class="navbar-nav me-auto mb-2 mb-lg-0 text-uppercase">
-          <!-- Nav Item - Display Funds -->
-          <router-link to="/display" style="text-decoration: none" v-if="isUserConnected">
-            <li class="nav-item">
-                <a class="nav-link" :class="{active:this.$route.name === 'display'}" href="/display">Display Funds</a>
-            </li>
-          </router-link>
-          <!-- END Nav Item - Display Funds -->
-
           <!-- Nav Item - Create Funds -->
           <router-link to="/create" style="text-decoration: none" v-if="isUserConnected">
             <li class="nav-item">
-                <a class="nav-link" :class="{active:this.$route.name === 'create'}" href="/create">Create Fund</a>
+                <a class="nav-link" :class="{active:this.$route.name === 'create'}" href="/create">Create Deal</a>
             </li>
           </router-link>
           <!-- END Nav Item - Create Funds -->
@@ -120,6 +112,7 @@
               <li><button @click="switchToFraxtal" class="dropdown-item">Fraxtal</button></li>
               <li><button @click="switchToEthereum" class="dropdown-item">Ethereum</button></li>
               <li><button @click="switchToArbitrumSepolia" class="dropdown-item">Arbitrum Sepolia</button></li>
+              <li><button @click="switchToAmoy" class="dropdown-item">Amoy Testnet</button></li>
             </ul>
           </div>
 
@@ -284,6 +277,14 @@ export default {
         method: 'wallet_switchEthereumChain', 
         params: [{ 
           chainId: '0x66eee'
+        }] 
+      });
+    },
+    switchToAmoy() {
+      window.ethereum.request({ 
+        method: 'wallet_switchEthereumChain', 
+        params: [{ 
+          chainId: '0x13882'
         }] 
       });
     }
