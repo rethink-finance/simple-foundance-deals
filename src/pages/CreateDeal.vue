@@ -70,7 +70,7 @@
       <div class="fund-submit-buttons">
         <button @click="actContributeCrowdFunding" class="btn btn-success">
           <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-          Create Deal
+          Execute Token Swap
         </button>
       </div>
     </div>
