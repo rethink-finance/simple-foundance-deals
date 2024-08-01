@@ -98,6 +98,12 @@ import { ethers } from "ethers";
 import DaoRegistryJSON from "../contracts/DaoRegistry.json";
 import ICrowdFundingExtensionJSON from "../contracts/ICrowdFundingExtension.json";
 
+
+const getCrowdFundingConfigABI = ICrowdFundingExtensionJSON.abi.find(
+  func => func.name === "getCrowdFundingConfig" && func.type === "function",
+);
+
+
 export default {
   name: "CreateDeal",
 
@@ -187,7 +193,16 @@ export default {
         
         const crowdFundingExtensionContract = await new this.getWeb3.eth.Contract(ICrowdFundingExtensionJSON.abi, this.selectedDAOCfeAddr);
         const daoSettings = await crowdFundingExtensionContract.methods.getCrowdFundingConfig(this.selectedDAO).call();
-        this.selectedDAOSettings = daoSettings;
+
+        console.log(getCrowdFundingConfigABI["outputs"][0]["components"]);
+
+        var output = daoSettings.map(function(obj,index){
+          var myobj = {};
+          myobj[getCrowdFundingConfigABI["outputs"][0]["components"][index].name] = obj;
+          return myobj;
+        });
+
+        this.selectedDAOSettings = output;
       }
     },
 
