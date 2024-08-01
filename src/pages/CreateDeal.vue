@@ -75,6 +75,11 @@
         <h3> Selected CrowdFunding ID Terms: </h3> 
         <pre style="color:#fff">{{ selectedDAOSettings }}</pre>
       </div>
+
+      <div class="section-big row mt-4 mx-3">
+        <h3> Price Per Funding Token</h3> 
+        <pre style="color:#fff">{{ pricePerToken }}</pre>
+      </div>
       
       <div class="section-big row mt-4 mx-3">
         <h3> Crowd Funding Amount:</h3>
@@ -97,7 +102,7 @@ import { mapGetters, mapActions } from "vuex";
 import { ethers } from "ethers";
 import DaoRegistryJSON from "../contracts/DaoRegistry.json";
 import ICrowdFundingExtensionJSON from "../contracts/ICrowdFundingExtension.json";
-
+import ERC20JSON from "../contracts/ERC20Mock.json"
 
 const getCrowdFundingConfigABI = ICrowdFundingExtensionJSON.abi.find(
   func => func.name === "getCrowdFundingConfig" && func.type === "function",
@@ -111,6 +116,10 @@ export default {
     ...mapGetters("accounts", ["getActiveAccount", "getChainName", "getWeb3", "isUserConnected"]),
     ...mapGetters("usdc", ["getUserUsdcBalance", "getUsdcContract", "getFundUsdcAllowance"]),
     ...mapGetters("fundFactory", ["getFoundanceFactoryContract", "getCrowdFundingAdapterContract", "getCrowdFundingAdapterAddress"]),
+
+    pricePerToken(){
+      return ((this.selectedDAOSettings !== null) ? (10 ** 12) / Number(this.selectedDAOSettings["baseAssetQuote"]) : "N/A");
+    }
   },
 
   created() {
@@ -182,17 +191,27 @@ export default {
 
         const crowdFundingExtensionContract = await new this.getWeb3.eth.Contract(ICrowdFundingExtensionJSON.abi, dao_cfe_addr);
 
-        const daos = await crowdFundingExtensionContract.methods.getCrowdFundingIds().call();
-        this.daoCids = daos;
+        const daoCrowdFundingIds = await crowdFundingExtensionContract.methods.getCrowdFundingIds().call();
+        this.daoCids = daoCrowdFundingIds;
       }
     },
 
     async getCrowdFundingConfig() {
 
       if((this.selectedDAO !== null) && (this.selectedDAOCfeAddr !== null)){
-        
+
+        console.log("selectedDAO");
+        console.log(this.selectedDAO);
+
+        console.log("selectedDAOCfeAddr");
+        console.log(this.selectedDAOCfeAddr);
+
+
+        console.log("selectedDeal");
+        console.log(this.selectedDeal);
+
         const crowdFundingExtensionContract = await new this.getWeb3.eth.Contract(ICrowdFundingExtensionJSON.abi, this.selectedDAOCfeAddr);
-        const daoSettings = await crowdFundingExtensionContract.methods.getCrowdFundingConfig(this.selectedDAO).call();
+        const daoSettings = await crowdFundingExtensionContract.methods.getCrowdFundingConfig(this.selectedDeal).call();
 
         console.log(getCrowdFundingConfigABI["outputs"][0]["components"]);
 
@@ -202,7 +221,14 @@ export default {
           return myobj;
         });
 
-        this.selectedDAOSettings = output;
+        const res = output.reduce((acc, el) => {
+          for (let key in el) {
+            acc[key] =  el[key];
+          };
+          return acc;
+        }, {})
+
+        this.selectedDAOSettings = res;
       }
     },
 
@@ -210,40 +236,47 @@ export default {
       let component = this;
       component.loading = true;
 
-      // define unit and token contract
-      let unit = "mwei"; // USDC - 6 decimals
+      if(this.selectedDAOSettings !== null) {
 
-      // convert deposit value to wei
-      //let tokensWei = component.getWeb3.utils.toWei(component.depositValue, unit);
+        // define unit and token contract
+        let unit = "mwei"; // USDC - 6 decimals
 
-      // call the approve method
-      await component.getUsdcContract.methods.approve(component.getCrowdFundingAdapterAddress, "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff").send({
-        from: component.getActiveAccount,
-        maxPriorityFeePerGas: null,
-        maxFeePerGas: null
-
-      }).on('transactionHash', function(hash){
-        console.log("tx hash: " + hash);
-        component.$toast.info("The transaction has been submitted. Please wait for it to be confirmed.");
-
-      }).on('receipt', function(receipt){
-        console.log(receipt);
-
-        if (receipt.status) {
-          component.$toast.success("The approval was successfull. You can execute the deal now.");
-          
-        } else {
-          component.$toast.error("The transaction has failed. Please contact the Rethink Finance support.");
-        }
+        // convert deposit value to wei
+        //let tokensWei = component.getWeb3.utils.toWei(component.depositValue, unit);
         
-        component.loading = false;
 
-      }).on('error', function(error){
-        console.log(error);
-        component.loading = false;
-        component.$toast.error("There has been an error. Please contact the Rethink Finance support.");
-      });
 
+        const TokenContract = await new this.getWeb3.eth.Contract(ERC20JSON.abi, this.selectedDAOSettings["quoteAssetAddress"]);
+
+
+        // call the approve method
+        await TokenContract.methods.approve(component.getCrowdFundingAdapterAddress, "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff").send({
+          from: component.getActiveAccount,
+          maxPriorityFeePerGas: null,
+          maxFeePerGas: null
+
+        }).on('transactionHash', function(hash){
+          console.log("tx hash: " + hash);
+          component.$toast.info("The transaction has been submitted. Please wait for it to be confirmed.");
+
+        }).on('receipt', function(receipt){
+          console.log(receipt);
+
+          if (receipt.status) {
+            component.$toast.success("The approval was successfull. You can execute the deal now.");
+            
+          } else {
+            component.$toast.error("The transaction has failed. Please contact the Rethink Finance support.");
+          }
+          
+          component.loading = false;
+
+        }).on('error', function(error){
+          console.log(error);
+          component.loading = false;
+          component.$toast.error("There has been an error. Please contact the Rethink Finance support.");
+        });
+      }
     },
 
     async actContributeCrowdFunding() {
