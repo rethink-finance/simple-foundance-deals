@@ -61,17 +61,32 @@
     <!------ Create Deal ------>
 
     <div class="section-big row mt-4 mx-3">
-      <h3> Selected DAO: </h3> {{ selectedDAO }}
-      <h3> Selected CrowdFunding ID: </h3>  {{ selectedDeal }}
-      <h3> Crowd Funding Amount:</h3>
-      <div class="col-md-12">
-        <input type="text" v-model="quoteAssetContributionAmount" class="form-control deposit-input" placeholder="1000.0" aria-describedby="depositText">
+      <div class="section-big row mt-4 mx-3">
+        <h3> Selected DAO: </h3>
+        <pre style="color:#fff">{{ selectedDAO }}</pre>
       </div>
-      <div class="fund-submit-buttons">
-        <button @click="actContributeCrowdFunding" class="btn btn-success">
-          <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-          Execute Token Swap
-        </button>
+
+      <div class="section-big row mt-4 mx-3">
+        <h3> Selected CrowdFunding ID:</h3>  
+        <pre style="color:#fff">{{ selectedDeal }}</pre>
+      </div>
+      
+      <div class="section-big row mt-4 mx-3">
+        <h3> Selected CrowdFunding ID Terms: </h3> 
+        <pre style="color:#fff">{{ selectedDAOSettings }}</pre>
+      </div>
+      
+      <div class="section-big row mt-4 mx-3">
+        <h3> Crowd Funding Amount:</h3>
+        <div class="col-md-12">
+          <input type="text" v-model="quoteAssetContributionAmount" class="form-control deposit-input" placeholder="1000.0" aria-describedby="depositText">
+        </div>
+        <div class="fund-submit-buttons">
+          <button @click="actContributeCrowdFunding" class="btn btn-success">
+            <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            Execute Token Swap
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -103,6 +118,8 @@ export default {
     return {
       loading: false,
       selectedDAO: null,
+      selectedDAOCfeAddr: null,
+      selectedDAOSettings: null,
       selectedDeal: null,
       quoteAssetContributionAmount: null,
       daos: [],
@@ -115,8 +132,9 @@ export default {
   methods: {
     ...mapActions("accounts", ["connectWeb3Modal"]),
 
-    changeDaoCid(event) {
+    async changeDaoCid(event) {
       this.selectedDeal = event.srcElement.textContent;
+      this.getCrowdFundingConfig();
     },
 
     async getDaos() {
@@ -153,12 +171,23 @@ export default {
 
         const daoRegisitryContract = await new this.getWeb3.eth.Contract(DaoRegistryJSON.abi, dao);
 
-        let dao_cfe_addr = await daoRegisitryContract.methods.getExtensions(ethers.utils.keccak256(ethers.utils.toUtf8Bytes("crowd-funding-ext"))).call();
+        const dao_cfe_addr = await daoRegisitryContract.methods.getExtensions(ethers.utils.keccak256(ethers.utils.toUtf8Bytes("crowd-funding-ext"))).call();
+        this.selectedDAOCfeAddr = dao_cfe_addr;
 
         const crowdFundingExtensionContract = await new this.getWeb3.eth.Contract(ICrowdFundingExtensionJSON.abi, dao_cfe_addr);
 
         const daos = await crowdFundingExtensionContract.methods.getCrowdFundingIds().call();
         this.daoCids = daos;
+      }
+    },
+
+    async getCrowdFundingConfig() {
+
+      if((this.selectedDAO !== null) && (this.selectedDAOCfeAddr !== null)){
+        
+        const crowdFundingExtensionContract = await new this.getWeb3.eth.Contract(ICrowdFundingExtensionJSON.abi, this.selectedDAOCfeAddr);
+        const daoSettings = await crowdFundingExtensionContract.methods.getCrowdFundingConfig(this.selectedDAO).call();
+        this.selectedDAOSettings = daoSettings;
       }
     },
 
