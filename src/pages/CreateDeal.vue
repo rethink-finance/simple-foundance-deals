@@ -82,7 +82,7 @@
       </div>
       
       <div class="section-big row mt-4 mx-3">
-        <h3> Crowd Funding Amount:</h3>
+        <h3> Funding Token Amount:</h3>
         <div class="col-md-12">
           <input type="text" v-model="quoteAssetContributionAmount" class="form-control deposit-input" placeholder="1000.0" aria-describedby="depositText">
         </div>
@@ -118,7 +118,7 @@ export default {
     ...mapGetters("fundFactory", ["getFoundanceFactoryContract", "getCrowdFundingAdapterContract", "getCrowdFundingAdapterAddress"]),
 
     pricePerToken(){
-      return ((this.selectedDAOSettings !== null) ? (10 ** 12) / Number(this.selectedDAOSettings["baseAssetQuote"]) : "N/A");
+      return ((this.selectedDAOSettings !== null) ? (10 ** 16) / Number(this.selectedDAOSettings["baseAssetQuote"]) : "N/A");
     }
   },
 
@@ -229,6 +229,15 @@ export default {
         }, {})
 
         this.selectedDAOSettings = res;
+
+
+        const TokenContract = await new this.getWeb3.eth.Contract(ERC20JSON.abi, this.selectedDAOSettings["quoteAssetAddress"]);
+
+        const quoteAssetAddressDecimals = await TokenContract.methods.decimals().call();
+
+        console.log("quoteAssetAddress decimals");
+        console.log(quoteAssetAddressDecimals);
+
       }
     },
 
